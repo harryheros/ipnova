@@ -5,9 +5,9 @@
 ![Data Source](https://img.shields.io/badge/source-APNIC-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
 
-IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with ASN-aware filtering and anycast exclusion.
+IPNova is a routing-aware IPv4 dataset derived from official APNIC allocation data, designed for infrastructure, filtering, and network intelligence use cases.
 
-It provides clean and structured CIDR lists for:
+It provides clean, structured CIDR lists for:
 
 - China (CN)
 - Hong Kong (HK)
@@ -19,11 +19,11 @@ It provides clean and structured CIDR lists for:
 ## ✨ Features
 
 - Based on official APNIC delegated data (no third-party aggregation)
-- ASN-aware filtering for improved accuracy
+- ASN-aware filtering for improved routing relevance
 - Excludes major anycast and CDN networks (Cloudflare, Google, etc.)
 - CN / HK / TW / MO fully separated
-- Weekly automated updates via GitHub Actions
 - CIDR aggregation for optimized size and performance
+- Fully automated updates via GitHub Actions
 
 ---
 
@@ -63,10 +63,19 @@ python3 generate_ip_list.py
 
 ---
 
+## 🧩 Use Cases
+
+- Routing and traffic filtering
+- Firewall / ACL configuration
+- Network policy enforcement
+- Data analysis and infrastructure research
+
+---
+
 ## 🔄 Update Schedule
 
 - Automatically updated **weekly**
-- Supports manual trigger via GitHub Actions
+- Manual trigger supported via GitHub Actions
 
 ---
 
