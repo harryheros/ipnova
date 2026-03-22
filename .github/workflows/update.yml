@@ -23,6 +23,7 @@ jobs:
 
       - name: Generate dataset
         run: python3 generate_ip_list.py
+        timeout-minutes: 10
 
       - name: Commit and push changes
         shell: bash
