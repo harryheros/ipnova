@@ -79,8 +79,11 @@ python3 generate_ip_list.py
 
 ## ⚠️ Notes
 
+## ⚠️ Notes
+
 - This dataset is intended for networking, routing, filtering, and infrastructure use cases
 - It does **not** represent precise geolocation
+- This dataset reflects IP allocation (RIR-based), not real-time geolocation or traffic origin
 - HK / TW / MO are intentionally separated from CN
 
 ---
