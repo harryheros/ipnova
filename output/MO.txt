@@ -1,3 +1,10 @@
+# Project     : ipnova
+# Region      : Macau
+# Last Updated: 2026-03-22 22:58:41 UTC
+# Source      : APNIC delegated-apnic-latest
+# Total CIDRs : 30
+# Note        : HK / TW / MO are NOT included in CN
+# ================================================
 27.109.128.0/17
 43.247.24.0/22
 45.64.20.0/22
