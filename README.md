@@ -1,47 +1,44 @@
 # IPNova — Routing-Aware IP Intelligence Dataset
 
-IPNova is a high-accuracy IP dataset based on APNIC allocation data, enhanced with ASN-aware filtering and anycast exclusion.
+IPNova is a routing-aware IPv4 dataset based on official APNIC allocation data, enhanced with ASN-aware filtering and anycast exclusion.
 
-It provides clean, structured IPv4 CIDR lists for China (CN), Hong Kong (HK), Taiwan (TW), and Macau (MO).
+It provides clean IPv4 CIDR lists for:
 
----
+- China (CN)
+- Hong Kong (HK)
+- Taiwan (TW)
+- Macau (MO)
 
 ## Features
 
-- Based on official APNIC delegated data (no third-party copying)
-- Routing-aware filtering (ASN + prefix analysis)
-- Excludes anycast and major CDN networks (Cloudflare, Google, etc.)
-- CN / HK / TW / MO are separated (not merged)
+- Based on official APNIC delegated data
+- ASN-aware filtering
+- Excludes major anycast / CDN networks
+- CN / HK / TW / MO separated
 - Weekly automated updates via GitHub Actions
 - CIDR aggregation for optimized output
-
----
 
 ## Dataset
 
 | File | Description |
 |------|-------------|
-| `CN.txt` | Mainland China IPv4 CIDR |
-| `HK.txt` | Hong Kong IPv4 CIDR |
-| `TW.txt` | Taiwan IPv4 CIDR |
-| `MO.txt` | Macau IPv4 CIDR |
+| `output/CN.txt` | Mainland China IPv4 CIDR list |
+| `output/HK.txt` | Hong Kong IPv4 CIDR list |
+| `output/TW.txt` | Taiwan IPv4 CIDR list |
+| `output/MO.txt` | Macau IPv4 CIDR list |
+| `output/meta.json` | Dataset metadata |
 
----
-
-## Direct Download (Raw)
+## Direct Download
 
 ```bash
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/HK.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/TW.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/MO.txt
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/meta.json
 ```
 
----
-
-## Usage
-
-### Clone and generate locally
+## Local Generation
 
 ```bash
 git clone https://github.com/harryheros/ipnova
@@ -49,44 +46,16 @@ cd ipnova
 python3 generate_ip_list.py
 ```
 
----
-
-## Data Source
-
-- APNIC delegated data:
-  https://ftp.apnic.net/stats/apnic/delegated-apnic-latest
-
----
-
 ## Update Schedule
 
 - Automatically updated weekly via GitHub Actions
-- Manual trigger supported
-
----
-
-## Project Structure
-
-```
-.
-├── generate_ip_list.py
-├── output/
-│   ├── CN.txt
-│   ├── HK.txt
-│   ├── TW.txt
-│   └── MO.txt
-└── .github/workflows/update.yml
-```
-
----
+- Manual workflow trigger supported
 
 ## Notes
 
-- This dataset is designed for networking, routing, and infrastructure use cases
+- This dataset is intended for networking, routing, filtering, and infrastructure use cases
 - It does not represent precise geolocation
 - HK / TW / MO are intentionally separated from CN
-
----
 
 ## License
 
