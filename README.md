@@ -1,24 +1,33 @@
 # IPNova — Routing-Aware IP Intelligence Dataset
 
-IPNova is a routing-aware IPv4 dataset based on official APNIC allocation data, enhanced with ASN-aware filtering and anycast exclusion.
+![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![Update](https://img.shields.io/badge/update-weekly-brightgreen)
+![Data Source](https://img.shields.io/badge/source-APNIC-orange)
+![Status](https://img.shields.io/badge/status-active-success)
 
-It provides clean IPv4 CIDR lists for:
+IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with ASN-aware filtering and anycast exclusion.
+
+It provides clean and structured CIDR lists for:
 
 - China (CN)
 - Hong Kong (HK)
 - Taiwan (TW)
 - Macau (MO)
 
-## Features
+---
 
-- Based on official APNIC delegated data
-- ASN-aware filtering
-- Excludes major anycast / CDN networks
-- CN / HK / TW / MO separated
+## ✨ Features
+
+- Based on official APNIC delegated data (no third-party aggregation)
+- ASN-aware filtering for improved accuracy
+- Excludes major anycast and CDN networks (Cloudflare, Google, etc.)
+- CN / HK / TW / MO fully separated
 - Weekly automated updates via GitHub Actions
-- CIDR aggregation for optimized output
+- CIDR aggregation for optimized size and performance
 
-## Dataset
+---
+
+## 📦 Dataset
 
 | File | Description |
 |------|-------------|
@@ -28,7 +37,9 @@ It provides clean IPv4 CIDR lists for:
 | `output/MO.txt` | Macau IPv4 CIDR list |
 | `output/meta.json` | Dataset metadata |
 
-## Direct Download
+---
+
+## ⬇️ Direct Download
 
 ```bash
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
@@ -38,7 +49,11 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/MO.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/meta.json
 ```
 
-## Local Generation
+---
+
+## 🚀 Usage
+
+### Local generation
 
 ```bash
 git clone https://github.com/harryheros/ipnova
@@ -46,17 +61,36 @@ cd ipnova
 python3 generate_ip_list.py
 ```
 
-## Update Schedule
+---
 
-- Automatically updated weekly via GitHub Actions
-- Manual workflow trigger supported
+## 🔄 Update Schedule
 
-## Notes
+- Automatically updated **weekly**
+- Supports manual trigger via GitHub Actions
+
+---
+
+## 📊 Data Source
+
+- APNIC delegated data  
+  https://ftp.apnic.net/stats/apnic/delegated-apnic-latest
+
+---
+
+## ⚠️ Notes
 
 - This dataset is intended for networking, routing, filtering, and infrastructure use cases
-- It does not represent precise geolocation
+- It does **not** represent precise geolocation
 - HK / TW / MO are intentionally separated from CN
 
-## License
+---
 
-GPL-3.0
+## ❤️ Support
+
+If IPNova is useful to you, consider giving it a ⭐ on GitHub.
+
+---
+
+## 📄 License
+
+MIT
