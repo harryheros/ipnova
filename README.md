@@ -7,12 +7,10 @@
 
 IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with ASN-level filtering and dynamic prefix analysis.
 
-It provides clean, structured CIDR lists for:
+IPNova is not a geolocation database.
 
-- China (CN)
-- Hong Kong (HK)
-- Taiwan (TW)
-- Macau (MO)
+It is a routing-aware IP dataset designed for traffic filtering,
+policy enforcement, and infrastructure-level decisions.
 
 ---
 
@@ -74,8 +72,9 @@ python3 generate_ip_list.py
 
 - Routing and traffic filtering
 - Firewall / ACL configuration
+- DNS / proxy traffic routing
 - Network policy enforcement
-- Data analysis and infrastructure research
+- Infrastructure-level traffic control
 
 ---
 
