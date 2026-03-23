@@ -23,7 +23,7 @@ EXCLUDED_ASNS = {
     20940, 16625,       # Akamai
     54113,              # Fastly
     16509, 14618,       # AWS
-    8075,  8069,        # Microsoft / Azure
+    8075, 8069,         # Microsoft / Azure
     32934,              # Meta
     13414,              # Twitter / X
 }
@@ -122,10 +122,10 @@ def parse_and_cleanse(raw_data, excluded_networks):
         if len(parts) < 7:
             continue
 
-        cc           = parts[1]
+        cc = parts[1]
         start_ip_str = parts[3]
-        count_str    = parts[4]
-        status       = parts[6]
+        count_str = parts[4]
+        status = parts[6]
 
         if status not in ("allocated", "assigned"):
             continue
@@ -134,8 +134,8 @@ def parse_and_cleanse(raw_data, excluded_networks):
 
         try:
             start_ip = ipaddress.IPv4Address(start_ip_str)
-            count    = int(count_str)
-            end_ip   = start_ip + (count - 1)
+            count = int(count_str)
+            end_ip = start_ip + (count - 1)
             networks = list(ipaddress.summarize_address_range(start_ip, end_ip))
 
             for net in networks:
@@ -152,27 +152,82 @@ def parse_and_cleanse(raw_data, excluded_networks):
     return result
 
 
-def save_outputs(region_data, output_dir="output"):
-    """Write per-region .txt files with a metadata header."""
+def normalize_region_data(region_data):
+    """
+    Collapse and normalize region data into structured JSON-ready form.
+    """
+    normalized = {}
+
+    for cc in TARGET_REGIONS:
+        networks = region_data.get(cc, [])
+        merged = sorted(ipaddress.collapse_addresses(networks))
+        normalized[cc] = {
+            "region_code": cc,
+            "region_name": TARGET_REGIONS[cc],
+            "total_cidrs": len(merged),
+            "cidrs": [str(net) for net in merged],
+        }
+
+    return normalized
+
+
+def save_txt_outputs(normalized_data, output_dir="output"):
+    """Write per-region .txt files with metadata headers."""
     os.makedirs(output_dir, exist_ok=True)
     timestamp = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
 
-    for cc, networks in region_data.items():
-        merged   = sorted(ipaddress.collapse_addresses(networks))
+    for cc, payload in normalized_data.items():
         filepath = os.path.join(output_dir, f"{cc}.txt")
 
         with open(filepath, "w", encoding="utf-8") as f:
-            f.write(f"# Project     : ipnova\n")
-            f.write(f"# Region      : {TARGET_REGIONS[cc]}\n")
+            f.write("# Project     : ipnova\n")
+            f.write(f"# Region      : {payload['region_name']}\n")
             f.write(f"# Last Updated: {timestamp}\n")
-            f.write(f"# Source      : APNIC delegated-apnic-latest\n")
-            f.write(f"# Total CIDRs : {len(merged)}\n")
-            f.write(f"# Note        : HK / TW / MO are NOT included in CN\n")
+            f.write("# Source      : APNIC delegated-apnic-latest\n")
+            f.write(f"# Total CIDRs : {payload['total_cidrs']}\n")
+            f.write("# Note        : HK / TW / MO are NOT included in CN\n")
             f.write("# " + "=" * 48 + "\n")
-            for net in merged:
-                f.write(str(net) + "\n")
+            for cidr in payload["cidrs"]:
+                f.write(cidr + "\n")
 
-        print(f"[+] {cc}.txt - {TARGET_REGIONS[cc]}: {len(merged)} CIDRs")
+        print(f"[+] {cc}.txt - {payload['region_name']}: {payload['total_cidrs']} CIDRs")
+
+
+def save_json_outputs(normalized_data, output_dir="output"):
+    """
+    Save structured JSON data layer and metadata layer.
+    """
+    os.makedirs(output_dir, exist_ok=True)
+    generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+    data_payload = {
+        "project": "ipnova",
+        "generated_at": generated_at,
+        "regions": normalized_data,
+    }
+
+    meta_payload = {
+        "project": "ipnova",
+        "generated_at": generated_at,
+        "source": "APNIC delegated-apnic-latest",
+        "target_regions": TARGET_REGIONS,
+        "excluded_asns": sorted(EXCLUDED_ASNS),
+        "static_anycast_blacklist": ANYCAST_BLACKLIST,
+        "counts": {
+            cc: normalized_data[cc]["total_cidrs"] for cc in normalized_data
+        },
+    }
+
+    with open(os.path.join(output_dir, "data.json"), "w", encoding="utf-8") as f:
+        json.dump(data_payload, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+    with open(os.path.join(output_dir, "meta.json"), "w", encoding="utf-8") as f:
+        json.dump(meta_payload, f, indent=2, ensure_ascii=False)
+        f.write("\n")
+
+    print("[+] data.json - structured dataset written")
+    print("[+] meta.json - metadata written")
 
 
 def main():
@@ -180,10 +235,13 @@ def main():
     print("  ipnova - High-quality IP database generator")
     print("=" * 55)
 
-    raw_data          = download_apnic_data()
+    raw_data = download_apnic_data()
     excluded_networks = build_excluded_networks()
-    region_data       = parse_and_cleanse(raw_data, excluded_networks)
-    save_outputs(region_data)
+    region_data = parse_and_cleanse(raw_data, excluded_networks)
+    normalized_data = normalize_region_data(region_data)
+
+    save_txt_outputs(normalized_data)
+    save_json_outputs(normalized_data)
 
     print("\n[✓] Done. Output directory: ./output/")
 
