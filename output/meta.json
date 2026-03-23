@@ -1,4 +1,41 @@
 {
-  "name": "IPNova",
-  "generated_at": "2026-03-22T16:55:28.832261"
+  "project": "ipnova",
+  "generated_at": "2026-03-23T00:44:26.600815+00:00",
+  "source": "APNIC delegated-apnic-latest",
+  "target_regions": {
+    "CN": "China (Mainland)",
+    "HK": "Hong Kong",
+    "TW": "Taiwan",
+    "MO": "Macau"
+  },
+  "excluded_asns": [
+    8069,
+    8075,
+    13335,
+    13414,
+    14618,
+    15169,
+    16509,
+    16625,
+    20940,
+    32934,
+    54113,
+    209242,
+    396982
+  ],
+  "static_anycast_blacklist": [
+    "1.0.0.0/24",
+    "1.1.1.0/24",
+    "8.8.8.0/24",
+    "8.8.4.0/24",
+    "9.9.9.0/24",
+    "208.67.222.0/24",
+    "208.67.220.0/24"
+  ],
+  "counts": {
+    "CN": 5479,
+    "HK": 2391,
+    "TW": 707,
+    "MO": 30
+  }
 }
