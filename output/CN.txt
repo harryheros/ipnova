@@ -1,6 +1,6 @@
 # Project     : ipnova
 # Region      : China (Mainland)
-# Last Updated: 2026-03-23 00:44:26 UTC
+# Last Updated: 2026-03-23 04:33:41 UTC
 # Source      : APNIC delegated-apnic-latest
 # Total CIDRs : 5479
 # Note        : HK / TW / MO are NOT included in CN
