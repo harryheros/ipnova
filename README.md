@@ -9,8 +9,7 @@ IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data
 
 IPNova is not a geolocation database.
 
-It is a routing-aware IP dataset designed for traffic filtering,
-policy enforcement, and infrastructure-level decisions.
+It is a routing-aware IP dataset designed for traffic filtering, policy enforcement, and infrastructure-level decisions.
 
 ---
 
@@ -23,6 +22,7 @@ policy enforcement, and infrastructure-level decisions.
 - CN / HK / TW / MO fully separated
 - Accurate CIDR generation via `summarize_address_range`
 - CIDR aggregation for optimized size and performance
+- Structured JSON data layer for future extensibility
 - Fully automated updates via GitHub Actions
 
 ---
@@ -35,8 +35,10 @@ policy enforcement, and infrastructure-level decisions.
 | `output/HK.txt` | Hong Kong IPv4 CIDR list |
 | `output/TW.txt` | Taiwan IPv4 CIDR list |
 | `output/MO.txt` | Macau IPv4 CIDR list |
+| `output/data.json` | Structured JSON dataset |
+| `output/meta.json` | Dataset metadata |
 
-Each file includes metadata headers:
+Text files include metadata headers such as:
 
 - Region
 - Last updated timestamp (UTC)
@@ -52,6 +54,8 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/HK.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/TW.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/MO.txt
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/data.json
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/meta.json
 ```
 
 ---
@@ -75,6 +79,17 @@ python3 generate_ip_list.py
 - DNS / proxy traffic routing
 - Network policy enforcement
 - Infrastructure-level traffic control
+
+---
+
+## 🧱 Data Layer
+
+IPNova now provides both:
+
+- **TXT outputs** for direct human-readable use
+- **JSON outputs** for system integration, future format conversion, and automation workflows
+
+This makes it easier to extend IPNova into formats such as MMDB, APIs, or additional machine-readable outputs in the future.
 
 ---
 
@@ -102,7 +117,7 @@ python3 generate_ip_list.py
 3. Fetch announced prefixes for blacklisted ASNs (RIPE Stat)  
 4. Merge dynamic ASN prefixes with static anycast blacklist  
 5. Generate accurate CIDRs via address range summarization  
-6. Aggregate and output optimized CIDR lists  
+6. Aggregate outputs into TXT and JSON formats  
 
 ---
 
