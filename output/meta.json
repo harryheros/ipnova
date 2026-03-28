@@ -1,6 +1,6 @@
 {
   "project": "ipnova",
-  "generated_at": "2026-03-23T04:33:41.325727+00:00",
+  "generated_at": "2026-03-28T21:19:59.748654+00:00",
   "source": "APNIC delegated-apnic-latest",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -33,9 +33,9 @@
     "208.67.220.0/24"
   ],
   "counts": {
-    "CN": 5479,
-    "HK": 2391,
-    "TW": 707,
+    "CN": 5482,
+    "HK": 2402,
+    "TW": 713,
     "MO": 30
   }
 }
