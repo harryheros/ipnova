@@ -195,13 +195,20 @@ def download_apnic_data():
             "Upstream may be broken. Aborting."
         )
 
-    # Format validation: APNIC files start with a version header
-    # e.g. "2|apnic|20260328|..."  or  "2.3|apnic|..."
-    header = lines[0].strip() if lines else ""
+    # Format validation: APNIC files may start with comment lines (######...)
+    # The real version header looks like "2|apnic|20260328|..." or "2.3|apnic|..."
+    # Find the first non-empty, non-comment line and verify it contains "apnic"
+    header = ""
+    for line in lines:
+        stripped = line.strip()
+        if stripped and not stripped.startswith("#"):
+            header = stripped
+            break
+
     if not header or "apnic" not in header.lower():
-        preview = header[:120]
+        preview = header[:120] if header else "(empty)"
         raise RuntimeError(
-            f"APNIC data format unexpected. First line: {preview!r}. "
+            f"APNIC data format unexpected. First data line: {preview!r}. "
             "This may be an error page or corrupted download."
         )
 
