@@ -3,7 +3,7 @@ name: Update IPNova Dataset
 on:
   schedule:
     - cron: "0 2 * * 1"    # Every Monday at 02:00 UTC
-  workflow_dispatch:
+  workflow_dispatch:         # Manual trigger
 
 permissions:
   contents: write
@@ -25,7 +25,7 @@ jobs:
       - name: Lint check
         run: |
           python -m pip install --upgrade pip
-          pip install "ruff==0.6.9"
+          pip install ruff
           ruff check generate_ip_list.py
 
       - name: Snapshot previous counts
@@ -35,12 +35,12 @@ jobs:
           set -euo pipefail
           if [ -f output/meta.json ]; then
             prev_meta="$(python3 - <<'PY'
-import json
-with open('output/meta.json', 'r', encoding='utf-8') as f:
-    meta = json.load(f)
-print(json.dumps(meta.get('counts', {}), separators=(',', ':')))
-PY
-)"
+          import json
+          with open('output/meta.json', 'r', encoding='utf-8') as f:
+              meta = json.load(f)
+          print(json.dumps(meta.get('counts', {}), separators=(',', ':')))
+          PY
+          )"
             echo "prev_meta=$prev_meta" >> "$GITHUB_OUTPUT"
           else
             echo 'prev_meta={}' >> "$GITHUB_OUTPUT"
@@ -51,39 +51,40 @@ PY
         timeout-minutes: 10
 
       - name: Generate diff report
-        id: diff_report
         env:
           PREV_META: ${{ steps.prev_counts.outputs.prev_meta }}
         run: |
           python3 - <<'PY'
-import json
-import os
+          import json
+          import os
 
-prev = json.loads(os.environ.get('PREV_META', '{}') or '{}')
+          prev = json.loads(os.environ.get('PREV_META', '{}') or '{}')
 
-with open('output/meta.json', 'r', encoding='utf-8') as f:
-    curr_meta = json.load(f)
+          with open('output/meta.json', 'r', encoding='utf-8') as f:
+              curr_meta = json.load(f)
 
-curr = curr_meta.get('counts', {})
+          curr = curr_meta.get('counts', {})
 
-lines = []
-for cc in sorted(set(prev) | set(curr)):
-    p = prev.get(cc, {})
-    c = curr.get(cc, {})
+          lines = []
+          for cc in sorted(set(prev) | set(curr)):
+              p = prev.get(cc, {})
+              c = curr.get(cc, {})
 
-    p_cidrs = p.get('cidrs', 0) if isinstance(p, dict) else 0
-    c_cidrs = c.get('cidrs', 0) if isinstance(c, dict) else 0
-    diff = c_cidrs - p_cidrs
-    sign = '+' if diff > 0 else ''
+              p_cidrs = p.get('cidrs', 0) if isinstance(p, dict) else 0
+              c_cidrs = c.get('cidrs', 0) if isinstance(c, dict) else 0
+              diff = c_cidrs - p_cidrs
+              sign = '+' if diff > 0 else ''
 
-    lines.append(f'{cc}: {p_cidrs} -> {c_cidrs} ({sign}{diff})')
+              lines.append(f'{cc}: {p_cidrs} -> {c_cidrs} ({sign}{diff})')
 
-report = '\n'.join(lines) if lines else 'First run or no previous data'
-print(report)
+          report = '\n'.join(lines) if lines else 'First run or no previous data'
+          print(report)
 
-with open('output/diff_report.txt', 'w', encoding='utf-8') as f:
-    f.write(report + '\n')
-PY
+          # Write to a temp location (not committed to repo)
+          os.makedirs('/tmp/ipnova', exist_ok=True)
+          with open('/tmp/ipnova/diff_report.txt', 'w', encoding='utf-8') as f:
+              f.write(report + '\n')
+          PY
 
       - name: Commit and push changes
         shell: bash
@@ -92,12 +93,19 @@ PY
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
+          # Remove legacy files if present
+          git rm -f output/.gitkeep 2>/dev/null || true
+          git rm -f output/diff_report.txt 2>/dev/null || true
+
           git add output/
 
           if git diff --cached --quiet; then
             echo "No changes detected."
           else
-            DIFF_SUMMARY=$(cat output/diff_report.txt)
+            DIFF_SUMMARY=""
+            if [ -f /tmp/ipnova/diff_report.txt ]; then
+              DIFF_SUMMARY=$(cat /tmp/ipnova/diff_report.txt)
+            fi
             git commit -m "chore: update dataset $(date -u '+%Y-%m-%d')" -m "$DIFF_SUMMARY"
             git push
           fi
@@ -122,6 +130,7 @@ PY
               '- APNIC upstream unavailable or returned abnormal data',
               '- RIPE Stat API failure rate exceeded 50%',
               '- Sanity check failed (CIDR counts below minimum thresholds)',
+              '- Lint check failed',
               '',
               'Please investigate the workflow logs and re-run manually if needed.',
             ].join('\n');

@@ -8,6 +8,7 @@ Source  : APNIC RIR official delegation data (upstream, not derived)
 
 import urllib.request
 import ipaddress
+import hashlib
 import os
 import sys
 import time
@@ -20,7 +21,7 @@ from collections import defaultdict
 # ================================================================
 # Version
 # ================================================================
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 # ================================================================
 # Logging
@@ -33,6 +34,27 @@ def setup_logging(verbose=False):
     level = logging.DEBUG if verbose else logging.INFO
     fmt = "[%(levelname)s] %(message)s"
     logging.basicConfig(level=level, format=fmt, stream=sys.stdout)
+
+
+# ================================================================
+# Step timer — logs elapsed time for each pipeline stage
+# ================================================================
+class StepTimer:
+    """Context manager that logs elapsed time for a named step."""
+
+    def __init__(self, name):
+        self.name = name
+        self.start = None
+        self.elapsed = 0.0
+
+    def __enter__(self):
+        self.start = time.monotonic()
+        return self
+
+    def __exit__(self, *exc):
+        self.elapsed = time.monotonic() - self.start
+        log.info("[timer] %s completed in %.1fs", self.name, self.elapsed)
+        return False
 
 
 # ================================================================
@@ -115,21 +137,28 @@ RIPE_REQUEST_INTERVAL = 1.5  # seconds between RIPE Stat requests
 # ================================================================
 # HTTP helpers with retry
 # ================================================================
-def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.0",
-             return_content_type=False):
+def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.1",
+             strict_decode=False, return_content_type=False):
     """
     Fetch URL with exponential backoff retry.
-    Returns response body as str, or (body, content_type) if requested.
-    Raises on total failure.
+
+    Args:
+        strict_decode: If True, raise on non-UTF-8 bytes (use for APNIC).
+                       If False, use errors='replace' (use for RIPE/error pages).
+        return_content_type: If True, return (body, content_type) tuple.
+
+    Returns response body as str, or raises on total failure.
     """
     headers = {"User-Agent": ua}
+    decode_errors = "strict" if strict_decode else "replace"
     last_err = None
 
     for attempt in range(1, retries + 1):
         try:
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
-                body = resp.read().decode("utf-8", errors="replace")
+                raw = resp.read()
+                body = raw.decode("utf-8", errors=decode_errors)
                 if return_content_type:
                     content_type = resp.headers.get("Content-Type", "")
                     return body, content_type
@@ -152,18 +181,31 @@ def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.0",
 # Data acquisition
 # ================================================================
 def download_apnic_data():
-    """Download the latest APNIC delegation file with retry."""
+    """Download the latest APNIC delegation file with retry and validation."""
     log.info("Fetching APNIC delegation data from %s", APNIC_URL)
-    data = http_get(APNIC_URL, timeout=60)
-    line_count = len(data.splitlines())
+    data = http_get(APNIC_URL, timeout=60, strict_decode=True)
+    lines = data.splitlines()
+    line_count = len(lines)
     log.info("Downloaded %d lines from APNIC", line_count)
 
+    # Size sanity
     if line_count < 1000:
         raise RuntimeError(
             f"APNIC data suspiciously small ({line_count} lines). "
             "Upstream may be broken. Aborting."
         )
 
+    # Format validation: APNIC files start with a version header
+    # e.g. "2|apnic|20260328|..."  or  "2.3|apnic|..."
+    header = lines[0].strip() if lines else ""
+    if not header or "apnic" not in header.lower():
+        preview = header[:120]
+        raise RuntimeError(
+            f"APNIC data format unexpected. First line: {preview!r}. "
+            "This may be an error page or corrupted download."
+        )
+
+    log.debug("APNIC header: %s", header[:80])
     return data
 
 
@@ -175,6 +217,7 @@ def fetch_asn_prefixes(asn):
     url = f"{RIPE_STAT_URL}?resource=AS{asn}"
     body, content_type = http_get(url, timeout=20, return_content_type=True)
 
+    # Validate content type (RIPE sometimes returns HTML error pages)
     if "json" not in content_type.lower():
         preview = body[:200].replace("\n", " ").strip()
         raise RuntimeError(
@@ -182,6 +225,7 @@ def fetch_asn_prefixes(asn):
             f"body preview={preview!r}"
         )
 
+    # Parse JSON with clear error reporting
     try:
         payload = json.loads(body.strip())
     except json.JSONDecodeError as e:
@@ -191,6 +235,7 @@ def fetch_asn_prefixes(asn):
             f"body preview={preview!r}"
         )
 
+    # Structural validation
     if not isinstance(payload, dict):
         raise RuntimeError(f"Malformed RIPE response for AS{asn}: root is not object")
 
@@ -202,11 +247,11 @@ def fetch_asn_prefixes(asn):
     if not isinstance(prefixes, list):
         raise RuntimeError(f"Malformed RIPE response for AS{asn}: prefixes is not list")
 
+    # Extract IPv4 networks
     networks = []
     for p in prefixes:
         if not isinstance(p, dict):
             continue
-
         raw = p.get("prefix", "")
         try:
             net = ipaddress.ip_network(raw, strict=False)
@@ -238,8 +283,9 @@ def build_excluded_networks(skip_ripe=False):
         log.info("Skipping RIPE Stat queries (--skip-ripe)")
     else:
         log.info("Fetching prefixes for %d blacklisted ASNs...", len(EXCLUDED_ASNS))
+        sorted_asns = sorted(EXCLUDED_ASNS)
 
-        for asn in sorted(EXCLUDED_ASNS):
+        for i, asn in enumerate(sorted_asns):
             label = ASN_LABELS.get(asn, "Unknown")
             try:
                 nets = fetch_asn_prefixes(asn)
@@ -251,8 +297,9 @@ def build_excluded_networks(skip_ripe=False):
                 report["failed"].append(asn)
                 log.warning("  AS%-6d %-12s FAILED: %s", asn, label, e)
 
-            # Rate limit: pause between requests
-            time.sleep(RIPE_REQUEST_INTERVAL)
+            # Rate limit: pause between requests (skip after last)
+            if i < len(sorted_asns) - 1:
+                time.sleep(RIPE_REQUEST_INTERVAL)
 
     # Evaluate failure rate
     total_asns = len(EXCLUDED_ASNS)
@@ -268,6 +315,10 @@ def build_excluded_networks(skip_ripe=False):
         log.warning("RIPE Stat: %d/%d ASN queries failed (%.0f%%). "
                     "Static blacklist will partially compensate.",
                     failed_count, total_asns, fail_pct)
+
+    # Sort for stable output (ensures consistent meta.json diffs)
+    report["succeeded"] = sorted(report["succeeded"])
+    report["failed"] = sorted(report["failed"])
 
     # Static blacklist (always applied)
     static_count = 0
@@ -287,21 +338,55 @@ def build_excluded_networks(skip_ripe=False):
 # ================================================================
 # Parsing helpers
 # ================================================================
-def subtract_excluded_from_network(network, excluded_networks):
+def _find_relevant_excluded(network, excluded_sorted):
+    """
+    Binary-search style pre-filter: return only excluded networks
+    whose IP range overlaps with `network`.
+
+    Since excluded_sorted is sorted by network_address, we can skip
+    entries that are entirely before or after our network range.
+    """
+    net_start = int(network.network_address)
+    net_end = int(network.broadcast_address)
+    relevant = []
+
+    for ex in excluded_sorted:
+        ex_start = int(ex.network_address)
+        ex_end = int(ex.broadcast_address)
+
+        # Excluded network is entirely after our range — stop
+        if ex_start > net_end:
+            break
+
+        # Excluded network is entirely before our range — skip
+        if ex_end < net_start:
+            continue
+
+        relevant.append(ex)
+
+    return relevant
+
+
+def subtract_excluded_from_network(network, excluded_sorted):
     """
     Precisely subtract excluded subnets from a source network.
 
-    Important:
-    - Do NOT drop the entire network merely because it overlaps with
-      an excluded subnet.
-    - Instead, cut out the excluded portions and keep the remainder.
+    - Do NOT drop the entire network merely because it overlaps
+      with an excluded subnet.
+    - Cut out only the excluded portions and keep the remainder.
+    - Uses pre-filtering to skip irrelevant excluded networks.
 
     Returns:
         list[IPv4Network]
     """
+    # Pre-filter: only check excluded nets that could possibly overlap
+    relevant = _find_relevant_excluded(network, excluded_sorted)
+    if not relevant:
+        return [network]
+
     remaining = [network]
 
-    for ex in excluded_networks:
+    for ex in relevant:
         new_remaining = []
 
         for current in remaining:
@@ -309,7 +394,7 @@ def subtract_excluded_from_network(network, excluded_networks):
                 new_remaining.append(current)
                 continue
 
-            # current fully covered by excluded network
+            # current fully covered by excluded network -> drop entirely
             if current.subnet_of(ex):
                 continue
 
@@ -318,11 +403,12 @@ def subtract_excluded_from_network(network, excluded_networks):
                 try:
                     new_remaining.extend(current.address_exclude(ex))
                 except ValueError:
-                    # Fallback: keep original if subtraction fails unexpectedly
                     new_remaining.append(current)
                 continue
 
-            # Defensive fallback: keep original if overlap shape is unexpected
+            # In standard CIDR, overlapping blocks always have a subnet
+            # relationship, so this branch should not trigger. Keep the
+            # network intact as a safety measure.
             new_remaining.append(current)
 
         remaining = new_remaining
@@ -340,19 +426,24 @@ def parse_and_cleanse(raw_data, excluded_networks):
     Parse APNIC delegation file, extract IPv4 CIDRs for target regions,
     and filter out excluded networks.
 
-    Optimisation: pre-collapse excluded_networks to reduce overlap checks.
+    Optimisation:
+    - Pre-collapse excluded_networks
+    - Sort for binary-search pre-filtering in subtract step
     """
-    # Pre-process: collapse excluded networks for faster overlap checking
+    # Pre-process: collapse + sort excluded networks
     try:
         collapsed_excluded = sorted(
             ipaddress.collapse_addresses(excluded_networks),
-            key=lambda n: (int(n.network_address), n.prefixlen),
+            key=lambda n: int(n.network_address),
         )
         log.debug("Collapsed %d excluded networks -> %d",
                   len(excluded_networks), len(collapsed_excluded))
     except Exception:
-        collapsed_excluded = excluded_networks
-        log.debug("Could not collapse excluded networks, using raw list")
+        collapsed_excluded = sorted(
+            excluded_networks,
+            key=lambda n: int(n.network_address),
+        )
+        log.debug("Could not collapse excluded networks, using sorted raw list")
 
     result = defaultdict(list)
     stats = {
@@ -387,6 +478,13 @@ def parse_and_cleanse(raw_data, excluded_networks):
         try:
             start_ip = ipaddress.IPv4Address(start_ip_str)
             count = int(count_str)
+
+            # Guard against zero or negative count
+            if count < 1:
+                stats["parse_errors"] += 1
+                log.debug("Invalid count %d at line [%s]", count, start_ip_str)
+                continue
+
             end_ip = start_ip + (count - 1)
             networks = list(ipaddress.summarize_address_range(start_ip, end_ip))
 
@@ -407,9 +505,9 @@ def parse_and_cleanse(raw_data, excluded_networks):
             stats["parse_errors"] += 1
             log.debug("Parse error at line [%s]: %s", start_ip_str, e)
 
-    log.info("Parsing complete: %d lines -> %d kept, %d excluded, %d errors",
-             stats["lines_processed"], stats["kept"],
-             stats["excluded"], stats["parse_errors"])
+    log.info("Parsing complete: %d lines -> %d source nets -> %d kept, %d excluded, %d errors",
+             stats["lines_processed"], stats["source_networks"],
+             stats["kept"], stats["excluded"], stats["parse_errors"])
 
     return result, stats
 
@@ -510,16 +608,24 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
         "regions": normalized_data,
     }
 
+    data_json_str = json.dumps(data_payload, indent=2, ensure_ascii=False) + "\n"
+
+    # SHA-256 checksum for data integrity (ipnova-pro can verify downloads)
+    data_sha256 = hashlib.sha256(data_json_str.encode("utf-8")).hexdigest()
+
+    with open(os.path.join(output_dir, "data.json"), "w", encoding="utf-8") as f:
+        f.write(data_json_str)
+
     # --- meta.json: enriched metadata for monitoring & pro integration ---
     meta_payload = {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -535,8 +641,8 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
         "exclusion": {
             "mode": asn_report.get("mode", "dynamic+static"),
             "asns_total": len(EXCLUDED_ASNS),
-            "asns_succeeded": asn_report["succeeded"],
-            "asns_failed": asn_report["failed"],
+            "asns_succeeded": sorted(asn_report["succeeded"]),
+            "asns_failed": sorted(asn_report["failed"]),
             "dynamic_prefixes": asn_report["total_prefixes"],
             "static_blacklist": ANYCAST_BLACKLIST,
         },
@@ -549,17 +655,16 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
             "parse_errors": parse_stats["parse_errors"],
         },
         "sanity_thresholds": SANITY_THRESHOLDS,
+        "checksum": {
+            "data_json_sha256": data_sha256,
+        },
     }
-
-    with open(os.path.join(output_dir, "data.json"), "w", encoding="utf-8") as f:
-        json.dump(data_payload, f, indent=2, ensure_ascii=False)
-        f.write("\n")
 
     with open(os.path.join(output_dir, "meta.json"), "w", encoding="utf-8") as f:
         json.dump(meta_payload, f, indent=2, ensure_ascii=False)
         f.write("\n")
 
-    log.info("  data.json - structured dataset written")
+    log.info("  data.json - structured dataset (sha256: %s...)", data_sha256[:16])
     log.info("  meta.json - enriched metadata written")
 
 
@@ -612,21 +717,25 @@ def main():
     log.info("  ipnova %s - High-quality IP database generator", __version__)
     log.info("=" * 55)
 
-    start_time = time.time()
+    start_time = time.monotonic()
 
     # Step 1: Download APNIC data
-    raw_data = download_apnic_data()
+    with StepTimer("APNIC download"):
+        raw_data = download_apnic_data()
 
     # Step 2: Build exclusion set
-    excluded_networks, asn_report = build_excluded_networks(
-        skip_ripe=args.skip_ripe
-    )
+    with StepTimer("Exclusion set build"):
+        excluded_networks, asn_report = build_excluded_networks(
+            skip_ripe=args.skip_ripe
+        )
 
     # Step 3: Parse and filter
-    region_data, parse_stats = parse_and_cleanse(raw_data, excluded_networks)
+    with StepTimer("Parse and filter"):
+        region_data, parse_stats = parse_and_cleanse(raw_data, excluded_networks)
 
     # Step 4: Normalize and aggregate
-    normalized_data = normalize_region_data(region_data)
+    with StepTimer("Normalize and aggregate"):
+        normalized_data = normalize_region_data(region_data)
 
     # Step 5: Sanity check
     if not args.skip_sanity:
@@ -634,11 +743,12 @@ def main():
 
     # Step 6: Write outputs
     log.info("Writing outputs to %s/", args.output_dir)
-    save_txt_outputs(normalized_data, output_dir=args.output_dir)
-    save_json_outputs(normalized_data, asn_report, parse_stats,
-                      output_dir=args.output_dir)
+    with StepTimer("Write outputs"):
+        save_txt_outputs(normalized_data, output_dir=args.output_dir)
+        save_json_outputs(normalized_data, asn_report, parse_stats,
+                          output_dir=args.output_dir)
 
-    elapsed = time.time() - start_time
+    elapsed = time.monotonic() - start_time
     log.info("")
     log.info("Done in %.1fs. Output: %s/", elapsed, args.output_dir)
 
