@@ -1,7 +1,7 @@
 # Project     : ipnova
 # Version     : 2.1.0
 # Region      : Macau
-# Last Updated: 2026-03-30 06:18:37 UTC
+# Last Updated: 2026-03-30 14:11:57 UTC
 # Source      : APNIC delegated-apnic-latest
 # Total CIDRs : 30
 # Total IPs   : 339,456

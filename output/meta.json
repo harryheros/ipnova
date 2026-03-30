@@ -2,7 +2,7 @@
   "schema_version": "2.1",
   "project": "ipnova",
   "version": "2.1.0",
-  "generated_at": "2026-03-30T06:18:37.860987+00:00",
+  "generated_at": "2026-03-30T14:11:57.084093+00:00",
   "source": "APNIC delegated-apnic-latest",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -73,6 +73,6 @@
     "MO": 10
   },
   "checksum": {
-    "data_json_sha256": "00bbef9b32d1184b94f9569f29493a7ff978d51b567db38fc6773c5b19b08fa9"
+    "data_json_sha256": "0f31c56a912312784c9585907c2cbe55583ee79b63fe6448a91784f20a56a055"
   }
 }
