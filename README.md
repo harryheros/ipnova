@@ -4,6 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
 
 IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with ASN-level filtering and dynamic prefix analysis.
 
@@ -22,8 +23,13 @@ It is a routing-aware IP dataset designed for traffic filtering, policy enforcem
 - CN / HK / TW / MO fully separated
 - Accurate CIDR generation via `summarize_address_range`
 - CIDR aggregation for optimized size and performance
-- Structured JSON data layer for future extensibility
-- Fully automated updates via GitHub Actions
+- Structured JSON data layer with schema versioning
+- Enriched metadata with exclusion & parsing reports
+- Data sanity checks with automatic failure detection
+- HTTP retry with exponential backoff
+- RIPE Stat rate limiting to avoid API throttling
+- CLI with `argparse` for flexible usage
+- Fully automated updates via GitHub Actions with failure notifications
 
 ---
 
@@ -35,15 +41,16 @@ It is a routing-aware IP dataset designed for traffic filtering, policy enforcem
 | `output/HK.txt` | Hong Kong IPv4 CIDR list |
 | `output/TW.txt` | Taiwan IPv4 CIDR list |
 | `output/MO.txt` | Macau IPv4 CIDR list |
-| `output/data.json` | Structured JSON dataset |
-| `output/meta.json` | Dataset metadata |
+| `output/data.json` | Structured JSON dataset (schema v2.0) |
+| `output/meta.json` | Enriched metadata with quality report |
 
 Text files include metadata headers such as:
 
 - Region
+- Version
 - Last updated timestamp (UTC)
 - Source
-- CIDR count
+- CIDR count and total IP count
 
 ---
 
@@ -70,6 +77,16 @@ cd ipnova
 python3 generate_ip_list.py
 ```
 
+### CLI options
+
+```bash
+python3 generate_ip_list.py --help
+python3 generate_ip_list.py -o custom_output/       # Custom output directory
+python3 generate_ip_list.py --skip-ripe              # Skip RIPE Stat queries
+python3 generate_ip_list.py -v                       # Verbose (debug) logging
+python3 generate_ip_list.py --version                # Show version
+```
+
 ---
 
 ## 🧩 Use Cases
@@ -84,10 +101,19 @@ python3 generate_ip_list.py
 
 ## 🧱 Data Layer
 
-IPNova now provides both:
+IPNova provides both:
 
 - **TXT outputs** for direct human-readable use
 - **JSON outputs** for system integration, future format conversion, and automation workflows
+
+### Schema v2.0
+
+`data.json` includes `schema_version`, `version`, and `total_ips` per region.
+
+`meta.json` includes enriched quality metadata:
+- ASN exclusion success/failure report
+- Parsing statistics (kept, excluded, errors)
+- Sanity check thresholds
 
 This makes it easier to extend IPNova into formats such as MMDB, APIs, or additional machine-readable outputs in the future.
 
@@ -95,8 +121,9 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 
 ## 🔄 Update Schedule
 
-- Automatically updated **weekly**
+- Automatically updated **weekly** (Monday 02:00 UTC)
 - Manual trigger supported via GitHub Actions
+- **Failure notifications**: auto-creates GitHub Issue on CI failure
 
 ---
 
@@ -112,12 +139,14 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 
 ## ⚙️ Processing Pipeline
 
-1. Fetch APNIC delegation data  
-2. Extract IPv4 allocations for target regions  
-3. Fetch announced prefixes for blacklisted ASNs (RIPE Stat)  
-4. Merge dynamic ASN prefixes with static anycast blacklist  
-5. Generate accurate CIDRs via address range summarization  
-6. Aggregate outputs into TXT and JSON formats  
+1. Fetch APNIC delegation data (with retry)
+2. Extract IPv4 allocations for target regions
+3. Fetch announced prefixes for blacklisted ASNs (RIPE Stat, rate-limited)
+4. Merge dynamic ASN prefixes with static anycast blacklist
+5. Collapse exclusion list for optimized filtering
+6. Generate accurate CIDRs via address range summarization
+7. Sanity check output against minimum thresholds
+8. Aggregate outputs into TXT and JSON formats
 
 ---
 
@@ -127,6 +156,7 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 - It does **not** represent precise geolocation
 - This dataset reflects IP allocation (RIR-based), not real-time traffic origin
 - HK / TW / MO are intentionally separated from CN
+- Zero external dependencies — Python 3.10+ standard library only
 
 ---
 
