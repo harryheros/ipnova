@@ -1,0 +1,78 @@
+{
+  "schema_version": "2.1",
+  "project": "ipnova",
+  "version": "2.1.0",
+  "generated_at": "2026-03-30T06:18:37.860987+00:00",
+  "source": "APNIC delegated-apnic-latest",
+  "target_regions": {
+    "CN": "China (Mainland)",
+    "HK": "Hong Kong",
+    "TW": "Taiwan",
+    "MO": "Macau"
+  },
+  "counts": {
+    "CN": {
+      "cidrs": 5492,
+      "ips": 342932992
+    },
+    "HK": {
+      "cidrs": 2431,
+      "ips": 13743424
+    },
+    "TW": {
+      "cidrs": 738,
+      "ips": 35708416
+    },
+    "MO": {
+      "cidrs": 30,
+      "ips": 339456
+    }
+  },
+  "exclusion": {
+    "mode": "dynamic+static",
+    "asns_total": 13,
+    "asns_succeeded": [
+      8069,
+      8075,
+      13335,
+      13414,
+      14618,
+      15169,
+      16509,
+      16625,
+      20940,
+      32934,
+      54113,
+      209242,
+      396982
+    ],
+    "asns_failed": [],
+    "dynamic_prefixes": 32680,
+    "static_blacklist": [
+      "1.0.0.0/24",
+      "1.1.1.0/24",
+      "8.8.8.0/24",
+      "8.8.4.0/24",
+      "9.9.9.0/24",
+      "208.67.222.0/24",
+      "208.67.220.0/24"
+    ]
+  },
+  "parsing": {
+    "lines_processed": 12566,
+    "source_networks": 12566,
+    "cidrs_kept": 12595,
+    "cidrs_excluded": 35,
+    "excluded_source_networks": 14,
+    "parse_errors": 0
+  },
+  "sanity_thresholds": {
+    "CN": 3000,
+    "HK": 1000,
+    "TW": 300,
+    "MO": 10
+  },
+  "checksum": {
+    "data_json_sha256": "00bbef9b32d1184b94f9569f29493a7ff978d51b567db38fc6773c5b19b08fa9"
+  }
+}
