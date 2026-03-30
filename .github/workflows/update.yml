@@ -1,139 +1,296 @@
-name: Update IPNova Dataset
+#!/usr/bin/env python3
+"""
+Project : ipnova
+Repo    : https://github.com/harryheros/ipnova
+Desc    : High-quality IPv4 CIDR list generator for CN / HK / TW / MO
+Source  : APNIC RIR official delegation data (upstream, not derived)
+"""
 
-on:
-  schedule:
-    - cron: "0 2 * * 1"
-  workflow_dispatch:
-
-permissions:
-  contents: write
-  issues: write
-
-jobs:
-  update:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Lint check
-        run: |
-          pip install "ruff==0.6.9"
-          ruff check generate_ip_list.py
-
-      - name: Snapshot previous counts
-        id: prev_counts
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [ -f output/meta.json ]; then
-            prev_meta="$(python3 - <<'PY'
-import json
-with open('output/meta.json', 'r', encoding='utf-8') as f:
-    m = json.load(f)
-print(json.dumps(m.get('counts', {}), separators=(',', ':')))
-PY
-)"
-            echo "prev_meta=$prev_meta" >> "$GITHUB_OUTPUT"
-          else
-            echo 'prev_meta={}' >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Generate dataset
-        run: python3 generate_ip_list.py
-        timeout-minutes: 10
-
-      - name: Generate diff report
-        id: diff_report
-        env:
-          PREV_META: ${{ steps.prev_counts.outputs.prev_meta }}
-        run: |
-          python3 - <<'PY'
-import json
+import urllib.request
+import ipaddress
 import os
+import sys
+import time
+import argparse
+import datetime
+import json
+import logging
+from collections import defaultdict
 
-prev = json.loads(os.environ.get('PREV_META', '{}') or '{}')
-with open('output/meta.json', 'r', encoding='utf-8') as f:
-    curr_meta = json.load(f)
-curr = curr_meta.get('counts', {})
+# ================================================================
+# Version
+# ================================================================
+__version__ = "2.0.0"
 
-lines = []
-for cc in sorted(set(prev) | set(curr)):
-    p = prev.get(cc, {})
-    c = curr.get(cc, {})
-    p_cidrs = p.get('cidrs', 0) if isinstance(p, dict) else 0
-    c_cidrs = c.get('cidrs', 0) if isinstance(c, dict) else 0
-    diff = c_cidrs - p_cidrs
-    sign = '+' if diff > 0 else ''
-    lines.append(f'{cc}: {p_cidrs} -> {c_cidrs} ({sign}{diff})')
+# ================================================================
+# Logging
+# ================================================================
+log = logging.getLogger("ipnova")
 
-report = '\n'.join(lines) if lines else 'First run or no previous data'
-print(report)
 
-with open('output/diff_report.txt', 'w', encoding='utf-8') as f:
-    f.write(report + '\n')
-PY
+def setup_logging(verbose=False):
+    level = logging.DEBUG if verbose else logging.INFO
+    logging.basicConfig(level=level, format="[%(levelname)s] %(message)s", stream=sys.stdout)
 
-      - name: Commit and push changes
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          git add output/
+# ================================================================
+# ASN Blacklist
+# ================================================================
+EXCLUDED_ASNS = {
+    13335, 209242,
+    15169, 396982,
+    20940, 16625,
+    54113,
+    16509, 14618,
+    8075, 8069,
+    32934,
+    13414,
+}
 
-          if git diff --cached --quiet; then
-            echo "No changes detected."
-          else
-            git commit -m "chore: update dataset $(date -u '+%Y-%m-%d')"
-            git push
-          fi
+ASN_LABELS = {
+    13335: "Cloudflare", 209242: "Cloudflare",
+    15169: "Google", 396982: "Google",
+    20940: "Akamai", 16625: "Akamai",
+    54113: "Fastly",
+    16509: "AWS", 14618: "AWS",
+    8075: "Microsoft", 8069: "Microsoft",
+    32934: "Meta",
+    13414: "X/Twitter",
+}
 
-  notify-failure:
-    runs-on: ubuntu-latest
-    needs: update
-    if: ${{ needs.update.result == 'failure' }}
+ANYCAST_BLACKLIST = [
+    "1.0.0.0/24",
+    "1.1.1.0/24",
+    "8.8.8.0/24",
+    "8.8.4.0/24",
+    "9.9.9.0/24",
+    "208.67.222.0/24",
+    "208.67.220.0/24",
+]
 
-    steps:
-      - name: Create failure issue
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const title = `Dataset update failed — ${new Date().toISOString().split('T')[0]}`;
-            const body = [
-              '## IPNova automated update failed',
-              '',
-              `**Workflow run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
-              '',
-              'Possible causes:',
-              '- APNIC upstream unavailable or returned abnormal data',
-              '- RIPE Stat API failure rate exceeded 50%',
-              '- Sanity check failed (CIDR counts below minimum thresholds)',
-              '',
-              'Please investigate the workflow logs and re-run manually if needed.',
-            ].join('\n');
+TARGET_REGIONS = {
+    "CN": "China (Mainland)",
+    "HK": "Hong Kong",
+    "TW": "Taiwan",
+    "MO": "Macau",
+}
 
-            const issues = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              state: 'open',
-              labels: 'ci-failure',
-              per_page: 5,
-            });
+SANITY_THRESHOLDS = {
+    "CN": 3000,
+    "HK": 1000,
+    "TW": 300,
+    "MO": 10,
+}
 
-            if (issues.data.length === 0) {
-              await github.rest.issues.create({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                title,
-                body,
-                labels: ['ci-failure'],
-              });
-            }
+APNIC_URL = "https://ftp.apnic.net/stats/apnic/delegated-apnic-latest"
+RIPE_STAT_URL = "https://stat.ripe.net/data/announced-prefixes/data.json"
+
+MAX_RETRIES = 3
+RETRY_BACKOFF_BASE = 2
+RIPE_REQUEST_INTERVAL = 1.5
+
+
+# ================================================================
+# HTTP
+# ================================================================
+def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.0", return_content_type=False):
+    headers = {"User-Agent": ua}
+    last_err = None
+
+    for attempt in range(1, retries + 1):
+        try:
+            req = urllib.request.Request(url, headers=headers)
+            with urllib.request.urlopen(req, timeout=timeout) as resp:
+                body = resp.read().decode("utf-8", errors="replace")
+                if return_content_type:
+                    return body, resp.headers.get("Content-Type", "")
+                return body
+        except Exception as e:
+            last_err = e
+            if attempt < retries:
+                time.sleep(RETRY_BACKOFF_BASE ** attempt)
+            else:
+                log.error("HTTP failed: %s", e)
+
+    raise last_err
+
+
+# ================================================================
+# Data
+# ================================================================
+def download_apnic_data():
+    data = http_get(APNIC_URL, timeout=60)
+    if len(data.splitlines()) < 1000:
+        raise RuntimeError("APNIC data too small")
+    return data
+
+
+def fetch_asn_prefixes(asn):
+    body, content_type = http_get(RIPE_STAT_URL + f"?resource=AS{asn}", return_content_type=True)
+
+    if "json" not in content_type.lower():
+        raise RuntimeError(f"Non-JSON response for AS{asn}")
+
+    payload = json.loads(body.strip())
+
+    prefixes = payload.get("data", {}).get("prefixes", [])
+
+    nets = []
+    for p in prefixes:
+        try:
+            net = ipaddress.ip_network(p.get("prefix", ""), strict=False)
+            if net.version == 4:
+                nets.append(net)
+        except:
+            pass
+
+    return nets
+
+
+def build_excluded_networks(skip_ripe=False):
+    excluded = []
+    report = {"succeeded": [], "failed": [], "total_prefixes": 0}
+
+    if not skip_ripe:
+        for asn in EXCLUDED_ASNS:
+            try:
+                nets = fetch_asn_prefixes(asn)
+                excluded.extend(nets)
+                report["succeeded"].append(asn)
+                report["total_prefixes"] += len(nets)
+            except Exception as e:
+                report["failed"].append(asn)
+                log.warning("ASN %d failed: %s", asn, e)
+
+            time.sleep(RIPE_REQUEST_INTERVAL)
+
+    for cidr in ANYCAST_BLACKLIST:
+        excluded.append(ipaddress.ip_network(cidr, strict=False))
+
+    return excluded, report
+
+
+# ================================================================
+# FIX: precise subtraction
+# ================================================================
+def subtract_excluded(network, excluded_list):
+    remaining = [network]
+
+    for ex in excluded_list:
+        new = []
+        for r in remaining:
+            if not r.overlaps(ex):
+                new.append(r)
+                continue
+
+            if r.subnet_of(ex):
+                continue
+
+            if ex.subnet_of(r):
+                new.extend(r.address_exclude(ex))
+            else:
+                new.append(r)
+
+        remaining = new
+        if not remaining:
+            break
+
+    return remaining
+
+
+# ================================================================
+# Parsing
+# ================================================================
+def parse_and_cleanse(raw_data, excluded_networks):
+    result = defaultdict(list)
+    stats = {"kept": 0, "excluded": 0}
+
+    excluded_networks = list(ipaddress.collapse_addresses(excluded_networks))
+
+    for line in raw_data.splitlines():
+        if "|ipv4|" not in line:
+            continue
+
+        parts = line.split("|")
+        if parts[1] not in TARGET_REGIONS:
+            continue
+
+        start = ipaddress.IPv4Address(parts[3])
+        count = int(parts[4])
+        end = start + (count - 1)
+
+        for net in ipaddress.summarize_address_range(start, end):
+            pieces = subtract_excluded(net, excluded_networks)
+
+            if pieces:
+                result[parts[1]].extend(pieces)
+                stats["kept"] += len(pieces)
+            else:
+                stats["excluded"] += 1
+
+    return result, stats
+
+
+# ================================================================
+# Normalize
+# ================================================================
+def normalize_region_data(region_data):
+    out = {}
+
+    for cc in TARGET_REGIONS:
+        nets = list(ipaddress.collapse_addresses(region_data.get(cc, [])))
+        total_ips = sum(n.num_addresses for n in nets)
+
+        out[cc] = {
+            "region_code": cc,
+            "region_name": TARGET_REGIONS[cc],
+            "total_cidrs": len(nets),
+            "total_ips": total_ips,
+            "cidrs": [str(n) for n in nets],
+        }
+
+    return out
+
+
+# ================================================================
+# Sanity
+# ================================================================
+def sanity_check(data):
+    for cc, threshold in SANITY_THRESHOLDS.items():
+        if data[cc]["total_cidrs"] < threshold:
+            raise RuntimeError(f"{cc} sanity failed")
+
+
+# ================================================================
+# Output
+# ================================================================
+def save_outputs(data, output_dir="output"):
+    os.makedirs(output_dir, exist_ok=True)
+
+    for cc, d in data.items():
+        with open(f"{output_dir}/{cc}.txt", "w") as f:
+            for c in d["cidrs"]:
+                f.write(c + "\n")
+
+    with open(f"{output_dir}/meta.json", "w") as f:
+        json.dump({
+            "schema_version": "2.0",
+            "version": __version__,
+            "counts": {k: {"cidrs": v["total_cidrs"], "ips": v["total_ips"]} for k, v in data.items()}
+        }, f, indent=2)
+
+
+# ================================================================
+# Main
+# ================================================================
+def main():
+    raw = download_apnic_data()
+    excluded, report = build_excluded_networks()
+    region_data, stats = parse_and_cleanse(raw, excluded)
+    normalized = normalize_region_data(region_data)
+    sanity_check(normalized)
+    save_outputs(normalized)
+
+
+if __name__ == "__main__":
+    main()
