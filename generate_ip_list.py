@@ -7,6 +7,7 @@ Source  : APNIC RIR official delegation data (upstream, not derived)
 """
 
 import urllib.request
+import urllib.error
 import ipaddress
 import os
 import sys
@@ -20,7 +21,7 @@ from collections import defaultdict
 # ================================================================
 # Version
 # ================================================================
-__version__ = "2.0.0"
+__version__ = "2.1.0"
 
 # ================================================================
 # Logging
@@ -115,10 +116,12 @@ RIPE_REQUEST_INTERVAL = 1.5  # seconds between RIPE Stat requests
 # ================================================================
 # HTTP helpers with retry
 # ================================================================
-def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.0"):
+def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.1",
+             return_content_type=False):
     """
     Fetch URL with exponential backoff retry.
-    Returns response body as str, or raises on total failure.
+    Returns response body as str, or (body, content_type) if requested.
+    Raises on total failure.
     """
     headers = {"User-Agent": ua}
     last_err = None
@@ -127,7 +130,11 @@ def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.0"):
         try:
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
-                return resp.read().decode("utf-8")
+                body = resp.read().decode("utf-8", errors="replace")
+                if return_content_type:
+                    content_type = resp.headers.get("Content-Type", "")
+                    return body, content_type
+                return body
         except Exception as e:
             last_err = e
             if attempt < retries:
@@ -167,12 +174,40 @@ def fetch_asn_prefixes(asn):
     Returns list of IPv4Network objects.
     """
     url = f"{RIPE_STAT_URL}?resource=AS{asn}"
-    body = http_get(url, timeout=20)
-    payload = json.loads(body)
-    prefixes = payload.get("data", {}).get("prefixes", [])
+    body, content_type = http_get(url, timeout=20, return_content_type=True)
+
+    if "json" not in content_type.lower():
+        preview = body[:200].replace("\n", " ").strip()
+        raise RuntimeError(
+            f"Unexpected RIPE content type for AS{asn}: {content_type!r}; "
+            f"body preview={preview!r}"
+        )
+
+    try:
+        payload = json.loads(body)
+    except json.JSONDecodeError as e:
+        preview = body[:200].replace("\n", " ").strip()
+        raise RuntimeError(
+            f"RIPE API returned non-JSON for AS{asn}: {e}; "
+            f"body preview={preview!r}"
+        )
+
+    if not isinstance(payload, dict):
+        raise RuntimeError(f"Malformed RIPE response for AS{asn}: root is not object")
+
+    data = payload.get("data")
+    if not isinstance(data, dict):
+        raise RuntimeError(f"Malformed RIPE response for AS{asn}: missing data object")
+
+    prefixes = data.get("prefixes", [])
+    if not isinstance(prefixes, list):
+        raise RuntimeError(f"Malformed RIPE response for AS{asn}: prefixes is not list")
 
     networks = []
     for p in prefixes:
+        if not isinstance(p, dict):
+            continue
+
         raw = p.get("prefix", "")
         try:
             net = ipaddress.ip_network(raw, strict=False)
@@ -193,7 +228,12 @@ def build_excluded_networks(skip_ripe=False):
     Returns (excluded_networks, report) where report tracks successes/failures.
     """
     excluded = []
-    report = {"succeeded": [], "failed": [], "total_prefixes": 0}
+    report = {
+        "succeeded": [],
+        "failed": [],
+        "total_prefixes": 0,
+        "mode": "static_only" if skip_ripe else "dynamic+static",
+    }
 
     if skip_ripe:
         log.info("Skipping RIPE Stat queries (--skip-ripe)")
@@ -227,8 +267,8 @@ def build_excluded_networks(skip_ripe=False):
                 f"({fail_pct:.0f}%). Exclusion list unreliable. Aborting."
             )
         log.warning("RIPE Stat: %d/%d ASN queries failed (%.0f%%). "
-                     "Static blacklist will partially compensate.",
-                     failed_count, total_asns, fail_pct)
+                    "Static blacklist will partially compensate.",
+                    failed_count, total_asns, fail_pct)
 
     # Static blacklist (always applied)
     static_count = 0
@@ -246,6 +286,54 @@ def build_excluded_networks(skip_ripe=False):
 
 
 # ================================================================
+# Parsing helpers
+# ================================================================
+def subtract_excluded_from_network(network, excluded_networks):
+    """
+    Precisely subtract excluded subnets from a source network.
+
+    Important:
+    - Do NOT drop the entire network merely because it overlaps with
+      an excluded subnet.
+    - Instead, cut out the excluded portions and keep the remainder.
+
+    Returns:
+        list[IPv4Network]
+    """
+    remaining = [network]
+
+    for ex in excluded_networks:
+        new_remaining = []
+
+        for current in remaining:
+            if not current.overlaps(ex):
+                new_remaining.append(current)
+                continue
+
+            # current fully covered by excluded network
+            if current.subnet_of(ex):
+                continue
+
+            # excluded network is a subnet of current -> subtract precisely
+            if ex.subnet_of(current):
+                try:
+                    new_remaining.extend(current.address_exclude(ex))
+                except ValueError:
+                    # Fallback: keep original if subtraction fails unexpectedly
+                    new_remaining.append(current)
+                continue
+
+            # Defensive fallback: keep original if overlap shape is unexpected
+            new_remaining.append(current)
+
+        remaining = new_remaining
+        if not remaining:
+            break
+
+    return remaining
+
+
+# ================================================================
 # Parsing & filtering
 # ================================================================
 def parse_and_cleanse(raw_data, excluded_networks):
@@ -257,7 +345,10 @@ def parse_and_cleanse(raw_data, excluded_networks):
     """
     # Pre-process: collapse excluded networks for faster overlap checking
     try:
-        collapsed_excluded = list(ipaddress.collapse_addresses(excluded_networks))
+        collapsed_excluded = sorted(
+            ipaddress.collapse_addresses(excluded_networks),
+            key=lambda n: (int(n.network_address), n.prefixlen),
+        )
         log.debug("Collapsed %d excluded networks -> %d",
                   len(excluded_networks), len(collapsed_excluded))
     except Exception:
@@ -265,7 +356,14 @@ def parse_and_cleanse(raw_data, excluded_networks):
         log.debug("Could not collapse excluded networks, using raw list")
 
     result = defaultdict(list)
-    stats = {"kept": 0, "excluded": 0, "parse_errors": 0, "lines_processed": 0}
+    stats = {
+        "kept": 0,
+        "excluded": 0,
+        "parse_errors": 0,
+        "lines_processed": 0,
+        "source_networks": 0,
+        "excluded_source_networks": 0,
+    }
 
     for line in raw_data.splitlines():
         if not line or line.startswith("#") or "|ipv4|" not in line:
@@ -294,11 +392,17 @@ def parse_and_cleanse(raw_data, excluded_networks):
             networks = list(ipaddress.summarize_address_range(start_ip, end_ip))
 
             for net in networks:
-                if any(net.overlaps(ex) for ex in collapsed_excluded):
-                    stats["excluded"] += 1
+                stats["source_networks"] += 1
+                kept_parts = subtract_excluded_from_network(net, collapsed_excluded)
+
+                if kept_parts:
+                    result[cc].extend(kept_parts)
+                    stats["kept"] += len(kept_parts)
+                    if len(kept_parts) != 1 or kept_parts[0] != net:
+                        stats["excluded"] += 1
                 else:
-                    result[cc].append(net)
-                    stats["kept"] += 1
+                    stats["excluded"] += 1
+                    stats["excluded_source_networks"] += 1
 
         except (ValueError, TypeError) as e:
             stats["parse_errors"] += 1
@@ -407,7 +511,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -416,7 +520,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- meta.json: enriched metadata for monitoring & pro integration ---
     meta_payload = {
-        "schema_version": "2.0",
+        "schema_version": "2.1",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -430,6 +534,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
             for cc in normalized_data
         },
         "exclusion": {
+            "mode": asn_report.get("mode", "dynamic+static"),
             "asns_total": len(EXCLUDED_ASNS),
             "asns_succeeded": asn_report["succeeded"],
             "asns_failed": asn_report["failed"],
@@ -438,8 +543,10 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
         },
         "parsing": {
             "lines_processed": parse_stats["lines_processed"],
+            "source_networks": parse_stats["source_networks"],
             "cidrs_kept": parse_stats["kept"],
             "cidrs_excluded": parse_stats["excluded"],
+            "excluded_source_networks": parse_stats["excluded_source_networks"],
             "parse_errors": parse_stats["parse_errors"],
         },
         "sanity_thresholds": SANITY_THRESHOLDS,
