@@ -2,12 +2,12 @@ name: Update IPNova Dataset
 
 on:
   schedule:
-    - cron: "0 2 * * 1"    # Every Monday at 02:00 UTC
-  workflow_dispatch:         # Manual trigger
+    - cron: "0 2 * * 1"
+  workflow_dispatch:
 
 permissions:
   contents: write
-  issues: write              # For failure notification
+  issues: write
 
 jobs:
   update:
@@ -16,8 +16,6 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 2     # Need previous commit for diff
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -26,16 +24,25 @@ jobs:
 
       - name: Lint check
         run: |
-          pip install ruff
+          pip install "ruff==0.6.9"
           ruff check generate_ip_list.py
 
       - name: Snapshot previous counts
         id: prev_counts
+        shell: bash
         run: |
+          set -euo pipefail
           if [ -f output/meta.json ]; then
-            echo "prev_meta=$(cat output/meta.json | python3 -c 'import sys,json; m=json.load(sys.stdin); print(json.dumps(m.get("counts",{})))')" >> $GITHUB_OUTPUT
+            prev_meta="$(python3 - <<'PY'
+import json
+with open('output/meta.json', 'r', encoding='utf-8') as f:
+    m = json.load(f)
+print(json.dumps(m.get('counts', {}), separators=(',', ':')))
+PY
+)"
+            echo "prev_meta=$prev_meta" >> "$GITHUB_OUTPUT"
           else
-            echo "prev_meta={}" >> $GITHUB_OUTPUT
+            echo 'prev_meta={}' >> "$GITHUB_OUTPUT"
           fi
 
       - name: Generate dataset
@@ -44,32 +51,34 @@ jobs:
 
       - name: Generate diff report
         id: diff_report
+        env:
+          PREV_META: ${{ steps.prev_counts.outputs.prev_meta }}
         run: |
-          python3 -c "
-          import json, sys
+          python3 - <<'PY'
+import json
+import os
 
-          prev = json.loads('${{ steps.prev_counts.outputs.prev_meta }}' or '{}')
-          with open('output/meta.json') as f:
-              curr_meta = json.load(f)
-          curr = curr_meta.get('counts', {})
+prev = json.loads(os.environ.get('PREV_META', '{}') or '{}')
+with open('output/meta.json', 'r', encoding='utf-8') as f:
+    curr_meta = json.load(f)
+curr = curr_meta.get('counts', {})
 
-          lines = []
-          for cc in sorted(set(list(prev.keys()) + list(curr.keys()))):
-              p = prev.get(cc, {})
-              c = curr.get(cc, {})
-              p_cidrs = p.get('cidrs', p) if isinstance(p, dict) else p
-              c_cidrs = c.get('cidrs', c) if isinstance(c, dict) else c
-              if isinstance(p_cidrs, int) and isinstance(c_cidrs, int):
-                  diff = c_cidrs - p_cidrs
-                  sign = '+' if diff > 0 else ''
-                  lines.append(f'{cc}: {p_cidrs} -> {c_cidrs} ({sign}{diff})')
+lines = []
+for cc in sorted(set(prev) | set(curr)):
+    p = prev.get(cc, {})
+    c = curr.get(cc, {})
+    p_cidrs = p.get('cidrs', 0) if isinstance(p, dict) else 0
+    c_cidrs = c.get('cidrs', 0) if isinstance(c, dict) else 0
+    diff = c_cidrs - p_cidrs
+    sign = '+' if diff > 0 else ''
+    lines.append(f'{cc}: {p_cidrs} -> {c_cidrs} ({sign}{diff})')
 
-          report = '\n'.join(lines) if lines else 'First run or no previous data'
-          print(report)
+report = '\n'.join(lines) if lines else 'First run or no previous data'
+print(report)
 
-          with open('output/diff_report.txt', 'w') as f:
-              f.write(report + '\n')
-          "
+with open('output/diff_report.txt', 'w', encoding='utf-8') as f:
+    f.write(report + '\n')
+PY
 
       - name: Commit and push changes
         shell: bash
@@ -90,7 +99,7 @@ jobs:
   notify-failure:
     runs-on: ubuntu-latest
     needs: update
-    if: failure()
+    if: ${{ needs.update.result == 'failure' }}
 
     steps:
       - name: Create failure issue
@@ -111,7 +120,6 @@ jobs:
               'Please investigate the workflow logs and re-run manually if needed.',
             ].join('\n');
 
-            // Check for existing open issue to avoid duplicates
             const issues = await github.rest.issues.listForRepo({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -124,8 +132,8 @@ jobs:
               await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                title: title,
-                body: body,
+                title,
+                body,
                 labels: ['ci-failure'],
               });
             }
