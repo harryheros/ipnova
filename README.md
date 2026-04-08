@@ -8,9 +8,10 @@
 
 IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with ASN-level filtering and dynamic prefix analysis.
 
-IPNova is not a geolocation database.
+IPNova is part of the DomainNova intelligence stack, providing the IP-level foundation for infrastructure attribution.
 
-It is a routing-aware IP dataset designed for traffic filtering, policy enforcement, and infrastructure-level decisions.
+IPNova is not a geolocation database.  
+It is designed for routing-aware infrastructure analysis rather than end-user location inference.
 
 ---
 
@@ -207,3 +208,6 @@ If IPNova is useful to you, consider giving it a ⭐ on GitHub.
 ## 📄 License
 
 MIT
+
+IPNova is part of the DomainNova intelligence stack.  
+Higher-level attribution, correlation, and infrastructure intelligence systems are not open-sourced.
