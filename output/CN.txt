@@ -1,7 +1,7 @@
 # Project     : ipnova
 # Version     : 2.1.0
 # Region      : China (Mainland)
-# Last Updated: 2026-04-11 22:21:41 UTC
+# Last Updated: 2026-04-11 22:54:47 UTC
 # Source      : APNIC delegated-apnic-latest
 # Total CIDRs : 5796
 # Total IPs   : 352,254,976
