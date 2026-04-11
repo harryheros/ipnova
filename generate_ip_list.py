@@ -428,108 +428,6 @@ def subtract_excluded_from_network(network, excluded_sorted):
 # ================================================================
 # Parsing & filtering
 # ================================================================
-
-# ============================================================
-# P0.5a-b: Multi-source cloud supplementary networks
-# ============================================================
-CN_CLOUD_ASNS = {
-    45102, 37963, 134963,  # Alibaba Cloud
-    45062, 132203, 132591, # Tencent Cloud
-    55967, 38365,          # Baidu
-    55960, 45090,          # Huawei Cloud
-    4808, 4837, 9808,      # China Unicom/Mobile cloud-adjacent
-}
-FORBIDDEN_ASNS = {
-    13335,  # Cloudflare
-    16509, 14618,  # AWS
-    15169,  # Google
-    8075,   # Microsoft
-    20940,  # Akamai
-    13414,  # Twitter
-    32934,  # Facebook
-}
-assert CN_CLOUD_ASNS.isdisjoint(FORBIDDEN_ASNS), \
-    "CN_CLOUD_ASNS overlaps FORBIDDEN_ASNS"
-
-def fetch_prefix_country(prefix):
-    """Three-level fallback: RIPEstat geoloc -> network-info -> whois ASN lookup."""
-    try:
-        url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
-        r = http_get(url, timeout=20)
-        if r:
-            import json as _j
-            d = _j.loads(r)
-            locs = d.get("data", {}).get("locations", [])
-            if locs:
-                cc = locs[0].get("country")
-                if cc and len(cc) == 2:
-                    return cc.upper()
-    except Exception:
-        pass
-    try:
-        url = f"https://stat.ripe.net/data/network-info/data.json?resource={prefix}"
-        r = http_get(url, timeout=20)
-        if r:
-            import json as _j
-            d = _j.loads(r)
-            asns = d.get("data", {}).get("asns", [])
-            if asns:
-                return fetch_asn_country(asns[0])
-    except Exception:
-        pass
-    return None
-
-def fetch_asn_country(asn):
-    """Lookup ASN registration country via RIPEstat."""
-    try:
-        url = f"https://stat.ripe.net/data/as-overview/data.json?resource=AS{asn}"
-        r = http_get(url, timeout=20)
-        if r:
-            import json as _j
-            d = _j.loads(r)
-            holder = d.get("data", {}).get("holder", "")
-            # heuristic: many holders end with ", CN" etc; fall back to whois block
-            url2 = f"https://stat.ripe.net/data/whois/data.json?resource=AS{asn}"
-            r2 = http_get(url2, timeout=20)
-            if r2:
-                d2 = _j.loads(r2)
-                for rec in d2.get("data", {}).get("records", []):
-                    for kv in rec:
-                        if kv.get("key", "").lower() == "country":
-                            v = kv.get("value", "").strip().upper()
-                            if len(v) == 2:
-                                return v
-    except Exception:
-        pass
-    return None
-
-def build_cloud_supplementary_networks():
-    """Fetch CN cloud ASN prefixes, verify country, return {cc: [networks]} + stats."""
-    supp = {}
-    stats = {"asns_processed": 0, "prefixes_fetched": 0,
-             "prefixes_accepted": 0, "prefixes_rejected_forbidden": 0,
-             "prefixes_rejected_country": 0, "prefixes_rejected_unknown": 0}
-    for asn in sorted(CN_CLOUD_ASNS):
-        if asn in FORBIDDEN_ASNS:
-            continue
-        stats["asns_processed"] += 1
-        try:
-            nets = fetch_asn_prefixes(asn)
-        except Exception:
-            continue
-        for n in nets:
-            stats["prefixes_fetched"] += 1
-            cc = fetch_prefix_country(str(n))
-            if cc is None:
-                stats["prefixes_rejected_unknown"] += 1
-                continue
-            if cc != "CN":
-                stats["prefixes_rejected_country"] += 1
-                continue
-            supp.setdefault(cc, []).append(n)
-            stats["prefixes_accepted"] += 1
-    return supp, stats
-
 def parse_and_cleanse(raw_data, excluded_networks):
     """
     Parse APNIC delegation file, extract IPv4 CIDRs for target regions,
@@ -842,23 +740,9 @@ def main():
     with StepTimer("Parse and filter"):
         region_data, parse_stats = parse_and_cleanse(raw_data, excluded_networks)
 
-        # P0.5a-b: merge cloud supplementary networks before normalize
-        try:
-            cloud_supp, cloud_stats = build_cloud_supplementary_networks()
-            for cc, nets in cloud_supp.items():
-                region_data.setdefault(cc, []).extend(nets)
-            prefixes_before_collapse = sum(len(v) for v in region_data.values())
-        except Exception as _e:
-            cloud_stats = {"error": str(_e)}
-            prefixes_before_collapse = sum(len(v) for v in region_data.values())
-
     # Step 4: Normalize and aggregate
     with StepTimer("Normalize and aggregate"):
         normalized_data = normalize_region_data(region_data)
-        prefixes_after_collapse = sum(len(v) for v in normalized_data.values())
-        parse_stats["cloud_supplement"] = cloud_stats
-        parse_stats["prefixes_before_collapse"] = prefixes_before_collapse
-        parse_stats["prefixes_after_collapse"] = prefixes_after_collapse
 
     # Step 5: Sanity check
     if not args.skip_sanity:
