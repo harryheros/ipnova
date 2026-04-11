@@ -509,12 +509,25 @@ def fetch_prefix_country(prefix, asn, region_data=None):
     """
     Three-level fallback for a prefix's country code.
 
+    L0: in-memory APNIC region_data containment (no HTTP, fastest)
     L1: RIPEstat geoloc
     L2: ASN holder country
-    L3: disabled for performance
+    L3: None
 
     Returns (cc_or_None, level_str).
     """
+    if region_data:
+        try:
+            target = ipaddress.ip_network(prefix, strict=False)
+            for rcc, nets in region_data.items():
+                for n in nets:
+                    if n.version != target.version:
+                        continue
+                    if n.supernet_of(target) or n.subnet_of(target) or n.overlaps(target):
+                        return rcc, "L0"
+        except Exception:
+            pass
+
     try:
         url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
         body, _ = http_get(url, timeout=5, retries=1, return_content_type=True)
@@ -541,6 +554,7 @@ def build_cloud_supplementary_networks(region_data):
         "kept_per_region": {},
         "dropped_other_country": 0,
         "dropped_unknown": 0,
+        "l0_local_hit": 0,
         "l1_success": 0,
         "l2_fallback": 0,
         "l3_fallback": 0,
@@ -568,7 +582,9 @@ def build_cloud_supplementary_networks(region_data):
 
             cc, level = fetch_prefix_country(str(p), asn, region_data)
 
-            if level == "L1":
+            if level == "L0":
+                stats["l0_local_hit"] += 1
+            elif level == "L1":
                 stats["l1_success"] += 1
             elif level == "L2":
                 stats["l2_fallback"] += 1
