@@ -500,7 +500,7 @@ def fetch_asn_country(asn):
     return cc
 
 
-def fetch_prefix_country(prefix, asn):
+def fetch_prefix_country(prefix, asn, region_data=None):
     """
     Three-level fallback for a prefix's country code.
     L1 RIPEstat geoloc -> early return on hit.
@@ -524,8 +524,62 @@ def fetch_prefix_country(prefix, asn):
     cc = fetch_asn_country(asn)
     if cc:
         return cc, "L2"
-    # L3: APNIC delegated lookup placeholder (P0.5b leaves wiring to caller)
+    # L3: in-memory containment/overlap against already-parsed region_data
+    if region_data:
+        try:
+            target = ipaddress.ip_network(prefix, strict=False)
+            for rcc, nets in region_data.items():
+                for n in nets:
+                    if n.version != target.version:
+                        continue
+                    if n.supernet_of(target) or n.subnet_of(target) or n.overlaps(target):
+                        return rcc, "L3"
+        except Exception:
+            pass
     return None, "L3"
+
+
+def build_cloud_supplementary_networks(region_data):
+    """Fetch CN cloud ASN prefixes, classify by country, keep TARGET_REGIONS only."""
+    stats = {
+        "prefixes_fetched": 0, "kept_per_region": {},
+        "dropped_other_country": 0, "dropped_unknown": 0,
+        "l1_success": 0, "l2_fallback": 0, "l3_fallback": 0,
+        "duration_seconds": 0.0,
+        "asn_count": len(CN_CLOUD_ASNS),
+        "tier1_asn_count": len(CN_CLOUD_ASNS_TIER1),
+        "tier2_asn_count": len(CN_CLOUD_ASNS_TIER2),
+    }
+    supp = {}
+    _t0 = time.time()
+    log.info("[cloud-supp] build_cloud_supplementary_networks start")
+    for asn, name in CN_CLOUD_ASNS.items():
+        try:
+            prefixes = fetch_asn_prefixes(asn)
+        except Exception as e:
+            log.warning(f"[cloud-supp] ASN {asn} ({name}) fetch failed: {e}")
+            continue
+        for p in prefixes:
+            stats["prefixes_fetched"] += 1
+            cc, level = fetch_prefix_country(p, asn, region_data)
+            if level == "L1": stats["l1_success"] += 1
+            elif level == "L2": stats["l2_fallback"] += 1
+            elif level == "L3": stats["l3_fallback"] += 1
+            if cc is None:
+                stats["dropped_unknown"] += 1
+                continue
+            if cc not in TARGET_REGIONS:
+                stats["dropped_other_country"] += 1
+                continue
+            try:
+                net = ipaddress.ip_network(p, strict=False)
+            except Exception:
+                stats["dropped_unknown"] += 1
+                continue
+            supp.setdefault(cc, []).append(net)
+            stats["kept_per_region"][cc] = stats["kept_per_region"].get(cc, 0) + 1
+    stats["duration_seconds"] = round(time.time() - _t0, 3)
+    return supp, stats
 
 
 def parse_and_cleanse(raw_data, excluded_networks):
@@ -840,9 +894,17 @@ def main():
     with StepTimer("Parse and filter"):
         region_data, parse_stats = parse_and_cleanse(raw_data, excluded_networks)
 
+    # Step 3.5: CN cloud ASN supplement
+    supp, supp_stats = build_cloud_supplementary_networks(region_data)
+    for cc, nets in supp.items():
+        region_data.setdefault(cc, []).extend(nets)
+    parse_stats["cloud_supplement"] = supp_stats
+    parse_stats["prefixes_before_collapse"] = sum(len(v) for v in region_data.values())
+
     # Step 4: Normalize and aggregate
     with StepTimer("Normalize and aggregate"):
         normalized_data = normalize_region_data(region_data)
+    parse_stats["prefixes_after_collapse"] = sum(len(v) for v in normalized_data.values())
 
     # Step 5: Sanity check
     if not args.skip_sanity:
