@@ -1,10 +1,10 @@
 # Project     : ipnova
 # Version     : 2.1.0
 # Region      : Taiwan
-# Last Updated: 2026-04-10 08:42:47 UTC
+# Last Updated: 2026-04-11 21:51:49 UTC
 # Source      : APNIC delegated-apnic-latest
-# Total CIDRs : 739
-# Total IPs   : 35,708,416
+# Total CIDRs : 740
+# Total IPs   : 35,708,928
 # Note        : HK / TW / MO are NOT included in CN
 # ================================================
 1.34.0.0/15
@@ -545,6 +545,7 @@
 163.128.76.0/23
 163.128.120.0/23
 163.128.172.0/23
+163.128.192.0/23
 163.223.206.0/23
 163.223.248.0/23
 163.227.172.0/23
