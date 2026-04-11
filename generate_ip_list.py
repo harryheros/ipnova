@@ -505,6 +505,55 @@ def fetch_asn_country(asn):
     return cc
 
 
+_GEOLOC_CACHE_PATH = os.path.join("output", ".geoloc_cache.json")
+_GEOLOC_CACHE_TTL_HOURS = 168  # 7 days, slightly longer than weekly cron
+_GEOLOC_CACHE = None  # lazy-loaded dict {prefix: {"cc": str, "level": str, "ts": iso}}
+
+
+def _load_geoloc_cache():
+    global _GEOLOC_CACHE
+    if _GEOLOC_CACHE is not None:
+        return _GEOLOC_CACHE
+    _GEOLOC_CACHE = {}
+    if not os.path.exists(_GEOLOC_CACHE_PATH):
+        return _GEOLOC_CACHE
+    try:
+        with open(_GEOLOC_CACHE_PATH, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        entries = payload.get("entries") or {}
+        cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=_GEOLOC_CACHE_TTL_HOURS)
+        for prefix, rec in entries.items():
+            try:
+                ts = datetime.datetime.fromisoformat(rec["ts"].replace("Z", "+00:00"))
+                if ts >= cutoff:
+                    _GEOLOC_CACHE[prefix] = rec
+            except Exception:
+                pass
+        log.info("[cloud-supp] loaded %d valid geoloc cache entries", len(_GEOLOC_CACHE))
+    except Exception as e:
+        log.warning("[cloud-supp] geoloc cache load failed: %s", e)
+    return _GEOLOC_CACHE
+
+
+def _save_geoloc_cache():
+    if _GEOLOC_CACHE is None:
+        return
+    try:
+        os.makedirs("output", exist_ok=True)
+        payload = {
+            "version": 1,
+            "ttl_hours": _GEOLOC_CACHE_TTL_HOURS,
+            "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+            "entries": _GEOLOC_CACHE,
+        }
+        with open(_GEOLOC_CACHE_PATH, "w", encoding="utf-8") as f:
+            json.dump(payload, f, indent=2, ensure_ascii=False)
+            f.write("\n")
+        log.info("[cloud-supp] saved %d geoloc cache entries", len(_GEOLOC_CACHE))
+    except Exception as e:
+        log.warning("[cloud-supp] geoloc cache save failed: %s", e)
+
+
 def fetch_prefix_country(prefix, asn, region_data=None):
     """
     Three-level fallback for a prefix's country code.
@@ -516,6 +565,10 @@ def fetch_prefix_country(prefix, asn, region_data=None):
 
     Returns (cc_or_None, level_str).
     """
+    cache = _load_geoloc_cache()
+    rec = cache.get(prefix)
+    if rec:
+        return rec.get("cc"), "L-1"
     if region_data:
         try:
             target = ipaddress.ip_network(prefix, strict=False)
@@ -536,6 +589,7 @@ def fetch_prefix_country(prefix, asn, region_data=None):
         if locs:
             cc = (locs[0].get("country") or "").upper().strip()
             if len(cc) == 2:
+                cache[prefix] = {"cc": cc, "level": "L1", "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")}
                 return cc, "L1"
     except Exception:
         pass
@@ -555,6 +609,7 @@ def build_cloud_supplementary_networks(region_data):
         "dropped_other_country": 0,
         "dropped_unknown": 0,
         "l0_local_hit": 0,
+        "cache_hit": 0,
         "l1_success": 0,
         "l2_fallback": 0,
         "l3_fallback": 0,
@@ -582,7 +637,9 @@ def build_cloud_supplementary_networks(region_data):
 
             cc, level = fetch_prefix_country(str(p), asn, region_data)
 
-            if level == "L0":
+            if level == "L-1":
+                stats["cache_hit"] += 1
+            elif level == "L0":
                 stats["l0_local_hit"] += 1
             elif level == "L1":
                 stats["l1_success"] += 1
@@ -612,6 +669,7 @@ def build_cloud_supplementary_networks(region_data):
         supp[cc] = list(ipaddress.collapse_addresses(nets))
 
     stats["duration_seconds"] = round(time.time() - _t0, 3)
+    _save_geoloc_cache()
     return supp, stats
 
 
@@ -847,6 +905,9 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
             "cidrs_excluded": parse_stats["excluded"],
             "excluded_source_networks": parse_stats["excluded_source_networks"],
             "parse_errors": parse_stats["parse_errors"],
+            "prefixes_before_collapse": parse_stats.get("prefixes_before_collapse"),
+            "prefixes_after_collapse": parse_stats.get("prefixes_after_collapse"),
+            "cloud_supplement": parse_stats.get("cloud_supplement"),
         },
         "sanity_thresholds": SANITY_THRESHOLDS,
         "checksum": {
