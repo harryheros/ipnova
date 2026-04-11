@@ -428,6 +428,106 @@ def subtract_excluded_from_network(network, excluded_sorted):
 # ================================================================
 # Parsing & filtering
 # ================================================================
+# ============================================================
+# Cloud / Internet Company ASNs for ARIN-gap supplementation
+# ============================================================
+CN_CLOUD_ASNS_TIER1 = {
+    37963: "Aliyun Computing",
+    45102: "Alibaba US Technology",
+    132203: "Tencent Cloud International",
+    136907: "Huawei Clouds International",
+}
+
+CN_CLOUD_ASNS_TIER2 = {
+    45090: "Tencent",
+    38365: "Baidu",
+    58593: "ByteDance",
+}
+
+CN_CLOUD_ASNS = {**CN_CLOUD_ASNS_TIER1, **CN_CLOUD_ASNS_TIER2}
+
+# ============================================================
+# FORBIDDEN: Operator backbone ASNs - must NEVER be in CN_CLOUD_ASNS
+# Purpose: prevent accidentally adding ISP backbones which would
+# pollute CN.txt with consumer broadband / IDC access networks
+# ============================================================
+FORBIDDEN_ASNS = {
+    58466: "China Telecom",
+    4134:  "China Telecom Backbone",
+    4837:  "China Unicom Backbone",
+    9808:  "China Mobile",
+    4538:  "CERNET",
+    17621: "China Unicom Shanghai",
+    9394:  "China Railway Telecom",
+}
+
+# Module-load sanity check
+_overlap = set(CN_CLOUD_ASNS.keys()) & set(FORBIDDEN_ASNS.keys())
+if _overlap:
+    raise RuntimeError(
+        f"Forbidden ASN(s) found in CN_CLOUD_ASNS: {_overlap}. "
+        f"Operator backbone ASNs must never be used as cloud sources."
+    )
+
+
+_ASN_COUNTRY_CACHE = {}
+
+def fetch_asn_country(asn):
+    """Return ISO country code for ASN holder, cached. None on failure."""
+    if asn in _ASN_COUNTRY_CACHE:
+        return _ASN_COUNTRY_CACHE[asn]
+    cc = None
+    try:
+        url = f"https://stat.ripe.net/data/as-overview/data.json?resource=AS{asn}"
+        body, _ct = http_get(url, timeout=15, return_content_type=True)
+        payload = json.loads(body.strip())
+        holder_cc = (payload.get("data", {}) or {}).get("holder", "")
+        # holder format often "NAME - CC"; also try located_resource
+        if isinstance(holder_cc, str) and " - " in holder_cc:
+            tail = holder_cc.rsplit(" - ", 1)[-1].strip()
+            if len(tail) == 2 and tail.isalpha():
+                cc = tail.upper()
+        if not cc:
+            url2 = f"https://stat.ripe.net/data/rir-stats-country/data.json?resource=AS{asn}"
+            body2, _ = http_get(url2, timeout=15, return_content_type=True)
+            p2 = json.loads(body2.strip())
+            located = (p2.get("data", {}) or {}).get("located_resources") or []
+            if located:
+                cc = (located[0].get("location") or "").upper() or None
+    except Exception:
+        cc = None
+    _ASN_COUNTRY_CACHE[asn] = cc
+    return cc
+
+
+def fetch_prefix_country(prefix, asn):
+    """
+    Three-level fallback for a prefix's country code.
+    L1 RIPEstat geoloc -> early return on hit.
+    L2 ASN holder country.
+    L3 APNIC delegated lookup (best-effort; None if unavailable).
+    Returns (cc_or_None, level_str).
+    """
+    # L1: RIPEstat geoloc
+    try:
+        url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
+        body, _ = http_get(url, timeout=15, return_content_type=True)
+        payload = json.loads(body.strip())
+        locs = (payload.get("data", {}) or {}).get("locations") or []
+        if locs:
+            cc = (locs[0].get("country") or "").upper().strip()
+            if len(cc) == 2:
+                return cc, "L1"
+    except Exception:
+        pass
+    # L2: ASN holder
+    cc = fetch_asn_country(asn)
+    if cc:
+        return cc, "L2"
+    # L3: APNIC delegated lookup placeholder (P0.5b leaves wiring to caller)
+    return None, "L3"
+
+
 def parse_and_cleanse(raw_data, excluded_networks):
     """
     Parse APNIC delegation file, extract IPv4 CIDRs for target regions,
