@@ -48,7 +48,7 @@ jobs:
 
       - name: Generate dataset
         run: python3 generate_ip_list.py
-        timeout-minutes: 25
+        timeout-minutes: 28
 
       - name: Generate diff report
         env:
