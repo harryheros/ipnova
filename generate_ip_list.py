@@ -562,9 +562,12 @@ def build_cloud_supplementary_networks(region_data):
         for p in prefixes:
             stats["prefixes_fetched"] += 1
             cc, level = fetch_prefix_country(p, asn, region_data)
-            if level == "L1": stats["l1_success"] += 1
-            elif level == "L2": stats["l2_fallback"] += 1
-            elif level == "L3": stats["l3_fallback"] += 1
+            if level == "L1":
+                stats["l1_success"] += 1
+            elif level == "L2":
+                stats["l2_fallback"] += 1
+            elif level == "L3":
+                stats["l3_fallback"] += 1
             if cc is None:
                 stats["dropped_unknown"] += 1
                 continue
