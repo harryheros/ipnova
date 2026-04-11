@@ -2,7 +2,7 @@
   "schema_version": "2.1",
   "project": "ipnova",
   "version": "2.1.0",
-  "generated_at": "2026-04-11T22:54:47.210414+00:00",
+  "generated_at": "2026-04-11T23:04:42.605729+00:00",
   "source": "APNIC delegated-apnic-latest",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -75,12 +75,12 @@
       },
       "dropped_other_country": 0,
       "dropped_unknown": 0,
-      "l0_local_hit": 3307,
-      "cache_hit": 23,
+      "l0_local_hit": 0,
+      "cache_hit": 5745,
       "l1_success": 0,
-      "l2_fallback": 2415,
+      "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 883.993,
+      "duration_seconds": 3.119,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -93,6 +93,6 @@
     "MO": 10
   },
   "checksum": {
-    "data_json_sha256": "b31583879dde7d62ddf4601f7906e257f688cdca03f4e2c7148564b199151a2c"
+    "data_json_sha256": "8b5698d9bfff8ccd3b9f4142f64882566fd6a1721d9e9843857671db98f626b5"
   }
 }
