@@ -577,13 +577,18 @@ def fetch_prefix_country(prefix, asn, region_data=None):
                     if n.version != target.version:
                         continue
                     if n.supernet_of(target) or n.subnet_of(target) or n.overlaps(target):
+                        cache[prefix] = {
+                            "cc": rcc,
+                            "level": "L0",
+                            "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+                        }
                         return rcc, "L0"
         except Exception:
             pass
 
     try:
         url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
-        body, _ = http_get(url, timeout=5, retries=1, return_content_type=True)
+        body, _ = http_get(url, timeout=15, retries=2, return_content_type=True)
         payload = json.loads(body.strip())
         locs = (payload.get("data", {}) or {}).get("locations") or []
         if locs:
@@ -596,6 +601,11 @@ def fetch_prefix_country(prefix, asn, region_data=None):
 
     cc = fetch_asn_country(asn)
     if cc:
+        cache[prefix] = {
+            "cc": cc,
+            "level": "L2",
+            "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+        }
         return cc, "L2"
 
     return None, "L3"
@@ -998,7 +1008,9 @@ def main():
     # Step 4: Normalize and aggregate
     with StepTimer("Normalize and aggregate"):
         normalized_data = normalize_region_data(region_data)
-    parse_stats["prefixes_after_collapse"] = sum(len(v) for v in normalized_data.values())
+    parse_stats["prefixes_after_collapse"] = sum(
+        v.get("total_cidrs", 0) for v in normalized_data.values()
+    )
 
     # Step 5: Sanity check
     if not args.skip_sanity:
