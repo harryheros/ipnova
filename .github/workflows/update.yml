@@ -49,6 +49,9 @@ jobs:
 
       - name: Generate dataset
         run: python3 generate_ip_list.py
+
+      - name: Validate output
+        run: python3 scripts/validate_output.py
         timeout-minutes: 21
 
       - name: Generate diff report

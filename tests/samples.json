@@ -1,0 +1,53 @@
+{
+  "CN": [
+    "163.com",
+    "qq.com",
+    "weixin.qq.com",
+    "taobao.com",
+    "tmall.com",
+    "jd.com",
+    "bilibili.com",
+    "zhihu.com",
+    "baidu.com",
+    "weibo.com",
+    "douyin.com",
+    "ctrip.com"
+  ],
+  "HK": [
+    "hktvmall.com",
+    "discuss.com.hk",
+    "hk01.com",
+    "mingpao.com",
+    "tvb.com"
+  ],
+  "TW": [
+    "pchome.com.tw",
+    "momoshop.com.tw",
+    "yahoo.com.tw",
+    "udn.com",
+    "ettoday.net"
+  ],
+  "MO": [
+    "gov.mo",
+    "dsat.gov.mo",
+    "gcs.gov.mo"
+  ],
+  "INTL": [
+    "google.com",
+    "cloudflare.com",
+    "openai.com",
+    "wikipedia.org",
+    "amazon.com",
+    "facebook.com"
+  ],
+  "EDGE": [
+    "163.net",
+    "yeah.net",
+    "126.net",
+    "netease.com",
+    "alipay.com",
+    "aliyun.com",
+    "tencent.com",
+    "volcengine.com"
+  ]
+}
