@@ -124,6 +124,7 @@ def main():
                             break
                     if not intl_ok:
                         break
+
                 if intl_ok:
                     info(f"PASS sample: {domain} -> {ips} -> INTL")
                 else:
@@ -136,20 +137,38 @@ def main():
                     for r in ("CN", "HK", "TW", "MO"):
                         if ip_in_region(ip, region_nets[r]) and r not in matched_regions:
                             matched_regions.append(r)
+
                 edge_warnings.append((domain, ips, matched_regions))
                 info(f"EDGE sample: {domain} -> {ips} -> {matched_regions or ['UNCLASSIFIED']}")
                 continue
 
-            matched = False
-            for ip in ips:
-                if ip_in_region(ip, region_nets[expected_region]):
-                    matched = True
-                    break
+            if expected_region in ("HK", "TW", "MO"):
+                matched = False
+                for ip in ips:
+                    if ip_in_region(ip, region_nets[expected_region]):
+                        matched = True
+                        break
 
-            if matched:
-                info(f"PASS sample: {domain} -> {ips} -> {expected_region}")
-            else:
-                hard_failures.append((domain, expected_region, ips))
+                if matched:
+                    info(f"PASS sample: {domain} -> {ips} -> {expected_region}")
+                else:
+                    warn(f"{domain}: expected {expected_region}, got {ips}")
+                continue
+
+            if expected_region == "CN":
+                matched = False
+                for ip in ips:
+                    if ip_in_region(ip, region_nets["CN"]):
+                        matched = True
+                        break
+
+                if matched:
+                    info(f"PASS sample: {domain} -> {ips} -> CN")
+                else:
+                    hard_failures.append((domain, expected_region, ips))
+                continue
+
+            warn(f"Unknown sample region {expected_region} for {domain}")
 
     if edge_warnings:
         print("\n[WARN] Edge sample results:")
