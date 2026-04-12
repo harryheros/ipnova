@@ -507,6 +507,7 @@ def fetch_asn_country(asn):
 
 _GEOLOC_CACHE_PATH = os.path.join("output", ".geoloc_cache.json")
 _GEOLOC_CACHE_TTL_HOURS = 168  # 7 days, slightly longer than weekly cron
+_GEOLOC_CACHE_RULE_VERSION = "2026-04-12-l0-strict-l2-cn-only"
 _GEOLOC_CACHE = None  # lazy-loaded dict {prefix: {"cc": str, "level": str, "ts": iso}}
 
 
@@ -524,6 +525,8 @@ def _load_geoloc_cache():
         cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=_GEOLOC_CACHE_TTL_HOURS)
         for prefix, rec in entries.items():
             try:
+                if rec.get("rule_version") != _GEOLOC_CACHE_RULE_VERSION:
+                    continue
                 ts = datetime.datetime.fromisoformat(rec["ts"].replace("Z", "+00:00"))
                 if ts >= cutoff:
                     _GEOLOC_CACHE[prefix] = rec
@@ -541,7 +544,8 @@ def _save_geoloc_cache():
     try:
         os.makedirs("output", exist_ok=True)
         payload = {
-            "version": 1,
+            "version": 2,
+            "rule_version": _GEOLOC_CACHE_RULE_VERSION,
             "ttl_hours": _GEOLOC_CACHE_TTL_HOURS,
             "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
             "entries": _GEOLOC_CACHE,
@@ -576,11 +580,12 @@ def fetch_prefix_country(prefix, asn, region_data=None):
                 for n in nets:
                     if n.version != target.version:
                         continue
-                    if n.supernet_of(target) or n.subnet_of(target) or n.overlaps(target):
+                    if target.subnet_of(n):
                         cache[prefix] = {
                             "cc": rcc,
                             "level": "L0",
                             "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+                            "rule_version": _GEOLOC_CACHE_RULE_VERSION,
                         }
                         return rcc, "L0"
         except Exception:
@@ -588,23 +593,24 @@ def fetch_prefix_country(prefix, asn, region_data=None):
 
     try:
         url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
-        body, _ = http_get(url, timeout=15, retries=2, return_content_type=True)
+        body, _ = http_get(url, timeout=5, retries=1, return_content_type=True)
         payload = json.loads(body.strip())
         locs = (payload.get("data", {}) or {}).get("locations") or []
         if locs:
             cc = (locs[0].get("country") or "").upper().strip()
             if len(cc) == 2:
-                cache[prefix] = {"cc": cc, "level": "L1", "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")}
+                cache[prefix] = {"cc": cc, "level": "L1", "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"), "rule_version": _GEOLOC_CACHE_RULE_VERSION}
                 return cc, "L1"
     except Exception:
         pass
 
     cc = fetch_asn_country(asn)
-    if cc:
+    if cc == "CN":
         cache[prefix] = {
             "cc": cc,
             "level": "L2",
             "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+            "rule_version": _GEOLOC_CACHE_RULE_VERSION,
         }
         return cc, "L2"
 
