@@ -507,7 +507,7 @@ def fetch_asn_country(asn):
 
 _GEOLOC_CACHE_PATH = os.path.join("output", ".geoloc_cache.json")
 _GEOLOC_CACHE_TTL_HOURS = 168  # 7 days, slightly longer than weekly cron
-_GEOLOC_CACHE_RULE_VERSION = "2026-04-12-l0-strict-l2-cn-only"
+_GEOLOC_CACHE_RULE_VERSION = "2026-04-12-l0-strict-l2-target-regions"
 _GEOLOC_CACHE = None  # lazy-loaded dict {prefix: {"cc": str, "level": str, "ts": iso}}
 
 
@@ -593,7 +593,7 @@ def fetch_prefix_country(prefix, asn, region_data=None):
 
     try:
         url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
-        body, _ = http_get(url, timeout=5, retries=1, return_content_type=True)
+        body, _ = http_get(url, timeout=15, retries=2, return_content_type=True)
         payload = json.loads(body.strip())
         locs = (payload.get("data", {}) or {}).get("locations") or []
         if locs:
@@ -605,7 +605,7 @@ def fetch_prefix_country(prefix, asn, region_data=None):
         pass
 
     cc = fetch_asn_country(asn)
-    if cc == "CN":
+    if cc in TARGET_REGIONS:
         cache[prefix] = {
             "cc": cc,
             "level": "L2",
