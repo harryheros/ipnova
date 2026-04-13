@@ -2,7 +2,7 @@
   "version": 2,
   "rule_version": "2026-04-12-l0-strict-l2-cn-only",
   "ttl_hours": 168,
-  "generated_at": "2026-04-12T23:01:48.475380Z",
+  "generated_at": "2026-04-13T04:59:32.703209Z",
   "entries": {
     "106.11.216.0/21": {
       "cc": "CN",
