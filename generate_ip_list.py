@@ -507,7 +507,7 @@ def fetch_asn_country(asn):
 
 _GEOLOC_CACHE_PATH = os.path.join("output", ".geoloc_cache.json")
 _GEOLOC_CACHE_TTL_HOURS = 168  # 7 days, slightly longer than weekly cron
-_GEOLOC_CACHE_RULE_VERSION = "2026-04-12-l0-strict-l2-target-regions"
+_GEOLOC_CACHE_RULE_VERSION = "2026-04-13-l1-located-resources-pct-vote"
 _GEOLOC_CACHE = None  # lazy-loaded dict {prefix: {"cc": str, "level": str, "ts": iso}}
 
 
@@ -593,14 +593,42 @@ def fetch_prefix_country(prefix, asn, region_data=None):
 
     try:
         url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
-        body, _ = http_get(url, timeout=15, retries=2, return_content_type=True)
+        body, _ = http_get(url, timeout=10, retries=1, return_content_type=True)
         payload = json.loads(body.strip())
-        locs = (payload.get("data", {}) or {}).get("locations") or []
+        data = payload.get("data") or {}
+        # Current RIPE Stat API (v0.9.7+) wraps locations under located_resources
+        located = data.get("located_resources") or []
+        locs = []
+        if located:
+            locs = located[0].get("locations") or []
+        else:
+            # Backward compat for older/simpler response shape
+            locs = data.get("locations") or []
         if locs:
-            cc = (locs[0].get("country") or "").upper().strip()
-            if len(cc) == 2:
-                cache[prefix] = {"cc": cc, "level": "L1", "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"), "rule_version": _GEOLOC_CACHE_RULE_VERSION}
-                return cc, "L1"
+            # Aggregate covered_percentage by country, pick the dominant one.
+            # This avoids being misled by the first element which may be noise
+            # (e.g. 0% coverage in an unrelated country).
+            by_country = {}
+            for loc in locs:
+                c = (loc.get("country") or "").upper().strip()
+                if len(c) != 2:
+                    continue
+                pct = loc.get("covered_percentage")
+                try:
+                    pct = float(pct) if pct is not None else 0.0
+                except (TypeError, ValueError):
+                    pct = 0.0
+                by_country[c] = by_country.get(c, 0.0) + pct
+            if by_country:
+                cc = max(by_country.items(), key=lambda kv: kv[1])[0]
+                if len(cc) == 2:
+                    cache[prefix] = {
+                        "cc": cc,
+                        "level": "L1",
+                        "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+                        "rule_version": _GEOLOC_CACHE_RULE_VERSION,
+                    }
+                    return cc, "L1"
     except Exception:
         pass
 
