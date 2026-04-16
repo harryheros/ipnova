@@ -1,0 +1,98 @@
+{
+  "schema_version": "2.1",
+  "project": "ipnova",
+  "version": "2.1.0",
+  "generated_at": "2026-04-16T10:39:31.719988+00:00",
+  "source": "APNIC delegated-apnic-latest",
+  "target_regions": {
+    "CN": "China (Mainland)",
+    "HK": "Hong Kong",
+    "TW": "Taiwan",
+    "MO": "Macau"
+  },
+  "counts": {
+    "CN": {
+      "cidrs": 5542,
+      "ips": 345446656
+    },
+    "HK": {
+      "cidrs": 2564,
+      "ips": 16565568
+    },
+    "TW": {
+      "cidrs": 740,
+      "ips": 35708928
+    },
+    "MO": {
+      "cidrs": 30,
+      "ips": 339456
+    }
+  },
+  "exclusion": {
+    "mode": "dynamic+static",
+    "asns_total": 13,
+    "asns_succeeded": [
+      8069,
+      8075,
+      13335,
+      13414,
+      14618,
+      15169,
+      16509,
+      16625,
+      20940,
+      32934,
+      54113,
+      209242,
+      396982
+    ],
+    "asns_failed": [],
+    "dynamic_prefixes": 32691,
+    "static_blacklist": [
+      "1.0.0.0/24",
+      "1.1.1.0/24",
+      "8.8.8.0/24",
+      "8.8.4.0/24",
+      "9.9.9.0/24",
+      "208.67.222.0/24",
+      "208.67.220.0/24"
+    ]
+  },
+  "parsing": {
+    "lines_processed": 12588,
+    "source_networks": 12588,
+    "cidrs_kept": 12616,
+    "cidrs_excluded": 35,
+    "excluded_source_networks": 15,
+    "parse_errors": 0,
+    "prefixes_before_collapse": 13043,
+    "prefixes_after_collapse": 8876,
+    "cloud_supplement": {
+      "prefixes_fetched": 5742,
+      "kept_per_region": {
+        "CN": 3537,
+        "HK": 445
+      },
+      "dropped_other_country": 1760,
+      "dropped_unknown": 0,
+      "l0_local_hit": 3304,
+      "cache_hit": 23,
+      "l1_success": 2383,
+      "l2_fallback": 32,
+      "l3_fallback": 0,
+      "duration_seconds": 1325.458,
+      "asn_count": 7,
+      "tier1_asn_count": 4,
+      "tier2_asn_count": 3
+    }
+  },
+  "sanity_thresholds": {
+    "CN": 3000,
+    "HK": 1000,
+    "TW": 300,
+    "MO": 10
+  },
+  "checksum": {
+    "data_json_sha256": "81b045d61d84612bbda202da78b7078dbbdec056d7c520c85c66390ea8feb1ee"
+  }
+}
