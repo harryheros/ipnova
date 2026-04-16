@@ -2,12 +2,10 @@
   "CN": [
     "163.com",
     "qq.com",
-    "weixin.qq.com",
     "taobao.com",
     "tmall.com",
     "jd.com",
     "bilibili.com",
-    "zhihu.com",
     "baidu.com",
     "weibo.com",
     "douyin.com",
@@ -48,6 +46,8 @@
     "alipay.com",
     "aliyun.com",
     "tencent.com",
-    "volcengine.com"
+    "volcengine.com",
+    "weixin.qq.com",
+    "zhihu.com"
   ]
 }
