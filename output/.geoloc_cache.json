@@ -2,7 +2,7 @@
   "version": 2,
   "rule_version": "2026-04-13-l1-located-resources-pct-vote",
   "ttl_hours": 168,
-  "generated_at": "2026-04-16T11:15:07.092449Z",
+  "generated_at": "2026-04-17T16:01:16.128596Z",
   "entries": {
     "114.215.128.0/19": {
       "cc": "CN",
@@ -34316,6 +34316,72 @@
       "cc": "CN",
       "level": "L0",
       "ts": "2026-04-16T10:39:31.551546Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "47.118.144.0/24": {
+      "cc": "CN",
+      "level": "L0",
+      "ts": "2026-04-17T16:01:07.171304Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "139.95.224.0/19": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:07.851601Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "139.95.192.0/18": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:08.150254Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "139.95.192.0/19": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:08.442052Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "47.87.253.0/24": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:08.730401Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.124.0.0/18": {
+      "cc": "SG",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:09.039686Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.124.0.0/17": {
+      "cc": "SG",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:09.380310Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.124.64.0/18": {
+      "cc": "SG",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:09.683674Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "47.87.252.0/24": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:10.086013Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "47.87.252.0/23": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:10.397036Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.163.175.0/24": {
+      "cc": "HK",
+      "level": "L1",
+      "ts": "2026-04-17T16:01:11.307162Z",
       "rule_version": "2026-04-13-l1-located-resources-pct-vote"
     }
   }
