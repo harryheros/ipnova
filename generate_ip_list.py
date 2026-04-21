@@ -21,7 +21,7 @@ from collections import defaultdict
 # ================================================================
 # Version
 # ================================================================
-__version__ = "2.1.0"
+__version__ = "3.0.0"
 
 # ================================================================
 # Logging
@@ -904,7 +904,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "2.1",
+        "schema_version": "3.0",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -921,7 +921,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- meta.json: enriched metadata for monitoring & pro integration ---
     meta_payload = {
-        "schema_version": "2.1",
+        "schema_version": "3.0",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,

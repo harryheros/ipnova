@@ -2,11 +2,11 @@
 
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
-![Data Source](https://img.shields.io/badge/source-APNIC-orange)
+![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-2.1.0-blue)
+![Version](https://img.shields.io/badge/version-3.0.0-blue)
 
-IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with ASN-level filtering and dynamic prefix analysis.
+IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
 IPNova is part of the DomainNova intelligence stack, providing the IP-level foundation for infrastructure attribution.
 
@@ -23,6 +23,11 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 - Static fallback blacklist for critical anycast ranges
 - Precise CIDR subtraction — excluded prefixes are surgically removed, not bluntly dropped
 - CN / HK / TW / MO fully separated
+- **Multi-source fusion (v3.0)**: supplements APNIC data with BGP-announced prefixes from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance), resolving ARIN-registered IP blocks invisible to APNIC-only pipelines
+- **Four-level country attribution**: L-1 persistent cache → L0 in-memory APNIC containment → L1 RIPEstat geoloc (coverage-weighted vote) → L2 ASN holder country fallback
+- **ASN tier model**: Tier 1 (pure cloud), Tier 2 (mixed internet company), Tier 3 (operator backbone, hard-forbidden)
+- **Rule-versioned cache**: 168-hour TTL with semantic rule versioning for instant invalidation on classification logic changes; 15× speedup from cold to warm runs
+- **Defensive operator exclusion**: `FORBIDDEN_ASNS` with module-load assertion prevents accidental inclusion of China Telecom/Unicom/Mobile backbone ASNs
 - Accurate CIDR generation via `summarize_address_range`
 - CIDR aggregation for optimized size and performance
 - Structured JSON data layer with schema versioning
