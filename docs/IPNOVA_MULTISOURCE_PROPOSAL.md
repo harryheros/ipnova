@@ -1,6 +1,6 @@
 # IPNova 多源融合改造規範書 v0.2
 
-> Status: Draft · Target: IPNova v3.0
+> Status: Implemented (2026-04-16) · Delivered: IPNova v3.0.0
 > Predecessor: DomainNova `PROPOSAL_MULTI_REGION.md`
 > Changelog from v0.1: AS55990 移除、Tier 3 擴充、geoloc 加 fallback、Tier 2 局限明確化、性能優化補充
 
