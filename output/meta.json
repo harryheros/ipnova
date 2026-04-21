@@ -1,0 +1,98 @@
+{
+  "schema_version": "3.0",
+  "project": "ipnova",
+  "version": "3.0.0",
+  "generated_at": "2026-04-21T22:47:08.579241+00:00",
+  "source": "APNIC delegated-apnic-latest",
+  "target_regions": {
+    "CN": "China (Mainland)",
+    "HK": "Hong Kong",
+    "TW": "Taiwan",
+    "MO": "Macau"
+  },
+  "counts": {
+    "CN": {
+      "cidrs": 5542,
+      "ips": 345764608
+    },
+    "HK": {
+      "cidrs": 2567,
+      "ips": 16576832
+    },
+    "TW": {
+      "cidrs": 737,
+      "ips": 35707392
+    },
+    "MO": {
+      "cidrs": 30,
+      "ips": 339456
+    }
+  },
+  "exclusion": {
+    "mode": "dynamic+static",
+    "asns_total": 13,
+    "asns_succeeded": [
+      8069,
+      8075,
+      13335,
+      13414,
+      14618,
+      15169,
+      16509,
+      16625,
+      20940,
+      32934,
+      54113,
+      209242,
+      396982
+    ],
+    "asns_failed": [],
+    "dynamic_prefixes": 32823,
+    "static_blacklist": [
+      "1.0.0.0/24",
+      "1.1.1.0/24",
+      "8.8.8.0/24",
+      "8.8.4.0/24",
+      "9.9.9.0/24",
+      "208.67.222.0/24",
+      "208.67.220.0/24"
+    ]
+  },
+  "parsing": {
+    "lines_processed": 12587,
+    "source_networks": 12587,
+    "cidrs_kept": 12615,
+    "cidrs_excluded": 35,
+    "excluded_source_networks": 15,
+    "parse_errors": 0,
+    "prefixes_before_collapse": 13043,
+    "prefixes_after_collapse": 8876,
+    "cloud_supplement": {
+      "prefixes_fetched": 5748,
+      "kept_per_region": {
+        "CN": 3540,
+        "HK": 438
+      },
+      "dropped_other_country": 1770,
+      "dropped_unknown": 0,
+      "l0_local_hit": 3304,
+      "cache_hit": 23,
+      "l1_success": 2389,
+      "l2_fallback": 32,
+      "l3_fallback": 0,
+      "duration_seconds": 1333.012,
+      "asn_count": 7,
+      "tier1_asn_count": 4,
+      "tier2_asn_count": 3
+    }
+  },
+  "sanity_thresholds": {
+    "CN": 3000,
+    "HK": 1000,
+    "TW": 300,
+    "MO": 10
+  },
+  "checksum": {
+    "data_json_sha256": "699e9d2f2b48e693031be5a02e5a5168f3d631a98d8316c4fdbb69f7272f3652"
+  }
+}
