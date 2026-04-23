@@ -216,3 +216,6 @@ MIT
 
 IPNova is part of the DomainNova intelligence stack.  
 Higher-level attribution, correlation, and infrastructure intelligence systems are not open-sourced.
+---
+
+Part of the [Nova infrastructure toolkit](https://github.com/harryheros).
