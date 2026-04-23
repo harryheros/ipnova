@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "project": "ipnova",
   "version": "3.0.0",
-  "generated_at": "2026-04-21T22:47:08.579241+00:00",
+  "generated_at": "2026-04-23T15:41:48.552937+00:00",
   "source": "APNIC delegated-apnic-latest",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -16,8 +16,8 @@
       "ips": 345764608
     },
     "HK": {
-      "cidrs": 2567,
-      "ips": 16576832
+      "cidrs": 2569,
+      "ips": 16575552
     },
     "TW": {
       "cidrs": 737,
@@ -47,7 +47,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32823,
+    "dynamic_prefixes": 32876,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -59,28 +59,28 @@
     ]
   },
   "parsing": {
-    "lines_processed": 12587,
-    "source_networks": 12587,
-    "cidrs_kept": 12615,
-    "cidrs_excluded": 35,
+    "lines_processed": 12588,
+    "source_networks": 12588,
+    "cidrs_kept": 12616,
+    "cidrs_excluded": 39,
     "excluded_source_networks": 15,
     "parse_errors": 0,
-    "prefixes_before_collapse": 13043,
-    "prefixes_after_collapse": 8876,
+    "prefixes_before_collapse": 13044,
+    "prefixes_after_collapse": 8878,
     "cloud_supplement": {
-      "prefixes_fetched": 5748,
+      "prefixes_fetched": 5738,
       "kept_per_region": {
         "CN": 3540,
-        "HK": 438
+        "HK": 437
       },
-      "dropped_other_country": 1770,
+      "dropped_other_country": 1761,
       "dropped_unknown": 0,
-      "l0_local_hit": 3304,
-      "cache_hit": 23,
-      "l1_success": 2389,
-      "l2_fallback": 32,
+      "l0_local_hit": 0,
+      "cache_hit": 5737,
+      "l1_success": 1,
+      "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 1333.012,
+      "duration_seconds": 5.279,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -93,6 +93,6 @@
     "MO": 10
   },
   "checksum": {
-    "data_json_sha256": "699e9d2f2b48e693031be5a02e5a5168f3d631a98d8316c4fdbb69f7272f3652"
+    "data_json_sha256": "c5fe24ddb0a35f0633114632456b9e042ffb5d819edf0c103e7464782d693274"
   }
 }
