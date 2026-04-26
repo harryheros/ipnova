@@ -1,14 +1,17 @@
 {
   "schema_version": "3.0",
   "project": "ipnova",
-  "version": "3.0.0",
-  "generated_at": "2026-04-26T01:44:55.581998+00:00",
+  "version": "3.1.0",
+  "generated_at": "2026-04-26T02:19:18.282039+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
     "HK": "Hong Kong",
     "TW": "Taiwan",
-    "MO": "Macau"
+    "MO": "Macau",
+    "JP": "Japan",
+    "KR": "South Korea",
+    "SG": "Singapore"
   },
   "counts": {
     "CN": {
@@ -26,6 +29,18 @@
     "MO": {
       "cidrs": 30,
       "ips": 339456
+    },
+    "JP": {
+      "cidrs": 3206,
+      "ips": 188967936
+    },
+    "KR": {
+      "cidrs": 1057,
+      "ips": 112694528
+    },
+    "SG": {
+      "cidrs": 1613,
+      "ips": 26962944
     }
   },
   "exclusion": {
@@ -59,28 +74,31 @@
     ]
   },
   "parsing": {
-    "lines_processed": 12586,
-    "source_networks": 12586,
-    "cidrs_kept": 12614,
-    "cidrs_excluded": 39,
-    "excluded_source_networks": 15,
+    "lines_processed": 21461,
+    "source_networks": 21461,
+    "cidrs_kept": 21529,
+    "cidrs_excluded": 154,
+    "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 13042,
-    "prefixes_after_collapse": 8878,
+    "prefixes_before_collapse": 22219,
+    "prefixes_after_collapse": 14754,
     "cloud_supplement": {
       "prefixes_fetched": 5736,
       "kept_per_region": {
         "CN": 3538,
-        "HK": 437
+        "SG": 643,
+        "KR": 50,
+        "HK": 437,
+        "JP": 92
       },
-      "dropped_other_country": 1761,
+      "dropped_other_country": 976,
       "dropped_unknown": 0,
       "l0_local_hit": 0,
       "cache_hit": 5736,
       "l1_success": 0,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 6.296,
+      "duration_seconds": 5.94,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -90,9 +108,12 @@
     "CN": 3000,
     "HK": 1000,
     "TW": 300,
-    "MO": 10
+    "MO": 10,
+    "JP": 3000,
+    "KR": 800,
+    "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "2aa9efbb37ebbe1a20748de827f59e3aac3d52ee1385f982dd167778d2d93288"
+    "data_json_sha256": "f230cb7d00059a381e2b02284dee819db4b10ee7689cf12dd7c594c840328cd1"
   }
 }
