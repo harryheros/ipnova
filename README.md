@@ -8,7 +8,7 @@
 
 IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
-IPNova is part of the DomainNova intelligence stack, providing the IP-level foundation for infrastructure attribution.
+IPNova is part of the [Nova infrastructure toolkit](https://github.com/harryheros), providing the IP-level foundation for infrastructure attribution.
 
 IPNova is not a geolocation database.  
 It is designed for routing-aware infrastructure analysis rather than end-user location inference.
@@ -164,6 +164,17 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 
 ## 📋 Changelog
 
+### v3.0.0
+
+- **Multi-source BGP fusion**: supplements APNIC data with live BGP announcements from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance, JD, NetEase)
+- **ASN tier model**: Tier 1 (pure cloud), Tier 2 (mixed internet company), Tier 3 (operator backbone, hard-forbidden)
+- **Four-level country attribution**: L-1 persistent cache → L0 in-memory APNIC containment → L1 RIPEstat geoloc (coverage-weighted vote) → L2 ASN holder country fallback
+- **Rule-versioned cache**: 168-hour TTL with semantic rule versioning for instant invalidation on classification logic changes; 15× speedup from cold to warm runs
+- **Defensive operator exclusion**: `FORBIDDEN_ASNS` with module-load assertion prevents accidental inclusion of China Telecom/Unicom/Mobile backbone ASNs
+- TW and MO regions populated for the first time via cloud supplement pipeline
+- Output validation script (`scripts/validate_output.py`) with sample-based testing
+- Schema version bumped to 3.0
+
 ### v2.1.0
 
 - Precise CIDR subtraction — excluded subnets are surgically removed instead of dropping entire networks on overlap
@@ -214,8 +225,6 @@ If IPNova is useful to you, consider giving it a ⭐ on GitHub.
 
 MIT
 
-IPNova is part of the DomainNova intelligence stack.  
-Higher-level attribution, correlation, and infrastructure intelligence systems are not open-sourced.
 ---
 
 Part of the [Nova infrastructure toolkit](https://github.com/harryheros).
