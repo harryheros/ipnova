@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "project": "ipnova",
   "version": "3.1.0",
-  "generated_at": "2026-04-26T02:19:18.282039+00:00",
+  "generated_at": "2026-04-26T02:25:39.127595+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -98,7 +98,7 @@
       "l1_success": 0,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 5.94,
+      "duration_seconds": 2.979,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "f230cb7d00059a381e2b02284dee819db4b10ee7689cf12dd7c594c840328cd1"
+    "data_json_sha256": "b72c1065b27980578d75bfd57cd42074d180e68599db61dafc9bdc544159df47"
   }
 }
