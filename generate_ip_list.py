@@ -3,7 +3,7 @@
 Project : ipnova
 Repo    : https://github.com/harryheros/ipnova
 Desc    : High-quality IPv4 CIDR list generator for CN / HK / TW / MO
-Source  : APNIC RIR official delegation data (upstream, not derived)
+Source  : APNIC RIR delegation data + BGP multi-source fusion (upstream, not derived)
 """
 
 import urllib.request
@@ -881,7 +881,7 @@ def save_txt_outputs(normalized_data, output_dir="output"):
             f.write(f"# Version     : {__version__}\n")
             f.write(f"# Region      : {payload['region_name']}\n")
             f.write(f"# Last Updated: {timestamp}\n")
-            f.write("# Source      : APNIC delegated-apnic-latest\n")
+            f.write("# Source      : APNIC delegated + BGP multi-source fusion\n")
             f.write(f"# Total CIDRs : {payload['total_cidrs']}\n")
             f.write(f"# Total IPs   : {payload['total_ips']:,}\n")
             f.write("# Note        : HK / TW / MO are NOT included in CN\n")
@@ -925,7 +925,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
-        "source": "APNIC delegated-apnic-latest",
+        "source": "APNIC delegated + BGP multi-source fusion",
         "target_regions": TARGET_REGIONS,
         "counts": {
             cc: {
