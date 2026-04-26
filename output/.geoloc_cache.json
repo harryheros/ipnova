@@ -2,7 +2,7 @@
   "version": 2,
   "rule_version": "2026-04-13-l1-located-resources-pct-vote",
   "ttl_hours": 168,
-  "generated_at": "2026-04-26T01:44:55.437622Z",
+  "generated_at": "2026-04-26T02:19:18.083086Z",
   "entries": {
     "139.196.0.0/16": {
       "cc": "CN",
