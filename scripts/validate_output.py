@@ -17,6 +17,9 @@ REGION_FILES = {
     "HK": OUTPUT_DIR / "HK.txt",
     "TW": OUTPUT_DIR / "TW.txt",
     "MO": OUTPUT_DIR / "MO.txt",
+    "JP": OUTPUT_DIR / "JP.txt",
+    "KR": OUTPUT_DIR / "KR.txt",
+    "SG": OUTPUT_DIR / "SG.txt",
 }
 
 MAX_L2_RATIO = 0.60
@@ -118,7 +121,7 @@ def main():
             if expected_region == "INTL":
                 intl_ok = True
                 for ip in ips:
-                    for r in ("CN", "HK", "TW", "MO"):
+                    for r in ("CN", "HK", "TW", "MO", "JP", "KR", "SG"):
                         if ip_in_region(ip, region_nets[r]):
                             intl_ok = False
                             break
@@ -134,7 +137,7 @@ def main():
             if expected_region == "EDGE":
                 matched_regions = []
                 for ip in ips:
-                    for r in ("CN", "HK", "TW", "MO"):
+                    for r in ("CN", "HK", "TW", "MO", "JP", "KR", "SG"):
                         if ip_in_region(ip, region_nets[r]) and r not in matched_regions:
                             matched_regions.append(r)
 
