@@ -890,7 +890,7 @@ def save_txt_outputs(normalized_data, output_dir="output"):
             f.write("# Source      : APNIC delegated + BGP multi-source fusion\n")
             f.write(f"# Total CIDRs : {payload['total_cidrs']}\n")
             f.write(f"# Total IPs   : {payload['total_ips']:,}\n")
-            f.write("# Note        : HK / TW / MO are NOT included in CN\n")
+            f.write(f"# Note        : Each region is separated — this file contains {payload["region_name"]} only\n")
             f.write("# " + "=" * 48 + "\n")
             for cidr in payload["cidrs"]:
                 f.write(cidr + "\n")
