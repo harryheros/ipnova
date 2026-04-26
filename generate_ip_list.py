@@ -2,7 +2,7 @@
 """
 Project : ipnova
 Repo    : https://github.com/harryheros/ipnova
-Desc    : High-quality IPv4 CIDR list generator for CN / HK / TW / MO
+Desc    : High-quality IPv4 CIDR list generator for Asia-Pacific regions (CN / HK / TW / MO / JP / KR / SG)
 Source  : APNIC RIR delegation data + BGP multi-source fusion (upstream, not derived)
 """
 
@@ -21,7 +21,7 @@ from collections import defaultdict
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 # ================================================================
 # Logging
@@ -112,6 +112,9 @@ TARGET_REGIONS = {
     "HK": "Hong Kong",
     "TW": "Taiwan",
     "MO": "Macau",
+    "JP": "Japan",
+    "KR": "South Korea",
+    "SG": "Singapore",
 }
 
 # ================================================================
@@ -123,6 +126,9 @@ SANITY_THRESHOLDS = {
     "HK": 1000,
     "TW": 300,
     "MO": 10,
+    "JP": 3000,
+    "KR": 2000,
+    "SG": 300,
 }
 
 APNIC_URL = "https://ftp.apnic.net/stats/apnic/delegated-apnic-latest"

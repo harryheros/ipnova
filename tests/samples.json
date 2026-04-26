@@ -30,6 +30,25 @@
     "dsat.gov.mo",
     "gcs.gov.mo"
   ],
+  "JP": [
+    "yahoo.co.jp",
+    "rakuten.co.jp",
+    "amazon.co.jp",
+    "nhk.or.jp",
+    "livedoor.jp"
+  ],
+  "KR": [
+    "naver.com",
+    "daum.net",
+    "coupang.com",
+    "samsung.co.kr",
+    "kakaocorp.com"
+  ],
+  "SG": [
+    "gov.sg",
+    "straitstimes.com",
+    "channelnewsasia.com"
+  ],
   "INTL": [
     "google.com",
     "cloudflare.com",

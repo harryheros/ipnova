@@ -4,9 +4,9 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.0.0-blue)
+![Version](https://img.shields.io/badge/version-3.1.0-blue)
 
-IPNova is a routing-aware IPv4 dataset built from official APNIC allocation data, enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
+IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
 IPNova is part of the [Nova infrastructure toolkit](https://github.com/harryheros), providing the IP-level foundation for infrastructure attribution.
 
@@ -22,7 +22,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 - Dynamic exclusion of major anycast / CDN / cloud providers
 - Static fallback blacklist for critical anycast ranges
 - Precise CIDR subtraction — excluded prefixes are surgically removed, not bluntly dropped
-- CN / HK / TW / MO fully separated
+- CN / HK / TW / MO / JP / KR / SG fully separated
 - **Multi-source fusion (v3.0)**: supplements APNIC data with BGP-announced prefixes from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance), resolving ARIN-registered IP blocks invisible to APNIC-only pipelines
 - **Four-level country attribution**: L-1 persistent cache → L0 in-memory APNIC containment → L1 RIPEstat geoloc (coverage-weighted vote) → L2 ASN holder country fallback
 - **ASN tier model**: Tier 1 (pure cloud), Tier 2 (mixed internet company), Tier 3 (operator backbone, hard-forbidden)
@@ -51,6 +51,9 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/HK.txt` | Hong Kong IPv4 CIDR list |
 | `output/TW.txt` | Taiwan IPv4 CIDR list |
 | `output/MO.txt` | Macau IPv4 CIDR list |
+| `output/JP.txt` | Japan IPv4 CIDR list |
+| `output/KR.txt` | South Korea IPv4 CIDR list |
+| `output/SG.txt` | Singapore IPv4 CIDR list |
 | `output/data.json` | Structured JSON dataset (schema v2.1) |
 | `output/meta.json` | Enriched metadata with quality report |
 
@@ -71,6 +74,9 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/HK.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/TW.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/MO.txt
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/JP.txt
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/KR.txt
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/SG.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/data.json
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/meta.json
 ```
@@ -164,6 +170,14 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 
 ## 📋 Changelog
 
+### v3.1.0
+
+- **Asia-Pacific expansion**: added Japan (JP), South Korea (KR), and Singapore (SG) to target regions
+- All new regions sourced from APNIC delegation data (no BGP supplement needed — APNIC coverage is complete for these regions)
+- Updated sanity thresholds for new regions (JP: 3000, KR: 2000, SG: 300)
+- Validation script and test samples updated with JP/KR/SG domains
+- Cloud supplement remains CN-specific (resolves ARIN-registered Chinese cloud provider IP blocks)
+
 ### v3.0.0
 
 - **Multi-source BGP fusion**: supplements APNIC data with live BGP announcements from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance, JD, NetEase)
@@ -211,7 +225,7 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 - This dataset is intended for networking, routing, filtering, and infrastructure use cases
 - It does **not** represent precise geolocation
 - This dataset reflects IP allocation (RIR-based), not real-time traffic origin
-- HK / TW / MO are intentionally separated from CN
+- HK / TW / MO / JP / KR / SG are intentionally separated from CN
 
 ---
 
