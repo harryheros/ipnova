@@ -2,7 +2,7 @@
   "schema_version": "3.0",
   "project": "ipnova",
   "version": "3.1.0",
-  "generated_at": "2026-04-27T05:18:18.835991+00:00",
+  "generated_at": "2026-04-27T23:46:22.954345+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -20,7 +20,7 @@
     },
     "HK": {
       "cidrs": 2569,
-      "ips": 16575552
+      "ips": 16575040
     },
     "TW": {
       "cidrs": 737,
@@ -39,8 +39,8 @@
       "ips": 112694528
     },
     "SG": {
-      "cidrs": 1613,
-      "ips": 26962944
+      "cidrs": 1610,
+      "ips": 26958592
     }
   },
   "exclusion": {
@@ -62,7 +62,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32901,
+    "dynamic_prefixes": 32894,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -74,31 +74,31 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21461,
-    "source_networks": 21461,
-    "cidrs_kept": 21529,
+    "lines_processed": 21458,
+    "source_networks": 21458,
+    "cidrs_kept": 21526,
     "cidrs_excluded": 154,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22219,
-    "prefixes_after_collapse": 14754,
+    "prefixes_before_collapse": 22216,
+    "prefixes_after_collapse": 14751,
     "cloud_supplement": {
-      "prefixes_fetched": 5736,
+      "prefixes_fetched": 5737,
       "kept_per_region": {
-        "CN": 3538,
+        "CN": 3539,
         "SG": 643,
-        "KR": 50,
         "HK": 437,
-        "JP": 92
+        "JP": 92,
+        "KR": 50
       },
       "dropped_other_country": 976,
       "dropped_unknown": 0,
-      "l0_local_hit": 0,
+      "l0_local_hit": 1,
       "cache_hit": 5736,
       "l1_success": 0,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 3.428,
+      "duration_seconds": 4.721,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "8ea19001d6214cea6ac0aca26bcc9ce1ab6e534171da149309a9c0e4e1b8fcab"
+    "data_json_sha256": "1b824bcb8d0e18e4c366a48ba763b32e859ec5c6c9ff414d8711774a2df6247f"
   }
 }
