@@ -1,8 +1,8 @@
 {
-  "schema_version": "3.0",
+  "schema_version": "3.1",
   "project": "ipnova",
   "version": "3.1.0",
-  "generated_at": "2026-04-27T23:46:22.954345+00:00",
+  "generated_at": "2026-04-28T01:49:04.107884+00:00",
   "regions": {
     "CN": {
       "region_code": "CN",
