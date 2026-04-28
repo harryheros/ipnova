@@ -2,7 +2,7 @@
   "schema_version": "3.1",
   "project": "ipnova",
   "version": "3.1.0",
-  "generated_at": "2026-04-28T01:49:04.107884+00:00",
+  "generated_at": "2026-04-28T15:25:42.913573+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -39,8 +39,8 @@
       "ips": 112694528
     },
     "SG": {
-      "cidrs": 1610,
-      "ips": 26958592
+      "cidrs": 1609,
+      "ips": 26958336
     }
   },
   "exclusion": {
@@ -62,7 +62,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32894,
+    "dynamic_prefixes": 32901,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -74,31 +74,31 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21458,
-    "source_networks": 21458,
-    "cidrs_kept": 21526,
+    "lines_processed": 21457,
+    "source_networks": 21457,
+    "cidrs_kept": 21525,
     "cidrs_excluded": 154,
     "excluded_source_networks": 89,
     "parse_errors": 0,
     "prefixes_before_collapse": 22216,
-    "prefixes_after_collapse": 14751,
+    "prefixes_after_collapse": 14750,
     "cloud_supplement": {
-      "prefixes_fetched": 5737,
+      "prefixes_fetched": 5775,
       "kept_per_region": {
         "CN": 3539,
-        "SG": 643,
-        "HK": 437,
+        "SG": 680,
         "JP": 92,
+        "HK": 437,
         "KR": 50
       },
-      "dropped_other_country": 976,
+      "dropped_other_country": 977,
       "dropped_unknown": 0,
-      "l0_local_hit": 0,
-      "cache_hit": 5737,
-      "l1_success": 0,
+      "l0_local_hit": 36,
+      "cache_hit": 5738,
+      "l1_success": 1,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 6.291,
+      "duration_seconds": 4.821,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "6073e5d6e442a7ec9a6a444fa364d8c39e7db82ca231d613cd574683fc523e86"
+    "data_json_sha256": "91f5919cedaf7a2674e040157d382c9cf8b3ceedde879e00fe2b8d139432a250"
   }
 }
