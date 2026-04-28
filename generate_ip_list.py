@@ -910,7 +910,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "3.0",
+        "schema_version": "3.1",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -927,7 +927,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- meta.json: enriched metadata for monitoring & pro integration ---
     meta_payload = {
-        "schema_version": "3.0",
+        "schema_version": "3.1",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
