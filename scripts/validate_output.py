@@ -145,7 +145,7 @@ def main():
                 info(f"EDGE sample: {domain} -> {ips} -> {matched_regions or ['UNCLASSIFIED']}")
                 continue
 
-            if expected_region in ("HK", "TW", "MO"):
+            if expected_region in ("HK", "TW", "MO", "JP", "KR", "SG"):
                 matched = False
                 for ip in ips:
                     if ip_in_region(ip, region_nets[expected_region]):
