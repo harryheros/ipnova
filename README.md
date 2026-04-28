@@ -54,7 +54,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/JP.txt` | Japan IPv4 CIDR list |
 | `output/KR.txt` | South Korea IPv4 CIDR list |
 | `output/SG.txt` | Singapore IPv4 CIDR list |
-| `output/data.json` | Structured JSON dataset (schema v2.1) |
+| `output/data.json` | Structured JSON dataset (schema v3.1) |
 | `output/meta.json` | Enriched metadata with quality report |
 
 Text files include metadata headers such as:
@@ -122,7 +122,7 @@ IPNova provides both:
 - **TXT outputs** for direct human-readable use
 - **JSON outputs** for system integration, future format conversion, and automation workflows
 
-### Schema v2.1
+### Schema v3.1
 
 `data.json` includes `schema_version`, `version`, and `total_ips` per region.
 
@@ -174,7 +174,7 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 
 - **Asia-Pacific expansion**: added Japan (JP), South Korea (KR), and Singapore (SG) to target regions
 - All new regions sourced from APNIC delegation data (no BGP supplement needed — APNIC coverage is complete for these regions)
-- Updated sanity thresholds for new regions (JP: 3000, KR: 2000, SG: 300)
+- Updated sanity thresholds for new regions (JP: 3000, KR: 800, SG: 300)
 - Validation script and test samples updated with JP/KR/SG domains
 - Cloud supplement remains CN-specific (resolves ARIN-registered Chinese cloud provider IP blocks)
 
