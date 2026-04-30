@@ -57,7 +57,7 @@ def info(msg: str):
 
 
 def check_meta(meta: dict, region_counts: dict):
-    cloud = meta.get("cloud_supplement", {})
+    cloud = (meta.get("parsing", {}) or {}).get("cloud_supplement", {})
     prefixes_fetched = cloud.get("prefixes_fetched", 0)
     l2_fallback = cloud.get("l2_fallback", 0)
 

@@ -29,6 +29,12 @@ jobs:
           pip install ruff
           ruff check generate_ip_list.py
 
+      - name: Syntax check
+        run: python -m py_compile generate_ip_list.py
+
+      - name: Offline smoke test
+        run: python tests/test_core_offline.py
+
       - name: Snapshot previous counts
         id: prev_counts
         shell: bash
@@ -52,18 +58,11 @@ jobs:
 
       - name: Validate output
         id: validate
-        continue-on-error: true
         run: python3 scripts/validate_output.py
         timeout-minutes: 21
 
       - name: Record validation result
-        run: |
-          if [ "${{ steps.validate.outcome }}" = "failure" ]; then
-            echo "VALIDATION_STATUS=failed" >> $GITHUB_ENV
-            echo "::warning::Validation reported failures (non-blocking, data will still be committed for inspection)"
-          else
-            echo "VALIDATION_STATUS=passed" >> $GITHUB_ENV
-          fi
+        run: echo "VALIDATION_STATUS=passed" >> $GITHUB_ENV
 
       - name: Generate diff report
         env:
