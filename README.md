@@ -4,7 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.1.0-blue)
+![Version](https://img.shields.io/badge/version-3.1.1-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
@@ -169,6 +169,16 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 ---
 
 ## 📋 Changelog
+
+### v3.1.1
+
+- **Fix**: f-string syntax error in region header write (Python < 3.12 compatibility)
+- **Fix**: `--skip-ripe` now correctly skips cloud supplement as well
+- **New**: `--skip-cloud-supplement` flag for APNIC-only output
+- **Fix**: geolocation cache now follows `--output-dir` instead of hardcoded `output/`
+- **Fix**: `validate_output.py` reads `cloud_supplement` from correct metadata path
+- **CI**: added syntax check and offline smoke test steps; validation failures now block commit
+- **Test**: added `tests/test_core_offline.py` for network-free core regression
 
 ### v3.1.0
 
