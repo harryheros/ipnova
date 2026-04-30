@@ -15,7 +15,6 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 
 ---
 
-
 > **License Notice**: All versions of this project, including historical commits, are licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/). Commercial use of any version requires a separate written license agreement.
 > **Versioning Notice**: Previous public versions of this project may have been distributed under different license terms. All current and future releases are governed solely by the LICENSE file in this repository.
 
@@ -61,13 +60,9 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/data.json` | Structured JSON dataset (schema v3.1) |
 | `output/meta.json` | Enriched metadata with quality report |
 
-Text files include metadata headers such as:
+For current CIDR counts and IP coverage per region, see `output/meta.json`.
 
-- Region
-- Version
-- Last updated timestamp (UTC)
-- Source
-- CIDR count and total IP count
+Text files include metadata headers such as region, version, last updated timestamp (UTC), source, CIDR count and total IP count.
 
 ---
 
