@@ -1,6 +1,6 @@
 # IPNova — Routing-Aware IP Intelligence Dataset
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
+![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
@@ -14,6 +14,9 @@ IPNova is not a geolocation database.
 It is designed for routing-aware infrastructure analysis rather than end-user location inference.
 
 ---
+
+
+> **License Notice**: Licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) as of 2026-04-30. Commercial use of any version requires explicit written permission from the author.
 
 ## ✨ Features
 
@@ -98,7 +101,8 @@ python3 generate_ip_list.py
 ```bash
 python3 generate_ip_list.py --help
 python3 generate_ip_list.py -o custom_output/       # Custom output directory
-python3 generate_ip_list.py --skip-ripe              # Skip RIPE Stat queries
+python3 generate_ip_list.py --skip-ripe              # Skip all RIPE Stat queries (static blacklist only)
+python3 generate_ip_list.py --skip-cloud-supplement  # Skip CN cloud ASN supplement (APNIC-only output)
 python3 generate_ip_list.py -v                       # Verbose (debug) logging
 python3 generate_ip_list.py --version                # Show version
 ```
@@ -146,11 +150,11 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 
 ## 📊 Data Sources
 
-- APNIC delegated data  
-  https://ftp.apnic.net/stats/apnic/delegated-apnic-latest
+- **APNIC delegated data** — [https://ftp.apnic.net/stats/apnic/delegated-apnic-latest](https://ftp.apnic.net/stats/apnic/delegated-apnic-latest)  
+  Data sourced from [APNIC](https://www.apnic.net/) and used in accordance with [APNIC's terms of use](https://www.apnic.net/about-apnic/legal/terms-and-conditions/).
 
-- RIPE Stat (ASN announced prefixes)  
-  https://stat.ripe.net/
+- **RIPE Stat** (ASN announced prefixes) — [https://stat.ripe.net/](https://stat.ripe.net/)  
+  Data sourced from [RIPE NCC](https://www.ripe.net/) and used in accordance with [RIPE NCC's terms of service](https://www.ripe.net/manage-ips-and-asns/db/terms-conditions-ripe-database).
 
 ---
 
@@ -247,7 +251,7 @@ If IPNova is useful to you, consider giving it a ⭐ on GitHub.
 
 ## 📄 License
 
-MIT
+[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) — Attribution-NonCommercial-ShareAlike.
 
 ---
 
