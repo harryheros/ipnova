@@ -141,7 +141,7 @@ add ipnova_SG 47.87.196.0/22
 add ipnova_SG 47.88.128.0/17
 add ipnova_SG 47.89.72.0/22
 add ipnova_SG 47.89.88.0/22
-add ipnova_SG 47.235.0.0/22
+add ipnova_SG 47.235.2.0/23
 add ipnova_SG 47.236.0.0/15
 add ipnova_SG 47.241.0.0/16
 add ipnova_SG 47.245.64.0/18
