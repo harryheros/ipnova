@@ -5,6 +5,7 @@ Reads the generated MMDB file and verifies:
 - Sample IPs resolve to expected regions
 - All 7 APAC regions are present
 - Record structure matches expected schema
+- Database is not empty
 
 Requires: pip install maxminddb
 """
@@ -49,6 +50,13 @@ def validate(mmdb_path: str) -> bool:
     size_kb = os.path.getsize(mmdb_path) // 1024
     log.info("Validating %s (%d KB) ...", mmdb_path, size_kb)
 
+    # 空庫檢查 — 正常 MMDB 至少應有幾十 KB
+    if size_kb < 10:
+        log.error(
+            "MMDB file is too small (%d KB) — likely empty or corrupt", size_kb
+        )
+        return False
+
     passed = 0
     failed = 0
     missing_regions = []
@@ -91,8 +99,15 @@ def validate(mmdb_path: str) -> bool:
         passed, failed, len(missing_regions)
     )
 
-    # Pass if majority of samples hit correctly
-    return failed == 0 or passed > failed
+    # 嚴格判斷：必須有命中，不能有缺失區域，且失敗不能超過通過
+    if passed == 0:
+        log.error("Validation failed: no sample IPs matched any region")
+        return False
+
+    if missing_regions:
+        log.warning("Validation warning: %d regions have no hits", len(missing_regions))
+
+    return passed > 0 and failed == 0
 
 
 def print_sample(mmdb_path: str, ip: str):
