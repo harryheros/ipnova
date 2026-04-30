@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
+import bisect
+import ipaddress
 import json
 import socket
-socket.setdefaulttimeout(5)
 import sys
-import os
-import ipaddress
-import bisect
 from pathlib import Path
+
+socket.setdefaulttimeout(5)
 
 ROOT = Path(__file__).resolve().parent.parent
 OUTPUT_DIR = ROOT / "output"
