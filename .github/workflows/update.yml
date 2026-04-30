@@ -35,6 +35,30 @@ jobs:
       - name: Offline smoke test
         run: python tests/test_core_offline.py
 
+      - name: Read current version
+        id: version
+        run: |
+          VERSION=$(python3 -c "
+          import re
+          with open('generate_ip_list.py') as f:
+              content = f.read()
+          m = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', content)
+          print(m.group(1) if m else '0.0.0')
+          ")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Current version: $VERSION"
+
+      - name: Check if release already exists
+        id: check_release
+        run: |
+          TAG="v${{ steps.version.outputs.version }}"
+          if git tag | grep -q "^${TAG}$"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Snapshot previous counts
         id: prev_counts
         shell: bash
@@ -54,7 +78,7 @@ jobs:
           fi
 
       - name: Install format dependencies
-        run: pip install mmdb-writer maxminddb
+        run: pip install mmdb-writer netaddr maxminddb
 
       - name: Generate dataset
         run: python3 generate_ip_list.py
@@ -129,6 +153,57 @@ jobs:
             git commit -m "chore: update dataset $(date -u '+%Y-%m-%d')" -m "$DIFF_SUMMARY"
             git push
           fi
+
+      - name: Create GitHub Release
+        if: steps.check_release.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.version.outputs.tag }}
+          name: ${{ steps.version.outputs.tag }}
+          draft: false
+          prerelease: false
+          generate_release_notes: false
+          body: |
+            ## IPNova ${{ steps.version.outputs.tag }}
+
+            Automated dataset release.
+
+            ### Dataset Coverage
+            - Regions: CN / HK / TW / MO / JP / KR / SG
+            - Source: APNIC delegated + BGP multi-source fusion
+
+            ### Available Formats
+            | File | Description |
+            |------|-------------|
+            | `ipnova-apac.mmdb` | MaxMind-compatible MMDB — drop-in GeoLite2 replacement for APAC |
+            | `CN.txt` / `HK.txt` / ... | Per-region plain text CIDR lists |
+            | `regions.json` | All regions combined JSON |
+            | `iptables/{CC}.ipset` | iptables ipset restore format |
+            | `nginx/{CC}.conf` | Nginx geo module format |
+
+            ### Usage (MMDB)
+            Compatible with Clash, Surge, V2Ray, Xray, Nginx, and any MaxMind GeoIP2 tool.
+            ```yaml
+            # Clash example
+            geoip:
+              path: ipnova-apac.mmdb
+            ```
+
+            ### License
+            CC BY-NC-SA 4.0 — Commercial use requires explicit written authorization.
+            See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md).
+          files: |
+            output/ipnova-apac.mmdb
+            output/CN.txt
+            output/HK.txt
+            output/TW.txt
+            output/MO.txt
+            output/JP.txt
+            output/KR.txt
+            output/SG.txt
+            output/regions.json
+            output/data.json
+            output/meta.json
 
   notify-failure:
     runs-on: ubuntu-latest

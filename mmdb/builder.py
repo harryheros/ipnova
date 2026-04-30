@@ -4,10 +4,9 @@ mmdb/builder.py — IPNova MMDB builder
 Reads normalized region data and writes a MaxMind-compatible
 MMDB database to the specified output path.
 
-Requires: pip install mmdb-writer maxminddb
+Requires: pip install mmdb-writer netaddr maxminddb
 """
 
-import ipaddress
 import logging
 import os
 
@@ -26,18 +25,19 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
         Path to the generated MMDB file.
 
     Raises:
-        ImportError: if mmdb-writer is not installed.
+        ImportError: if mmdb-writer or netaddr is not installed.
     """
     try:
         from mmdb_writer import MMDBWriter
+        from netaddr import IPSet
     except ImportError:
         raise ImportError(
-            "mmdb-writer is not installed.\n"
-            "Install with: pip install mmdb-writer maxminddb"
+            "Required packages not installed.\n"
+            "Install with: pip install mmdb-writer netaddr maxminddb"
         )
 
     from mmdb.schema import (
-        DATABASE_TYPE, DATABASE_DESCRIPTION, DATABASE_LANGUAGES, APAC_REGIONS
+        DATABASE_TYPE, DATABASE_DESCRIPTION, DATABASE_LANGUAGES, make_record
     )
 
     writer = MMDBWriter(
@@ -52,30 +52,30 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
 
     for cc, payload in normalized_data.items():
         cidrs = payload.get("cidrs", [])
+        if not cidrs:
+            log.warning("  %s: no CIDRs, skipping", cc)
+            continue
 
-        # 使用純 Python dict，與 mmdb-writer API 完全兼容
-        record = {
-            "country": cc,
-            "country_name": APAC_REGIONS.get(cc, cc),
-            "continent": "AS",
-            "source": "ipnova",
-        }
+        record = make_record(cc)
 
-        for cidr in cidrs:
-            try:
-                network = ipaddress.ip_network(cidr, strict=False)
-                writer.insert_network(network, record)
-                total_inserted += 1
-            except ValueError as e:
-                log.debug("Skipping invalid CIDR %s (%s): %s", cidr, cc, e)
-                total_skipped += 1
-            except Exception as e:
-                log.debug("Insert error for %s (%s): %s", cidr, cc, e)
-                total_skipped += 1
+        try:
+            writer.insert_network(IPSet(cidrs), record)
+            total_inserted += len(cidrs)
+            log.info(
+                "  %s (%s): %d CIDRs inserted",
+                cc, payload.get("region_name", cc), len(cidrs)
+            )
+        except Exception as e:
+            log.warning("  %s: insert failed — %s", cc, e)
+            total_skipped += len(cidrs)
 
-        log.info(
-            "  %s (%s): %d CIDRs inserted",
-            cc, payload.get("region_name", cc), len(cidrs)
+    if total_skipped > 0:
+        log.warning("  %d CIDRs skipped due to errors", total_skipped)
+
+    if total_inserted == 0:
+        raise RuntimeError(
+            "MMDB build failed: 0 CIDRs inserted. "
+            "Check mmdb-writer and netaddr versions."
         )
 
     out_path = os.path.join(output_dir, "ipnova-apac.mmdb")
@@ -87,7 +87,5 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
         "  ipnova-apac.mmdb — %d CIDRs, %d regions, %d KB",
         total_inserted, len(normalized_data), size_kb
     )
-    if total_skipped:
-        log.warning("  %d CIDRs skipped", total_skipped)
 
     return out_path
