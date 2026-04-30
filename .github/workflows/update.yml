@@ -54,7 +54,7 @@ jobs:
           fi
 
       - name: Install format dependencies
-        run: pip install mmdbwriter
+        run: pip install mmdb-writer maxminddb
 
       - name: Generate dataset
         run: python3 generate_ip_list.py

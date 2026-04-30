@@ -3,15 +3,17 @@
 build_formats.py — IPNova extended format generator
 
 Generates additional output formats from ipnova's data.json:
-  - ipnova-apac.mmdb   : MaxMind-compatible MMDB database (requires mmdbwriter)
-  - regions.json       : Per-region JSON (zero dependencies)
-  - nginx/             : Nginx geo module format (zero dependencies)
-  - iptables/          : iptables restore format (zero dependencies)
+  - ipnova-apac.mmdb   : MaxMind-compatible MMDB (via mmdb/ module)
+  - regions.json       : Per-region combined JSON (zero dependencies)
+  - json/{CC}.json     : Per-region individual JSON (zero dependencies)
+  - nginx/{CC}.conf    : Nginx geo module format (zero dependencies)
+  - iptables/{CC}.ipset: iptables ipset restore format (zero dependencies)
 
 Usage:
     python3 scripts/build_formats.py [--output-dir output] [--skip-mmdb] [-v]
 
 Run after generate_ip_list.py.
+Requires for MMDB: pip install mmdb-writer maxminddb
 """
 
 import argparse
@@ -47,71 +49,29 @@ def load_data_json(output_dir):
 
 
 # ================================================================
-# Format 1: MMDB
+# Format 1: MMDB (via mmdb/ module)
 # ================================================================
 
 def build_mmdb(data, output_dir):
-    """
-    Build a MaxMind-compatible MMDB database from ipnova data.
-    Requires: pip install mmdbwriter
-    """
+    """Build ipnova-apac.mmdb via mmdb.builder."""
+    # Add project root to path so mmdb/ module is importable
+    sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
     try:
-        import mmdbwriter
-        import mmdbwriter.inserter
-        import mmdbwriter.types
-        from ipaddress import ip_network
-    except ImportError:
-        log.warning(
-            "mmdbwriter not installed — skipping MMDB output.\n"
-            "  Install with: pip install mmdbwriter"
-        )
+        from mmdb.builder import build
+        from mmdb.validator import validate
+    except ImportError as e:
+        log.warning("mmdb module error: %s", e)
         return False
 
-    log.info("Building ipnova-apac.mmdb ...")
-
-    writer = mmdbwriter.MMDBWriter(
-        ip_version=4,
-        database_type="ipnova-GeoIP2-Country",
-        description={
-            "en": (
-                "IPNova Asia-Pacific IPv4 database — "
-                "routing-aware CIDR intelligence for CN/HK/TW/MO/JP/KR/SG"
-            )
-        },
-        languages=["en"],
-    )
-
-    regions = data.get("regions", {})
-    total = 0
-
-    for cc, payload in regions.items():
-        for cidr in payload.get("cidrs", []):
-            try:
-                network = ip_network(cidr, strict=False)
-                writer.insert(
-                    network,
-                    mmdbwriter.types.Map({
-                        "country": mmdbwriter.types.Map({
-                            "iso_code": mmdbwriter.types.UTF8String(cc),
-                        }),
-                        "continent": mmdbwriter.types.Map({
-                            "code": mmdbwriter.types.UTF8String("AS"),
-                        }),
-                    }),
-                )
-                total += 1
-            except ValueError as e:
-                log.debug("Skipping invalid CIDR %s: %s", cidr, e)
-
-    out_path = os.path.join(output_dir, "ipnova-apac.mmdb")
-    writer.to_db_file(out_path)
-
-    size_kb = os.path.getsize(out_path) // 1024
-    log.info(
-        "  ipnova-apac.mmdb — %d CIDRs across %d regions (%d KB)",
-        total, len(regions), size_kb
-    )
-    return True
+    try:
+        out_path = build(data.get("regions", {}), output_dir)
+        validate(out_path)
+        return True
+    except ImportError as e:
+        log.warning("%s", e)
+        log.warning("Skipping MMDB — install with: pip install mmdb-writer maxminddb")
+        return False
 
 
 # ================================================================
@@ -119,10 +79,7 @@ def build_mmdb(data, output_dir):
 # ================================================================
 
 def build_json_per_region(data, output_dir):
-    """
-    Build per-region JSON files and a combined regions.json.
-    Zero external dependencies.
-    """
+    """Build per-region JSON files and a combined regions.json."""
     json_dir = os.path.join(output_dir, "json")
     os.makedirs(json_dir, exist_ok=True)
 
@@ -145,29 +102,18 @@ def build_json_per_region(data, output_dir):
             "generated_at": generated_at,
             "cidrs": payload.get("cidrs", []),
         }
-
-        # Per-region file
         out_path = os.path.join(json_dir, f"{cc}.json")
         with open(out_path, "w", encoding="utf-8") as f:
             json.dump(region_data, f, indent=2, ensure_ascii=False)
             f.write("\n")
-
         combined["regions"][cc] = region_data
-        log.info(
-            "  json/%s.json — %d CIDRs",
-            cc, payload.get("total_cidrs", 0)
-        )
+        log.info("  json/%s.json — %d CIDRs", cc, payload.get("total_cidrs", 0))
 
-    # Combined file
     combined_path = os.path.join(output_dir, "regions.json")
     with open(combined_path, "w", encoding="utf-8") as f:
         json.dump(combined, f, indent=2, ensure_ascii=False)
         f.write("\n")
-
-    log.info(
-        "  regions.json — all %d regions combined",
-        len(regions)
-    )
+    log.info("  regions.json — all %d regions combined", len(regions))
     return True
 
 
@@ -176,19 +122,7 @@ def build_json_per_region(data, output_dir):
 # ================================================================
 
 def build_nginx(data, output_dir):
-    """
-    Build Nginx geo module format files.
-    Compatible with ngx_http_geo_module (no GeoIP2 required).
-
-    Usage in nginx.conf:
-        geo $ipnova_country {
-            default "";
-            include /etc/nginx/ipnova/CN.conf;
-            include /etc/nginx/ipnova/HK.conf;
-        }
-
-    Zero external dependencies.
-    """
+    """Build Nginx geo module format files."""
     nginx_dir = os.path.join(output_dir, "nginx")
     os.makedirs(nginx_dir, exist_ok=True)
 
@@ -200,14 +134,13 @@ def build_nginx(data, output_dir):
     for cc, payload in regions.items():
         out_path = os.path.join(nginx_dir, f"{cc}.conf")
         cidrs = payload.get("cidrs", [])
-
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(f"# IPNova — Nginx geo module — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
             f.write(f"# Project   : https://github.com/harryheros/ipnova\n")
             f.write("#\n")
-            f.write(f"# Usage:\n")
+            f.write(f"# Usage in nginx.conf:\n")
             f.write(f"#   geo $ipnova_country {{\n")
             f.write(f"#       default \"\";\n")
             f.write(f"#       include /path/to/ipnova/nginx/{cc}.conf;\n")
@@ -215,29 +148,16 @@ def build_nginx(data, output_dir):
             f.write("#\n")
             for cidr in cidrs:
                 f.write(f"{cidr} {cc};\n")
-
-        log.info(
-            "  nginx/%s.conf — %d CIDRs",
-            cc, len(cidrs)
-        )
+        log.info("  nginx/%s.conf — %d CIDRs", cc, len(cidrs))
     return True
 
 
 # ================================================================
-# Format 4: iptables
+# Format 4: iptables ipset
 # ================================================================
 
 def build_iptables(data, output_dir):
-    """
-    Build iptables-restore compatible scripts.
-    Creates an ipset-based approach for efficient IP matching.
-
-    Usage:
-        ipset restore < output/iptables/CN.ipset
-        iptables -I INPUT -m set --match-set ipnova_CN src -j ACCEPT
-
-    Zero external dependencies.
-    """
+    """Build iptables ipset restore format files."""
     ipt_dir = os.path.join(output_dir, "iptables")
     os.makedirs(ipt_dir, exist_ok=True)
 
@@ -249,7 +169,6 @@ def build_iptables(data, output_dir):
     for cc, payload in regions.items():
         out_path = os.path.join(ipt_dir, f"{cc}.ipset")
         cidrs = payload.get("cidrs", [])
-
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(f"# IPNova — ipset restore — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
@@ -263,11 +182,7 @@ def build_iptables(data, output_dir):
             f.write(f"create ipnova_{cc} hash:net family inet hashsize 4096 maxelem 65536\n")
             for cidr in cidrs:
                 f.write(f"add ipnova_{cc} {cidr}\n")
-
-        log.info(
-            "  iptables/%s.ipset — %d CIDRs",
-            cc, len(cidrs)
-        )
+        log.info("  iptables/%s.ipset — %d CIDRs", cc, len(cidrs))
     return True
 
 
@@ -288,7 +203,7 @@ def build_parser():
     parser.add_argument(
         "--skip-mmdb",
         action="store_true",
-        help="Skip MMDB generation (use if mmdbwriter is not installed)",
+        help="Skip MMDB generation",
     )
     parser.add_argument(
         "--skip-nginx",
