@@ -35,20 +35,6 @@ jobs:
       - name: Offline smoke test
         run: python tests/test_core_offline.py
 
-      - name: Read current version
-        id: version
-        run: python3 scripts/read_version.py
-
-      - name: Check if release already exists
-        id: check_release
-        run: |
-          TAG="v${{ steps.version.outputs.version }}"
-          if git tag | grep -q "^${TAG}$"; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-
       - name: Snapshot previous counts
         id: prev_counts
         shell: bash
@@ -143,59 +129,6 @@ jobs:
             git commit -m "chore: update dataset $(date -u '+%Y-%m-%d')" -m "$DIFF_SUMMARY"
             git push
           fi
-
-      - name: Create GitHub Release
-        if: steps.check_release.outputs.exists == 'false'
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ steps.version.outputs.tag }}
-          name: ${{ steps.version.outputs.tag }}
-          draft: false
-          prerelease: false
-          generate_release_notes: false
-          body: |
-            ## IPNova ${{ steps.version.outputs.tag }}
-
-            Automated dataset release.
-
-            ### Dataset Coverage
-            - Regions: CN / HK / TW / MO / JP / KR / SG
-            - Source: APNIC delegated + BGP multi-source fusion
-
-            ### Core Assets
-            - `ipnova-apac.mmdb` — MaxMind-compatible APAC GeoIP database
-            - `regions.json` — Structured all-region JSON dataset
-            - `meta.json` — Dataset metadata and regional counts
-            - `ipnova-formats.tar.gz` — TXT / JSON / Nginx / iptables compatibility bundle
-            - `SHA256SUMS` — Integrity verification checksums
-
-            ### Legacy Signature Assets
-            Individual `CN.txt` / `HK.txt` / `TW.txt` / etc remain available as IPNova's signature regional rule sets.
-
-            ### Usage (MMDB)
-            Compatible with Clash, Surge, V2Ray, Xray, Nginx, and any MaxMind GeoIP2 tool.
-            ```yaml
-            # Clash example
-            geoip:
-              path: ipnova-apac.mmdb
-            ```
-
-            ### License
-            CC BY-NC-SA 4.0 — Commercial use requires explicit written authorization.
-            See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md).
-          files: |
-            output/ipnova-apac.mmdb
-            output/regions.json
-            output/meta.json
-            output/ipnova-formats.tar.gz
-            output/SHA256SUMS
-            output/CN.txt
-            output/HK.txt
-            output/TW.txt
-            output/MO.txt
-            output/JP.txt
-            output/KR.txt
-            output/SG.txt
 
   notify-failure:
     runs-on: ubuntu-latest

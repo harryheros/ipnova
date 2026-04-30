@@ -186,7 +186,7 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 - **New**: `output/regions.json` + `output/json/{CC}.json` — per-region JSON outputs
 - **New**: `output/nginx/{CC}.conf` — Nginx geo module format
 - **New**: `output/iptables/{CC}.ipset` — iptables ipset restore format
-- **CI**: added `mmdb-writer` dependency install step; `build_formats.py` runs automatically after each dataset update
+- **CI**: added `mmdbwriter` dependency install step; `build_formats.py` runs automatically after each dataset update
 
 ### v3.1.1
 
