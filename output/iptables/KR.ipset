@@ -701,7 +701,7 @@ add ipnova_KR 134.75.0.0/16
 add ipnova_KR 137.68.0.0/16
 add ipnova_KR 138.252.134.0/23
 add ipnova_KR 139.5.224.0/22
-add ipnova_KR 139.95.128.0/22
+add ipnova_KR 139.95.130.0/23
 add ipnova_KR 139.150.0.0/16
 add ipnova_KR 141.223.0.0/16
 add ipnova_KR 143.248.0.0/16
