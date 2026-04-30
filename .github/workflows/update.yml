@@ -37,17 +37,7 @@ jobs:
 
       - name: Read current version
         id: version
-        run: |
-          VERSION=$(python3 -c "
-          import re
-          with open('generate_ip_list.py') as f:
-              content = f.read()
-          m = re.search(r'__version__\s*=\s*["\']([^"\']+)["\']', content)
-          print(m.group(1) if m else '0.0.0')
-          ")
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "tag=v$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Current version: $VERSION"
+        run: python3 scripts/read_version.py
 
       - name: Check if release already exists
         id: check_release
