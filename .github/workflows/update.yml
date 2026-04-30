@@ -68,7 +68,7 @@ jobs:
           fi
 
       - name: Install format dependencies
-        run: pip install mmdb-writer netaddr maxminddb
+        run: pip install -r requirements.txt
 
       - name: Generate dataset
         run: python3 generate_ip_list.py
@@ -162,14 +162,15 @@ jobs:
             - Regions: CN / HK / TW / MO / JP / KR / SG
             - Source: APNIC delegated + BGP multi-source fusion
 
-            ### Available Formats
-            | File | Description |
-            |------|-------------|
-            | `ipnova-apac.mmdb` | MaxMind-compatible MMDB — drop-in GeoLite2 replacement for APAC |
-            | `CN.txt` / `HK.txt` / ... | Per-region plain text CIDR lists |
-            | `regions.json` | All regions combined JSON |
-            | `iptables/{CC}.ipset` | iptables ipset restore format |
-            | `nginx/{CC}.conf` | Nginx geo module format |
+            ### Core Assets
+            - `ipnova-apac.mmdb` — MaxMind-compatible APAC GeoIP database
+            - `regions.json` — Structured all-region JSON dataset
+            - `meta.json` — Dataset metadata and regional counts
+            - `ipnova-formats.tar.gz` — TXT / JSON / Nginx / iptables compatibility bundle
+            - `SHA256SUMS` — Integrity verification checksums
+
+            ### Legacy Signature Assets
+            Individual `CN.txt` / `HK.txt` / `TW.txt` / etc remain available as IPNova's signature regional rule sets.
 
             ### Usage (MMDB)
             Compatible with Clash, Surge, V2Ray, Xray, Nginx, and any MaxMind GeoIP2 tool.
@@ -194,6 +195,11 @@ jobs:
             output/regions.json
             output/data.json
             output/meta.json
+            output/ipnova-formats.tar.gz
+            output/SHA256SUMS
+            output/json/*.json
+            output/nginx/*.conf
+            output/iptables/*.ipset
 
   notify-failure:
     runs-on: ubuntu-latest

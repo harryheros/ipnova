@@ -13,7 +13,7 @@ Usage:
     python3 scripts/build_formats.py [--output-dir output] [--skip-mmdb] [-v]
 
 Run after generate_ip_list.py.
-Requires for MMDB: pip install mmdb-writer maxminddb
+Requires for MMDB: pip install mmdb-writer netaddr maxminddb
 """
 
 import argparse
@@ -22,6 +22,8 @@ import logging
 import os
 import sys
 import datetime
+import tarfile
+import hashlib
 
 log = logging.getLogger("ipnova.formats")
 
@@ -66,11 +68,15 @@ def build_mmdb(data, output_dir):
 
     try:
         out_path = build(data.get("regions", {}), output_dir)
-        validate(out_path)
+        if not validate(out_path):
+            raise RuntimeError("MMDB validation failed")
         return True
     except ImportError as e:
         log.warning("%s", e)
-        log.warning("Skipping MMDB — install with: pip install mmdb-writer maxminddb")
+        log.warning("Skipping MMDB — install with: pip install mmdb-writer netaddr maxminddb")
+        return False
+    except RuntimeError as e:
+        log.error("%s", e)
         return False
 
 
@@ -185,6 +191,49 @@ def build_iptables(data, output_dir):
         log.info("  iptables/%s.ipset — %d CIDRs", cc, len(cidrs))
     return True
 
+
+
+
+# ================================================================
+# Packaging: commercial release assets
+# ================================================================
+
+def create_formats_archive(output_dir):
+    """Bundle compatibility formats into ipnova-formats.tar.gz."""
+    archive_path = os.path.join(output_dir, 'ipnova-formats.tar.gz')
+
+    with tarfile.open(archive_path, 'w:gz') as tar:
+        # Root TXT signature assets
+        for name in os.listdir(output_dir):
+            if name.endswith('.txt'):
+                tar.add(os.path.join(output_dir, name), arcname=f'txt/{name}')
+
+        # Structured compatibility directories
+        for name in ['json', 'nginx', 'iptables']:
+            path = os.path.join(output_dir, name)
+            if os.path.exists(path):
+                tar.add(path, arcname=name)
+
+    log.info('  ipnova-formats.tar.gz — bundled compatibility formats')
+    return archive_path
+
+
+def create_sha256sums(output_dir, files):
+    """Generate SHA256SUMS for core release assets."""
+    sums_path = os.path.join(output_dir, 'SHA256SUMS')
+
+    with open(sums_path, 'w', encoding='utf-8') as f:
+        for file_path in files:
+            if not os.path.exists(file_path):
+                continue
+            h = hashlib.sha256()
+            with open(file_path, 'rb') as fp:
+                for chunk in iter(lambda: fp.read(1024 * 1024), b''):
+                    h.update(chunk)
+            f.write(f'{h.hexdigest()}  {os.path.basename(file_path)}\n')
+
+    log.info('  SHA256SUMS — generated checksums')
+    return sums_path
 
 # ================================================================
 # CLI

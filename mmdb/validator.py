@@ -105,7 +105,8 @@ def validate(mmdb_path: str) -> bool:
         return False
 
     if missing_regions:
-        log.warning("Validation warning: %d regions have no hits", len(missing_regions))
+        log.error("Validation failed: %d regions have no hits", len(missing_regions))
+        return False
 
     return passed > 0 and failed == 0
 
