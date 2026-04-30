@@ -270,6 +270,11 @@ def build_parser():
         help="Skip per-region JSON generation",
     )
     parser.add_argument(
+        "--release-assets",
+        action="store_true",
+        help="Generate release helper assets: ipnova-formats.tar.gz and SHA256SUMS",
+    )
+    parser.add_argument(
         "-v", "--verbose",
         action="store_true",
         help="Enable debug-level logging",
@@ -317,6 +322,19 @@ def main():
         results["iptables"] = build_iptables(data, args.output_dir)
         log.info("")
 
+    if args.release_assets:
+        log.info("--- Release helper assets ---")
+        archive_path = create_formats_archive(args.output_dir)
+        core_files = [
+            os.path.join(args.output_dir, "ipnova-apac.mmdb"),
+            os.path.join(args.output_dir, "regions.json"),
+            os.path.join(args.output_dir, "meta.json"),
+            archive_path,
+        ]
+        create_sha256sums(args.output_dir, core_files)
+        results["release_assets"] = True
+        log.info("")
+
     log.info("Done.")
     log.info("")
     log.info("Output summary:")
@@ -328,6 +346,8 @@ def main():
         log.info("  %-20s output/nginx/{CC}.conf", "Nginx:")
     if results.get("iptables"):
         log.info("  %-20s output/iptables/{CC}.ipset", "iptables:")
+    if results.get("release_assets"):
+        log.info("  %-20s output/ipnova-formats.tar.gz + output/SHA256SUMS", "Release assets:")
 
 
 if __name__ == "__main__":

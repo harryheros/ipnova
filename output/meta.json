@@ -1,8 +1,8 @@
 {
   "schema_version": "3.1",
   "project": "ipnova",
-  "version": "3.2.0",
-  "generated_at": "2026-04-30T18:16:53.756783+00:00",
+  "version": "3.1.1",
+  "generated_at": "2026-04-30T14:25:50.356826+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -39,8 +39,8 @@
       "ips": 112519936
     },
     "SG": {
-      "cidrs": 1611,
-      "ips": 26958336
+      "cidrs": 1610,
+      "ips": 26957824
     }
   },
   "exclusion": {
@@ -74,14 +74,14 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21461,
-    "source_networks": 21461,
-    "cidrs_kept": 21529,
+    "lines_processed": 21460,
+    "source_networks": 21460,
+    "cidrs_kept": 21528,
     "cidrs_excluded": 154,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22225,
-    "prefixes_after_collapse": 14581,
+    "prefixes_before_collapse": 22224,
+    "prefixes_after_collapse": 14580,
     "cloud_supplement": {
       "prefixes_fetched": 5777,
       "kept_per_region": {
@@ -98,7 +98,7 @@
       "l1_success": 0,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 6.843,
+      "duration_seconds": 5.353,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "77cc612ab19563773cf073a24215dae214ec215f8733286c9503bbc67488de68"
+    "data_json_sha256": "95bc3ca7175b820645d6a22d5e7fa69de22e57957a80a44e0d32a109fc0d09c5"
   }
 }
