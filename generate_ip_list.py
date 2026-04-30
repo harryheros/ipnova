@@ -857,6 +857,36 @@ def parse_and_cleanse(raw_data, excluded_networks):
     return result, stats
 
 
+
+def enforce_mutual_exclusivity(region_data):
+    """Make region CIDR sets mutually exclusive before final normalization.
+
+    Earlier TARGET_REGIONS entries have precedence. This keeps APAC outputs
+    deterministic across TXT, JSON, Nginx, ipset and MMDB consumers, which may
+    otherwise disagree when two regions contain overlapping CIDRs.
+    """
+    cleaned = {}
+    owned = []
+
+    for cc in TARGET_REGIONS:
+        cleaned_nets = []
+        for net in region_data.get(cc, []):
+            parts = subtract_excluded_from_network(net, owned) if owned else [net]
+            cleaned_nets.extend(parts)
+
+        collapsed = sorted(
+            ipaddress.collapse_addresses(cleaned_nets),
+            key=lambda n: int(n.network_address),
+        )
+        cleaned[cc] = collapsed
+        owned.extend(collapsed)
+        owned = sorted(
+            ipaddress.collapse_addresses(owned),
+            key=lambda n: int(n.network_address),
+        )
+
+    return cleaned
+
 # ================================================================
 # Normalization & aggregation
 # ================================================================
@@ -1108,6 +1138,7 @@ def main():
 
     # Step 4: Normalize and aggregate
     with StepTimer("Normalize and aggregate"):
+        region_data = enforce_mutual_exclusivity(region_data)
         normalized_data = normalize_region_data(region_data)
     parse_stats["prefixes_after_collapse"] = sum(
         v.get("total_cidrs", 0) for v in normalized_data.values()
