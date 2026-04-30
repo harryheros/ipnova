@@ -21,7 +21,7 @@ from collections import defaultdict
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.1.0"
+__version__ = "3.1.1"
 
 # ================================================================
 # Logging
@@ -143,7 +143,7 @@ RIPE_REQUEST_INTERVAL = 1.5  # seconds between RIPE Stat requests
 # ================================================================
 # HTTP helpers with retry
 # ================================================================
-def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/2.1",
+def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/3.1",
              strict_decode=False, return_content_type=False):
     """
     Fetch URL with exponential backoff retry.
@@ -544,11 +544,17 @@ def _load_geoloc_cache():
     return _GEOLOC_CACHE
 
 
+def set_geoloc_cache_path(output_dir):
+    """Bind persistent geolocation cache to the selected output directory."""
+    global _GEOLOC_CACHE_PATH
+    _GEOLOC_CACHE_PATH = os.path.join(output_dir, ".geoloc_cache.json")
+
+
 def _save_geoloc_cache():
     if _GEOLOC_CACHE is None:
         return
     try:
-        os.makedirs("output", exist_ok=True)
+        os.makedirs(os.path.dirname(_GEOLOC_CACHE_PATH) or ".", exist_ok=True)
         payload = {
             "version": 2,
             "rule_version": _GEOLOC_CACHE_RULE_VERSION,
@@ -890,7 +896,10 @@ def save_txt_outputs(normalized_data, output_dir="output"):
             f.write("# Source      : APNIC delegated + BGP multi-source fusion\n")
             f.write(f"# Total CIDRs : {payload['total_cidrs']}\n")
             f.write(f"# Total IPs   : {payload['total_ips']:,}\n")
-            f.write(f"# Note        : Each region is separated — this file contains {payload["region_name"]} only\n")
+            f.write(
+                f"# Note        : Each region is separated — "
+                f"this file contains {payload['region_name']} only\n"
+            )
             f.write("# " + "=" * 48 + "\n")
             for cidr in payload["cidrs"]:
                 f.write(cidr + "\n")
@@ -990,7 +999,12 @@ def build_parser():
     parser.add_argument(
         "--skip-ripe",
         action="store_true",
-        help="Skip RIPE Stat ASN queries (use static blacklist only)",
+        help="Skip all RIPE Stat queries (static blacklist only, no cloud supplement)",
+    )
+    parser.add_argument(
+        "--skip-cloud-supplement",
+        action="store_true",
+        help="Skip CN cloud ASN supplement (APNIC-only output)",
     )
     parser.add_argument(
         "--skip-sanity",
@@ -1017,6 +1031,7 @@ def main():
     parser = build_parser()
     args = parser.parse_args()
     setup_logging(verbose=args.verbose)
+    set_geoloc_cache_path(args.output_dir)
 
     log.info("=" * 55)
     log.info("  ipnova %s - High-quality IP database generator", __version__)
@@ -1039,10 +1054,19 @@ def main():
         region_data, parse_stats = parse_and_cleanse(raw_data, excluded_networks)
 
     # Step 3.5: CN cloud ASN supplement
-    supp, supp_stats = build_cloud_supplementary_networks(region_data)
-    for cc, nets in supp.items():
-        region_data.setdefault(cc, []).extend(nets)
-    parse_stats["cloud_supplement"] = supp_stats
+    if args.skip_ripe or args.skip_cloud_supplement:
+        log.info("Skipping cloud ASN supplement")
+        parse_stats["cloud_supplement"] = {
+            "skipped": True,
+            "reason": "skip_ripe" if args.skip_ripe else "skip_cloud_supplement",
+        }
+    else:
+        with StepTimer("Cloud ASN supplement"):
+            supp, supp_stats = build_cloud_supplementary_networks(region_data)
+        for cc, nets in supp.items():
+            region_data.setdefault(cc, []).extend(nets)
+        parse_stats["cloud_supplement"] = supp_stats
+
     parse_stats["prefixes_before_collapse"] = sum(len(v) for v in region_data.values())
 
     # Step 4: Normalize and aggregate
