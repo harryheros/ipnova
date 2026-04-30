@@ -185,6 +185,10 @@ jobs:
             See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md).
           files: |
             output/ipnova-apac.mmdb
+            output/regions.json
+            output/meta.json
+            output/ipnova-formats.tar.gz
+            output/SHA256SUMS
             output/CN.txt
             output/HK.txt
             output/TW.txt
@@ -192,14 +196,6 @@ jobs:
             output/JP.txt
             output/KR.txt
             output/SG.txt
-            output/regions.json
-            output/data.json
-            output/meta.json
-            output/ipnova-formats.tar.gz
-            output/SHA256SUMS
-            output/json/*.json
-            output/nginx/*.conf
-            output/iptables/*.ipset
 
   notify-failure:
     runs-on: ubuntu-latest

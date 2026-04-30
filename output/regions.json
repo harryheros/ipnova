@@ -2,14 +2,14 @@
   "schema_version": "3.1",
   "project": "ipnova",
   "version": "3.2.0",
-  "generated_at": "2026-04-30T18:04:11.943587+00:00",
+  "generated_at": "2026-04-30T17:41:45.314993+00:00",
   "regions": {
     "CN": {
       "region": "CN",
       "region_name": "China (Mainland)",
       "total_cidrs": 5502,
       "total_ips": 342977536,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "1.0.1.0/24",
         "1.0.2.0/23",
@@ -5520,7 +5520,7 @@
       "region_name": "Hong Kong",
       "total_cidrs": 2472,
       "total_ips": 15050816,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "1.36.0.0/16",
         "1.64.0.0/15",
@@ -8001,7 +8001,7 @@
       "region_name": "Taiwan",
       "total_cidrs": 737,
       "total_ips": 35707392,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "1.34.0.0/15",
         "1.160.0.0/12",
@@ -8747,7 +8747,7 @@
       "region_name": "Macau",
       "total_cidrs": 30,
       "total_ips": 339456,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "27.109.128.0/17",
         "43.247.24.0/22",
@@ -8786,7 +8786,7 @@
       "region_name": "Japan",
       "total_cidrs": 3186,
       "total_ips": 188634624,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "1.0.16.0/20",
         "1.0.64.0/18",
@@ -11981,7 +11981,7 @@
       "region_name": "South Korea",
       "total_cidrs": 1043,
       "total_ips": 112519936,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "1.11.0.0/16",
         "1.16.0.0/14",
@@ -13033,7 +13033,7 @@
       "region_name": "Singapore",
       "total_cidrs": 1611,
       "total_ips": 26958336,
-      "generated_at": "2026-04-30T18:04:11.943587+00:00",
+      "generated_at": "2026-04-30T17:41:45.314993+00:00",
       "cidrs": [
         "1.21.224.0/19",
         "1.32.128.0/17",
