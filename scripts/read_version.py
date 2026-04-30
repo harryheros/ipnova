@@ -2,7 +2,6 @@
 """Read __version__ from generate_ip_list.py and write to GITHUB_OUTPUT."""
 import re
 import os
-import sys
 
 with open("generate_ip_list.py", encoding="utf-8") as f:
     content = f.read()
