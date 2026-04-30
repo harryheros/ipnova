@@ -35,12 +35,56 @@ def load_cidrs(path: Path):
             if not line or line.startswith("#"):
                 continue
             nets.append(ipaddress.ip_network(line, strict=False))
-    return nets
+    # Sort by network address for binary-search pre-filtering
+    return sorted(nets, key=lambda n: int(n.network_address))
 
 
 def ip_in_region(ip: str, nets):
+    """Check if IP falls within any of the sorted network list.
+    Uses binary search pre-filtering for O(log n) candidate selection.
+    """
+    import bisect
     ip_obj = ipaddress.ip_address(ip)
-    return any(ip_obj in net for net in nets)
+    ip_int = int(ip_obj)
+    # Find insertion point — all nets with network_address <= ip_int are candidates
+    keys = [int(n.network_address) for n in nets]
+    idx = bisect.bisect_right(keys, ip_int)
+    # Check backwards from insertion point (nearest candidates first)
+    for i in range(min(idx, len(nets)) - 1, max(idx - 512, -1), -1):
+        if ip_obj in nets[i]:
+            return True
+        # Early exit: if network address is way before our IP, stop
+        if ip_int - int(nets[i].network_address) > 0x1000000:  # >16M gap
+            break
+    return False
+
+
+
+def find_cross_region_overlaps(region_nets: dict):
+    """Return examples of CIDRs assigned to more than one region."""
+    overlaps = []
+    regions = sorted(region_nets)
+
+    for idx, left_cc in enumerate(regions):
+        left = region_nets[left_cc]
+        for right_cc in regions[idx + 1:]:
+            right = region_nets[right_cc]
+            i = j = 0
+            while i < len(left) and j < len(right):
+                a = left[i]
+                b = right[j]
+
+                if a.overlaps(b):
+                    overlaps.append((left_cc, str(a), right_cc, str(b)))
+                    if len(overlaps) >= 20:
+                        return overlaps
+
+                if int(a.broadcast_address) < int(b.broadcast_address):
+                    i += 1
+                else:
+                    j += 1
+
+    return overlaps
 
 
 def fail(msg: str):
@@ -102,6 +146,13 @@ def main():
         info(f"{region}: {len(nets)} CIDRs loaded")
 
     check_meta(meta, region_counts)
+
+    overlaps = find_cross_region_overlaps(region_nets)
+    if overlaps:
+        print("\n[FAIL] Cross-region CIDR overlaps detected:")
+        for left_cc, left_cidr, right_cc, right_cidr in overlaps:
+            print(f"  - {left_cc} {left_cidr} overlaps {right_cc} {right_cidr}")
+        fail("Region datasets must be mutually exclusive")
 
     hard_failures = []
     edge_warnings = []

@@ -1,4 +1,12 @@
-mmdb-writer
-netaddr
-maxminddb
-ruff
+# IPNova runtime dependencies
+# Install: pip install -r requirements.txt
+
+# MMDB generation
+mmdb-writer>=0.2.6
+netaddr>=0.7.0
+
+# MMDB validation / reading
+maxminddb>=3.0.0
+
+# Linting
+ruff>=0.4.0
