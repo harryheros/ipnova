@@ -53,6 +53,9 @@ jobs:
             echo 'prev_meta={}' >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Install format dependencies
+        run: pip install mmdbwriter
+
       - name: Generate dataset
         run: python3 generate_ip_list.py
 
@@ -60,6 +63,9 @@ jobs:
         id: validate
         run: python3 scripts/validate_output.py
         timeout-minutes: 21
+
+      - name: Generate extended formats
+        run: python3 scripts/build_formats.py
 
       - name: Record validation result
         run: echo "VALIDATION_STATUS=passed" >> $GITHUB_ENV
