@@ -8,8 +8,7 @@
     "bilibili.com",
     "baidu.com",
     "weibo.com",
-    "douyin.com",
-    "ctrip.com"
+    "douyin.com"
   ],
   "HK": [
     "hktvmall.com",
@@ -67,6 +66,7 @@
     "tencent.com",
     "volcengine.com",
     "weixin.qq.com",
-    "zhihu.com"
+    "zhihu.com",
+    "ctrip.com"
   ]
 }
