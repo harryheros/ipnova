@@ -657,6 +657,33 @@ def fetch_prefix_country(prefix, asn, region_data=None):
     return None, "L3"
 
 
+
+
+def subtract_region_conflicts(network, cc, region_data):
+    """Remove portions of a supplemental network already owned by other regions.
+
+    APNIC/RIR delegated regional data is treated as authoritative for
+    non-cloud regional ownership. Cloud supplement data must not create
+    cross-region overlaps because TXT, JSON, ipset, Nginx, and MMDB consumers
+    may resolve overlaps differently.
+    """
+    conflicts = []
+    for other_cc, nets in (region_data or {}).items():
+        if other_cc == cc:
+            continue
+        for n in nets:
+            if n.version == network.version and n.overlaps(network):
+                conflicts.append(n)
+
+    if not conflicts:
+        return [network]
+
+    conflicts = sorted(
+        ipaddress.collapse_addresses(conflicts),
+        key=lambda n: int(n.network_address),
+    )
+    return subtract_excluded_from_network(network, conflicts)
+
 def build_cloud_supplementary_networks(region_data):
     """Fetch cloud ASN prefixes, classify by country, keep TARGET_REGIONS only."""
     stats = {
@@ -718,8 +745,18 @@ def build_cloud_supplementary_networks(region_data):
                 stats["dropped_unknown"] += 1
                 continue
 
-            supp_raw[cc].append(net)
-            stats["kept_per_region"][cc] = stats["kept_per_region"].get(cc, 0) + 1
+            conflict_free_parts = subtract_region_conflicts(net, cc, region_data)
+            if not conflict_free_parts:
+                stats["dropped_region_conflict"] = stats.get("dropped_region_conflict", 0) + 1
+                continue
+
+            if len(conflict_free_parts) != 1 or conflict_free_parts[0] != net:
+                stats["trimmed_region_conflict"] = stats.get("trimmed_region_conflict", 0) + 1
+
+            supp_raw[cc].extend(conflict_free_parts)
+            stats["kept_per_region"][cc] = (
+                stats["kept_per_region"].get(cc, 0) + len(conflict_free_parts)
+            )
 
     for cc, nets in supp_raw.items():
         supp[cc] = list(ipaddress.collapse_addresses(nets))
