@@ -64,7 +64,13 @@ jobs:
         timeout-minutes: 21
 
       - name: Generate extended formats
-        run: python3 scripts/build_formats.py
+        run: |
+          python3 scripts/build_formats.py
+          # Remove any accidentally nested output directories
+          if [ -d "output/output" ]; then
+            echo "[warn] Removing nested output/output/ directory"
+            rm -rf output/output
+          fi
 
       - name: Record validation result
         run: echo "VALIDATION_STATUS=passed" >> $GITHUB_ENV
