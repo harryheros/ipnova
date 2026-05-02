@@ -1,6 +1,6 @@
 # IPNova — ipset restore — SG (Singapore)
-# Generated : 2026-05-02 20:48:47 UTC
-# CIDRs     : 1612
+# Generated : 2026-04-30 21:40:43 UTC
+# CIDRs     : 1611
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -1313,7 +1313,6 @@ add ipnova_SG 203.2.130.0/23
 add ipnova_SG 203.8.206.0/23
 add ipnova_SG 203.9.78.0/23
 add ipnova_SG 203.10.100.0/23
-add ipnova_SG 203.13.69.0/24
 add ipnova_SG 203.17.180.0/22
 add ipnova_SG 203.19.243.0/24
 add ipnova_SG 203.20.105.0/24

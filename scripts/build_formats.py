@@ -42,11 +42,23 @@ def setup_logging(verbose=False):
 
 
 def load_data_json(output_dir):
-    path = os.path.join(output_dir, "data.json")
-    if not os.path.exists(path):
-        log.error("data.json not found at %s — run generate_ip_list.py first", path)
+    # Safety: prevent accidental nested output directories
+    # (e.g. if someone runs build_formats.py from inside output/)
+    abs_output = os.path.abspath(output_dir)
+    data_json   = os.path.join(abs_output, "data.json")
+    nested_check = os.path.join(abs_output, os.path.basename(abs_output), "data.json")
+    if os.path.exists(nested_check):
+        log.error(
+            "Nested output directory detected (%s). "
+            "Run build_formats.py from the repository root.",
+            abs_output,
+        )
         sys.exit(1)
-    with open(path, encoding="utf-8") as f:
+
+    if not os.path.exists(data_json):
+        log.error("data.json not found at %s — run generate_ip_list.py first", data_json)
+        sys.exit(1)
+    with open(data_json, encoding="utf-8") as f:
         return json.load(f)
 
 

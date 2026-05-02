@@ -1,6 +1,6 @@
 # IPNova — ipset restore — TW (Taiwan)
-# Generated : 2026-05-02 20:48:47 UTC
-# CIDRs     : 746
+# Generated : 2026-04-30 21:40:43 UTC
+# CIDRs     : 737
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -714,16 +714,7 @@ add ipnova_TW 210.211.30.0/23
 add ipnova_TW 210.240.0.0/14
 add ipnova_TW 210.244.0.0/16
 add ipnova_TW 211.20.0.0/14
-add ipnova_TW 211.72.0.0/14
-add ipnova_TW 211.76.0.0/15
-add ipnova_TW 211.78.0.0/16
-add ipnova_TW 211.79.0.0/18
-add ipnova_TW 211.79.64.0/19
-add ipnova_TW 211.79.96.0/21
-add ipnova_TW 211.79.104.0/23
-add ipnova_TW 211.79.108.0/22
-add ipnova_TW 211.79.112.0/20
-add ipnova_TW 211.79.128.0/17
+add ipnova_TW 211.72.0.0/13
 add ipnova_TW 216.107.240.0/20
 add ipnova_TW 218.32.0.0/16
 add ipnova_TW 218.34.0.0/15
