@@ -2,14 +2,8 @@
   "version": 2,
   "rule_version": "2026-04-13-l1-located-resources-pct-vote",
   "ttl_hours": 168,
-  "generated_at": "2026-05-02T23:07:58.902206Z",
+  "generated_at": "2026-05-03T09:47:29.551175Z",
   "entries": {
-    "43.164.120.0/22": {
-      "cc": "SG",
-      "level": "L1",
-      "ts": "2026-04-26T01:21:23.268592Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
     "40.72.64.0/24": {
       "cc": "CN",
       "level": "L0",
@@ -34550,6 +34544,12 @@
       "cc": "FR",
       "level": "L1",
       "ts": "2026-05-02T23:06:21.959166Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.164.120.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-03T09:46:38.237047Z",
       "rule_version": "2026-04-13-l1-located-resources-pct-vote"
     }
   }
