@@ -1,7 +1,7 @@
 # Project     : ipnova
 # Version     : 3.2.0
 # Region      : Taiwan
-# Last Updated: 2026-05-03 09:47:51 UTC
+# Last Updated: 2026-05-03 21:52:33 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
 # Total CIDRs : 746
 # Total IPs   : 35,706,880
