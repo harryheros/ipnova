@@ -2,7 +2,7 @@
   "schema_version": "3.1",
   "project": "ipnova",
   "version": "3.2.0",
-  "generated_at": "2026-05-03T21:52:33.762189+00:00",
+  "generated_at": "2026-05-04T05:31:28.791980+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -62,7 +62,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32900,
+    "dynamic_prefixes": 32901,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -85,8 +85,8 @@
     "cloud_supplement": {
       "prefixes_fetched": 5780,
       "kept_per_region": {
-        "CN": 3329,
         "SG": 1992,
+        "CN": 3329,
         "HK": 93,
         "KR": 15,
         "JP": 31
@@ -98,7 +98,7 @@
       "l1_success": 0,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 116.501,
+      "duration_seconds": 115.238,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "bcc20a27d23657396882ff890260986b012243acea93511dfdc93069d49a9c57"
+    "data_json_sha256": "9dbd2163744083e0643c20110d5d6cd5364db742128434b3ff333f0a92897255"
   }
 }
