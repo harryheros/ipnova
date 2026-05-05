@@ -2,236 +2,8 @@
   "version": 2,
   "rule_version": "2026-04-13-l1-located-resources-pct-vote",
   "ttl_hours": 168,
-  "generated_at": "2026-05-04T23:20:01.308923Z",
+  "generated_at": "2026-05-05T17:15:40.633580Z",
   "entries": {
-    "40.72.64.0/24": {
-      "cc": "CN",
-      "level": "L0",
-      "ts": "2026-04-27T23:46:22.716654Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "8.148.42.0/24": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:38.409051Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.84.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:38.930897Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.90.0.0/17": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:38.942853Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.88.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:38.954082Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.120.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:38.966331Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "139.95.22.0/23": {
-      "cc": "US",
-      "level": "L1",
-      "ts": "2026-04-28T15:25:39.380199Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.76.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.396025Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.108.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.410419Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.124.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.425774Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.80.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.440168Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.90.0.0/16": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.454092Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.116.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.467590Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.68.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.480638Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.64.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.493040Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.72.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.505088Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.96.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.516583Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.112.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.527636Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.92.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.538505Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.90.128.0/17": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.549402Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.100.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.561263Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.117.104.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.576206Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.216.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.590847Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.240.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.603702Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.212.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.615108Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.224.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.625887Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.200.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.636878Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.248.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.647858Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.244.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.658881Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.208.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.669821Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.196.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.680616Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.252.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.691277Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.220.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.701894Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.236.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.713019Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.204.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.724048Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.192.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.734681Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.228.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.745150Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
-    "43.116.232.0/22": {
-      "cc": "SG",
-      "level": "L0",
-      "ts": "2026-04-28T15:25:39.755652Z",
-      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
-    },
     "118.31.128.0/17": {
       "cc": "CN",
       "level": "L0",
@@ -34550,6 +34322,234 @@
       "cc": "SG",
       "level": "L0",
       "ts": "2026-05-03T09:46:38.237047Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "8.148.42.0/24": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:09.712811Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.108.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.637756Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.104.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.672549Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.80.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.706973Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.76.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.742217Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.120.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.777276Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.64.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.812247Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.90.0.0/17": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.847523Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.90.128.0/17": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.881837Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.90.0.0/16": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.916620Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.96.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.951435Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.112.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:25.986255Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.84.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.021255Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "139.95.22.0/23": {
+      "cc": "US",
+      "level": "L1",
+      "ts": "2026-05-05T17:14:26.361618Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.116.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.376796Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.124.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.413089Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.92.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.447971Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.72.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.482567Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.88.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.517127Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.100.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.551273Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.117.68.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.585914Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.228.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.620536Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.240.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.655082Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.232.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.689617Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.216.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.723555Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.248.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.758122Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.196.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.793707Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.208.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.828774Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.200.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.863809Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.192.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.898096Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.204.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.932820Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.220.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:26.967428Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.212.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:27.002430Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.236.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:27.037417Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.252.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:27.072709Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.244.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:27.107763Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "43.116.224.0/22": {
+      "cc": "SG",
+      "level": "L0",
+      "ts": "2026-05-05T17:14:27.142087Z",
+      "rule_version": "2026-04-13-l1-located-resources-pct-vote"
+    },
+    "40.72.64.0/24": {
+      "cc": "CN",
+      "level": "L0",
+      "ts": "2026-05-05T17:15:40.575609Z",
       "rule_version": "2026-04-13-l1-located-resources-pct-vote"
     }
   }
