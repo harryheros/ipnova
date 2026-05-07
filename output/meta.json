@@ -2,7 +2,7 @@
   "schema_version": "3.1",
   "project": "ipnova",
   "version": "3.2.0",
-  "generated_at": "2026-05-06T23:02:25.625180+00:00",
+  "generated_at": "2026-05-07T08:56:27.318670+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -15,12 +15,12 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5500,
-      "ips": 342975488
+      "cidrs": 5495,
+      "ips": 342999040
     },
     "HK": {
-      "cidrs": 2475,
-      "ips": 15118400
+      "cidrs": 2474,
+      "ips": 15052352
     },
     "TW": {
       "cidrs": 747,
@@ -36,10 +36,10 @@
     },
     "KR": {
       "cidrs": 1043,
-      "ips": 112519424
+      "ips": 112519936
     },
     "SG": {
-      "cidrs": 1613,
+      "cidrs": 1612,
       "ips": 26958592
     }
   },
@@ -62,7 +62,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32948,
+    "dynamic_prefixes": 32927,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -80,25 +80,25 @@
     "cidrs_excluded": 155,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22230,
-    "prefixes_after_collapse": 14591,
+    "prefixes_before_collapse": 22223,
+    "prefixes_after_collapse": 14584,
     "cloud_supplement": {
       "prefixes_fetched": 5781,
       "kept_per_region": {
+        "CN": 3324,
         "SG": 1993,
-        "CN": 3329,
-        "HK": 93,
         "JP": 31,
-        "KR": 15
+        "HK": 91,
+        "KR": 16
       },
-      "dropped_other_country": 320,
+      "dropped_other_country": 326,
       "dropped_unknown": 0,
-      "l0_local_hit": 1,
-      "cache_hit": 5780,
-      "l1_success": 0,
-      "l2_fallback": 0,
+      "l0_local_hit": 5173,
+      "cache_hit": 68,
+      "l1_success": 537,
+      "l2_fallback": 3,
       "l3_fallback": 0,
-      "duration_seconds": 130.911,
+      "duration_seconds": 487.506,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "c7ff7e54a2efd168aab4417631b106ffa1155a2fb3875069d095482fba1b8631"
+    "data_json_sha256": "152e17f769aae05c7d38060fad160053e219a77a5ece67ff24803e846ce66564"
   }
 }
