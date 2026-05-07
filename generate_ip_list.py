@@ -21,7 +21,7 @@ from collections import defaultdict
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.2.0"
+__version__ = "3.2.1"
 
 # ================================================================
 # Logging
@@ -143,7 +143,7 @@ RIPE_REQUEST_INTERVAL = 1.5  # seconds between RIPE Stat requests
 # ================================================================
 # HTTP helpers with retry
 # ================================================================
-def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/3.1",
+def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/3.2",
              strict_decode=False, return_content_type=False):
     """
     Fetch URL with exponential backoff retry.
@@ -452,6 +452,12 @@ CN_CLOUD_ASNS_TIER2 = {
 
 CN_CLOUD_ASNS = {**CN_CLOUD_ASNS_TIER1, **CN_CLOUD_ASNS_TIER2}
 
+# Lookup table: ASN -> tier integer (1 or 2), used for cidr_objects provenance
+_ASN_TIER_MAP: dict[int, int] = {
+    **{asn: 1 for asn in CN_CLOUD_ASNS_TIER1},
+    **{asn: 2 for asn in CN_CLOUD_ASNS_TIER2},
+}
+
 # ============================================================
 # FORBIDDEN: Operator backbone ASNs - must NEVER be in CN_CLOUD_ASNS
 # Purpose: prevent accidentally adding ISP backbones which would
@@ -685,7 +691,13 @@ def subtract_region_conflicts(network, cc, region_data):
     return subtract_excluded_from_network(network, conflicts)
 
 def build_cloud_supplementary_networks(region_data):
-    """Fetch cloud ASN prefixes, classify by country, keep TARGET_REGIONS only."""
+    """Fetch cloud ASN prefixes, classify by country, keep TARGET_REGIONS only.
+
+    Returns:
+        supp:            dict[cc, list[IPv4Network]]  — collapsed supplementary networks
+        supp_provenance: dict[cc, dict[cidr_str, {asn, tier}]]  — pre-collapse provenance
+        stats:           run statistics dict
+    """
     stats = {
         "prefixes_fetched": 0,
         "kept_per_region": {},
@@ -704,6 +716,8 @@ def build_cloud_supplementary_networks(region_data):
 
     supp_raw = defaultdict(list)
     supp = {}
+    # provenance: cc -> {cidr_str -> {asn, tier}} — pre-collapse, for metadata
+    _supp_provenance: dict = defaultdict(dict)
     _t0 = time.time()
 
     log.info("[cloud-supp] build_cloud_supplementary_networks start")
@@ -757,13 +771,19 @@ def build_cloud_supplementary_networks(region_data):
             stats["kept_per_region"][cc] = (
                 stats["kept_per_region"].get(cc, 0) + len(conflict_free_parts)
             )
+            # Record pre-collapse provenance for each kept prefix
+            for part in conflict_free_parts:
+                _supp_provenance[cc][str(part)] = {
+                    "asn": asn,
+                    "tier": _ASN_TIER_MAP.get(asn),
+                }
 
     for cc, nets in supp_raw.items():
         supp[cc] = list(ipaddress.collapse_addresses(nets))
 
     stats["duration_seconds"] = round(time.time() - _t0, 3)
     _save_geoloc_cache()
-    return supp, stats
+    return supp, dict(_supp_provenance), stats
 
 
 def parse_and_cleanse(raw_data, excluded_networks):
@@ -890,22 +910,60 @@ def enforce_mutual_exclusivity(region_data):
 # ================================================================
 # Normalization & aggregation
 # ================================================================
-def normalize_region_data(region_data):
-    """Collapse and normalize region data into structured JSON-ready form."""
+def normalize_region_data(region_data, bgp_provenance=None):
+    """Collapse and normalize region data into structured JSON-ready form.
+
+    Args:
+        region_data:     dict[cc, list[IPv4Network]]
+        bgp_provenance:  optional dict[cc, dict[cidr_str, {asn, tier}]]
+                         from build_cloud_supplementary_networks.
+                         When supplied, each entry in cidr_objects carries
+                         source/asn/tier/confidence metadata (schema v3.2).
+
+    Returns:
+        normalized dict with both legacy `cidrs` (list[str]) for backward
+        compatibility and new `cidr_objects` (list[dict]) with provenance.
+    """
     normalized = {}
+    prov = bgp_provenance or {}
 
     for cc in TARGET_REGIONS:
         networks = region_data.get(cc, [])
         merged = sorted(ipaddress.collapse_addresses(networks))
 
         total_ips = sum(net.num_addresses for net in merged)
+        cc_prov = prov.get(cc, {})
+
+        cidr_objects = []
+        for net in merged:
+            s = str(net)
+            if s in cc_prov:
+                entry = cc_prov[s]
+                cidr_objects.append({
+                    "cidr": s,
+                    "source": "bgp",
+                    "asn": entry.get("asn"),
+                    "tier": entry.get("tier"),
+                    "confidence": "high",
+                })
+            else:
+                cidr_objects.append({
+                    "cidr": s,
+                    "source": "apnic",
+                    "asn": None,
+                    "tier": None,
+                    "confidence": "high",
+                })
 
         normalized[cc] = {
             "region_code": cc,
             "region_name": TARGET_REGIONS[cc],
             "total_cidrs": len(merged),
             "total_ips": total_ips,
+            # Legacy field — kept for backward compatibility
             "cidrs": [str(net) for net in merged],
+            # v3.2: per-CIDR provenance objects
+            "cidr_objects": cidr_objects,
         }
 
     return normalized
@@ -986,7 +1044,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "3.1",
+        "schema_version": "3.2",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -1003,7 +1061,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- meta.json: enriched metadata for monitoring & pro integration ---
     meta_payload = {
-        "schema_version": "3.1",
+        "schema_version": "3.2",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -1123,13 +1181,14 @@ def main():
     # Step 3.5: CN cloud ASN supplement
     if args.skip_ripe or args.skip_cloud_supplement:
         log.info("Skipping cloud ASN supplement")
+        supp_provenance = {}
         parse_stats["cloud_supplement"] = {
             "skipped": True,
             "reason": "skip_ripe" if args.skip_ripe else "skip_cloud_supplement",
         }
     else:
         with StepTimer("Cloud ASN supplement"):
-            supp, supp_stats = build_cloud_supplementary_networks(region_data)
+            supp, supp_provenance, supp_stats = build_cloud_supplementary_networks(region_data)
         for cc, nets in supp.items():
             region_data.setdefault(cc, []).extend(nets)
         parse_stats["cloud_supplement"] = supp_stats
@@ -1139,7 +1198,10 @@ def main():
     # Step 4: Normalize and aggregate
     with StepTimer("Normalize and aggregate"):
         region_data = enforce_mutual_exclusivity(region_data)
-        normalized_data = normalize_region_data(region_data)
+        normalized_data = normalize_region_data(
+            region_data,
+            bgp_provenance=supp_provenance if not (args.skip_ripe or args.skip_cloud_supplement) else None,
+        )
     parse_stats["prefixes_after_collapse"] = sum(
         v.get("total_cidrs", 0) for v in normalized_data.values()
     )

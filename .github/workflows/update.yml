@@ -65,7 +65,7 @@ jobs:
 
       - name: Generate extended formats
         run: |
-          python3 scripts/build_formats.py
+          python3 scripts/build_formats.py --release-assets
           # Remove any accidentally nested output directories
           if [ -d "output/output" ]; then
             echo "[warn] Removing nested output/output/ directory"
