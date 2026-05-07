@@ -29,6 +29,9 @@ def test_parse_normalize_and_write_outputs():
     normalized = generate_ip_list.normalize_region_data(region_data)
 
     assert normalized["CN"]["cidrs"] == ["1.0.1.0/24"]
+    # v3.2: cidr_objects provenance (apnic when no bgp_provenance supplied)
+    assert normalized["CN"]["cidr_objects"][0]["cidr"] == "1.0.1.0/24"
+    assert normalized["CN"]["cidr_objects"][0]["source"] == "apnic"
     assert normalized["HK"]["cidrs"] == ["1.0.2.0/24"]
     assert normalized["JP"]["cidrs"] == ["1.0.3.0/24"]
     assert normalized["SG"]["cidrs"] == []
@@ -46,7 +49,7 @@ def test_parse_normalize_and_write_outputs():
 
         data = json.loads((Path(tmpdir) / "data.json").read_text())
         meta = json.loads((Path(tmpdir) / "meta.json").read_text())
-        assert data["schema_version"] == "3.1"
+        assert data["schema_version"] == "3.2"
         assert meta["checksum"]["data_json_sha256"]
         assert "Japan" in (Path(tmpdir) / "JP.txt").read_text()
 

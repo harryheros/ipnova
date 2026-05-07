@@ -4,7 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.2.0-blue)
+![Version](https://img.shields.io/badge/version-3.2.1-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
@@ -57,13 +57,20 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/JP.txt` | Japan IPv4 CIDR list |
 | `output/KR.txt` | South Korea IPv4 CIDR list |
 | `output/SG.txt` | Singapore IPv4 CIDR list |
-| `output/data.json` | Structured JSON dataset (schema v3.1) |
+| `output/data.json` | Structured JSON dataset (schema v3.2, includes cidr_objects provenance) |
 | `output/meta.json` | Enriched metadata with quality report |
 | `output/ipnova-apac.mmdb` | MaxMind-compatible MMDB database (all 7 regions) |
 | `output/regions.json` | Per-region combined JSON |
 | `output/json/{CC}.json` | Per-region individual JSON |
 | `output/nginx/{CC}.conf` | Nginx geo module format |
+| `output/haproxy/{CC}.acl` | HAProxy ACL format |
+| `output/caddy/{CC}.conf` | Caddy remote_ip matcher format |
 | `output/iptables/{CC}.ipset` | iptables ipset restore format |
+| `output/plain/{CC}.txt` | Plain CIDR list (no headers, for programmatic use) |
+| `output/terraform/{CC}.auto.tfvars.json` | Terraform variable file |
+| `output/GeoIP2-Country.mmdb` | MaxMind GeoIP2 drop-in alias |
+| `output/GeoLite2-Country.mmdb` | MaxMind GeoLite2 drop-in alias |
+| `output/checksums.txt` | SHA-256 checksums for all output files |
 
 For current CIDR counts and IP coverage per region, see `output/meta.json`.
 
@@ -74,10 +81,14 @@ Text files include metadata headers such as region, version, last updated timest
 ## ⬇️ Direct Download
 
 ```bash
-# MMDB (MaxMind-compatible, all 7 regions in one file)
+# MMDB — primary branded build
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac.mmdb
 
-# Plain text (per region)
+# MMDB — MaxMind drop-in aliases (zero-config replacement)
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoIP2-Country.mmdb
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoLite2-Country.mmdb
+
+# Plain text with headers (per region)
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/HK.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/TW.txt
@@ -85,8 +96,21 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/MO.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/JP.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/KR.txt
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/SG.txt
+
+# Plain CIDR only — no headers (for programmatic use)
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/plain/CN.txt
+
+# HAProxy / Caddy / Nginx / iptables / Terraform
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/haproxy/CN.acl
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/caddy/CN.conf
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/nginx/CN.conf
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/iptables/CN.ipset
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/terraform/CN.auto.tfvars.json
+
+# Structured data
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/data.json
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/meta.json
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/checksums.txt
 ```
 
 ---
@@ -131,17 +155,27 @@ IPNova provides both:
 - **TXT outputs** for direct human-readable use
 - **JSON outputs** for system integration, future format conversion, and automation workflows
 
-### Schema v3.1
+### Schema v3.2
 
 `data.json` includes `schema_version`, `version`, and `total_ips` per region.
+
+Each region now includes both:
+- `cidrs` — flat list of CIDR strings (backward-compatible)
+- `cidr_objects` — per-CIDR provenance objects (new in v3.2):
+
+```json
+{"cidr": "8.152.0.0/13", "source": "bgp",   "asn": 37963, "tier": 1,    "confidence": "high"}
+{"cidr": "1.0.1.0/24",   "source": "apnic",  "asn": null,  "tier": null, "confidence": "high"}
+```
+
+`source` is `"bgp"` for prefixes sourced from cloud ASN BGP announcements (the ARIN blind-spot coverage), and `"apnic"` for prefixes from APNIC delegation data.
 
 `meta.json` includes enriched quality metadata:
 - ASN exclusion success/failure report with mode indicator
 - Parsing statistics (source networks, kept, excluded, errors)
+- Cloud supplement stats: per-level signal attribution (L0/L1/L2/L3)
 - Sanity check thresholds
 - SHA-256 checksum of `data.json` for integrity verification
-
-This makes it easier to extend IPNova into formats such as MMDB, APIs, or additional machine-readable outputs in the future.
 
 ---
 
@@ -174,10 +208,23 @@ This makes it easier to extend IPNova into formats such as MMDB, APIs, or additi
 7. Precisely subtract excluded prefixes (surgical removal, not blunt drop)
 8. Sanity check output against minimum thresholds
 9. Aggregate outputs into TXT and JSON formats with SHA-256 checksum
+10. Build extended formats: MMDB (+ MaxMind drop-in aliases), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
 
 ---
 
 ## 📋 Changelog
+
+### v3.2.1
+
+- **New**: `output/cidr_objects` per-CIDR provenance metadata in `data.json` (schema v3.2) — each CIDR now carries `source`, `asn`, `tier`, and `confidence` fields
+- **New**: `output/GeoIP2-Country.mmdb` + `output/GeoLite2-Country.mmdb` — MaxMind drop-in aliases for zero-config migration
+- **New**: `output/haproxy/{CC}.acl` — HAProxy ACL format
+- **New**: `output/caddy/{CC}.conf` — Caddy remote_ip matcher format
+- **New**: `output/plain/{CC}.txt` — pure CIDR files with no comment headers (for programmatic consumption)
+- **New**: `output/terraform/{CC}.auto.tfvars.json` — Terraform-compatible variable files
+- **New**: `output/checksums.txt` — SHA-256 checksums covering all output files
+- **CI**: `build_formats.py` now runs with `--release-assets`, generating `ipnova-formats.tar.gz` and `SHA256SUMS` on every update
+- **Internal**: `_ASN_TIER_MAP` added for O(1) tier lookup; `build_cloud_supplementary_networks` returns provenance alongside networks
 
 ### v3.2.0
 
