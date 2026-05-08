@@ -3,7 +3,7 @@
   "region_name": "Macau",
   "total_cidrs": 30,
   "total_ips": 339456,
-  "generated_at": "2026-05-08T01:36:06.129725+00:00",
+  "generated_at": "2026-05-08T02:39:49.844577+00:00",
   "cidrs": [
     "27.109.128.0/17",
     "43.247.24.0/22",
@@ -35,5 +35,217 @@
     "202.174.0.0/22",
     "202.175.0.0/17",
     "202.175.160.0/19"
+  ],
+  "cidr_objects": [
+    {
+      "cidr": "27.109.128.0/17",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "43.247.24.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "45.64.20.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "45.123.200.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "60.246.0.0/16",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "74.119.64.0/21",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.5.218.0/23",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.88.176.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.96.60.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.115.140.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.143.92.0/23",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.192.44.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.233.188.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.237.100.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.237.124.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "103.240.56.0/23",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "113.52.64.0/18",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "116.193.8.0/21",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "122.100.128.0/17",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "123.253.200.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "125.31.0.0/18",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "161.64.0.0/16",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "163.53.244.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "180.94.128.0/18",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "182.93.0.0/18",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "202.75.248.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "202.86.128.0/18",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "202.174.0.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "202.175.0.0/17",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    },
+    {
+      "cidr": "202.175.160.0/19",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "confidence": "high"
+    }
   ]
 }
