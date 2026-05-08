@@ -37,6 +37,14 @@ jobs:
       - name: Offline smoke test
         run: python tests/test_core_offline.py
 
+      - name: Restore geoloc cache
+        uses: actions/cache@v4
+        with:
+          path: output/.geoloc_cache.json
+          key: geoloc-cache-${{ runner.os }}-${{ hashFiles('generate_ip_list.py') }}
+          restore-keys: |
+            geoloc-cache-${{ runner.os }}-
+
       - name: Snapshot previous counts
         id: prev_counts
         shell: bash
@@ -57,6 +65,13 @@ jobs:
 
       - name: Generate dataset
         run: python3 generate_ip_list.py
+
+      - name: Save geoloc cache
+        uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: output/.geoloc_cache.json
+          key: geoloc-cache-${{ runner.os }}-${{ hashFiles('generate_ip_list.py') }}
 
       - name: Validate output
         id: validate
@@ -139,6 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: update
     if: ${{ needs.update.result == 'failure' }}
+    timeout-minutes: 5
 
     steps:
       - name: Create failure issue

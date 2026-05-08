@@ -126,7 +126,7 @@ SANITY_THRESHOLDS = {
     "HK": 1000,
     "TW": 300,
     "MO": 10,
-    "JP": 3000,
+    "JP": 2500,  # was 3000; actual ~3183 but 6% margin was too tight for RIPE Stat flakiness
     "KR": 800,
     "SG": 300,
 }

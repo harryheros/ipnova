@@ -171,6 +171,9 @@ def build_json_per_region(data, output_dir):
             "total_ips": payload.get("total_ips", 0),
             "generated_at": generated_at,
             "cidrs": payload.get("cidrs", []),
+            # v3.2: include cidr_objects so BGP provenance is available to
+            # consumers of per-region files, not just data.json
+            "cidr_objects": payload.get("cidr_objects", []),
         }
         out_path = os.path.join(json_dir, f"{cc}.json")
         with open(out_path, "w", encoding="utf-8") as f:

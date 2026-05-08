@@ -28,7 +28,21 @@ REGION_FILES = {
 MAX_L2_RATIO = 0.60
 _NETWORK_KEYS = {}
 MAX_HK_CIDRS = 5000
-MIN_CN_CIDRS = 4000
+
+# Import SANITY_THRESHOLDS from generate_ip_list.py so the two scripts
+# share a single source of truth for minimum CIDR counts.
+# Previously MIN_CN_CIDRS = 4000 was hardcoded here while
+# generate_ip_list.py had SANITY_THRESHOLDS["CN"] = 3000 — inconsistent.
+import importlib.util as _ilu
+import os as _os
+_spec = _ilu.spec_from_file_location(
+    "generate_ip_list",
+    _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "generate_ip_list.py"),
+)
+_gen = _ilu.module_from_spec(_spec)
+_spec.loader.exec_module(_gen)
+_SANITY_THRESHOLDS = _gen.SANITY_THRESHOLDS
+MIN_CN_CIDRS = _SANITY_THRESHOLDS["CN"]  # single source of truth
 
 
 def load_cidrs(path: Path):
@@ -46,22 +60,29 @@ def load_cidrs(path: Path):
 def ip_in_region(ip: str, nets):
     """Check if IP falls within any of the sorted network list.
     Uses binary search pre-filtering for O(log n) candidate selection.
+
+    The previous heuristic early-exit (gap > 16M addresses) could produce
+    false negatives for sparsely-allocated cloud BGP blocks that are far
+    apart in address space. Replaced with a correct bisect-based approach:
+    find the rightmost network whose network_address <= ip_int, then check
+    backwards until the network cannot possibly contain ip_int.
     """
     ip_obj = ipaddress.ip_address(ip)
     ip_int = int(ip_obj)
-    # Find insertion point — all nets with network_address <= ip_int are candidates
     keys = _NETWORK_KEYS.get(id(nets))
     if keys is None:
         keys = [int(n.network_address) for n in nets]
         _NETWORK_KEYS[id(nets)] = keys
-    idx = bisect.bisect_right(keys, ip_int)
-    # Check backwards from insertion point (nearest candidates first)
-    for i in range(min(idx, len(nets)) - 1, max(idx - 512, -1), -1):
-        if ip_obj in nets[i]:
+    # Find the rightmost candidate: all nets with network_address <= ip_int
+    idx = bisect.bisect_right(keys, ip_int) - 1
+    # Walk backwards — stop as soon as the broadcast_address is below ip_int
+    while idx >= 0:
+        net = nets[idx]
+        if int(net.broadcast_address) < ip_int:
+            break  # this net and all earlier ones cannot contain ip_int
+        if ip_obj in net:
             return True
-        # Early exit: if network address is way before our IP, stop
-        if ip_int - int(nets[i].network_address) > 0x1000000:  # >16M gap
-            break
+        idx -= 1
     return False
 
 
