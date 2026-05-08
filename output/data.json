@@ -2,13 +2,13 @@
   "schema_version": "3.2",
   "project": "ipnova",
   "version": "3.2.1",
-  "generated_at": "2026-05-08T01:35:59.173225+00:00",
+  "generated_at": "2026-05-08T02:39:40.428453+00:00",
   "regions": {
     "CN": {
       "region_code": "CN",
       "region_name": "China (Mainland)",
-      "total_cidrs": 5492,
-      "total_ips": 342931456,
+      "total_cidrs": 5495,
+      "total_ips": 342932480,
       "cidrs": [
         "1.0.1.0/24",
         "1.0.2.0/23",
@@ -773,8 +773,11 @@
         "45.255.224.0/20",
         "45.255.240.0/21",
         "45.255.248.0/22",
+        "47.77.2.0/23",
+        "47.89.221.0/24",
         "47.92.0.0/14",
         "47.96.0.0/11",
+        "47.246.154.0/24",
         "49.4.0.0/14",
         "49.51.0.0/16",
         "49.52.0.0/14",
@@ -10846,6 +10849,20 @@
           "confidence": "high"
         },
         {
+          "cidr": "47.77.2.0/23",
+          "source": "bgp",
+          "asn": 45102,
+          "tier": 1,
+          "confidence": "high"
+        },
+        {
+          "cidr": "47.89.221.0/24",
+          "source": "bgp",
+          "asn": 45102,
+          "tier": 1,
+          "confidence": "high"
+        },
+        {
           "cidr": "47.92.0.0/14",
           "source": "bgp",
           "asn": 37963,
@@ -10857,6 +10874,13 @@
           "source": "apnic",
           "asn": null,
           "tier": null,
+          "confidence": "high"
+        },
+        {
+          "cidr": "47.246.154.0/24",
+          "source": "bgp",
+          "asn": 45102,
+          "tier": 1,
           "confidence": "high"
         },
         {

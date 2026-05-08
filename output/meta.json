@@ -2,7 +2,7 @@
   "schema_version": "3.2",
   "project": "ipnova",
   "version": "3.2.1",
-  "generated_at": "2026-05-08T01:35:59.173225+00:00",
+  "generated_at": "2026-05-08T02:39:40.428453+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -15,8 +15,8 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5492,
-      "ips": 342931456
+      "cidrs": 5495,
+      "ips": 342932480
     },
     "HK": {
       "cidrs": 2474,
@@ -80,25 +80,25 @@
     "cidrs_excluded": 155,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22223,
-    "prefixes_after_collapse": 14582,
+    "prefixes_before_collapse": 22226,
+    "prefixes_after_collapse": 14585,
     "cloud_supplement": {
       "prefixes_fetched": 5786,
       "kept_per_region": {
-        "CN": 3321,
+        "CN": 3324,
         "SG": 1998,
         "JP": 31,
         "KR": 16,
         "HK": 92
       },
-      "dropped_other_country": 328,
+      "dropped_other_country": 325,
       "dropped_unknown": 0,
-      "l0_local_hit": 0,
-      "cache_hit": 5786,
-      "l1_success": 0,
-      "l2_fallback": 0,
+      "l0_local_hit": 5220,
+      "cache_hit": 23,
+      "l1_success": 540,
+      "l2_fallback": 3,
       "l3_fallback": 0,
-      "duration_seconds": 105.178,
+      "duration_seconds": 430.812,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "fe516ded034e95a790163d570cb9140286d3985c978ef010df8136cda970e73e"
+    "data_json_sha256": "d78c3037dd805ec23c0c7390d2cbdf0bc3a0b3ad4525b81cbc53983604aaf09e"
   }
 }
