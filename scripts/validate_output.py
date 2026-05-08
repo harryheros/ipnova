@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 import bisect
+import importlib.util
 import ipaddress
 import json
+import os
 import socket
 import sys
 from pathlib import Path
@@ -29,20 +31,16 @@ MAX_L2_RATIO = 0.60
 _NETWORK_KEYS = {}
 MAX_HK_CIDRS = 5000
 
-# Import SANITY_THRESHOLDS from generate_ip_list.py so the two scripts
-# share a single source of truth for minimum CIDR counts.
-# Previously MIN_CN_CIDRS = 4000 was hardcoded here while
-# generate_ip_list.py had SANITY_THRESHOLDS["CN"] = 3000 — inconsistent.
-import importlib.util as _ilu
-import os as _os
-_spec = _ilu.spec_from_file_location(
+# Load SANITY_THRESHOLDS from generate_ip_list.py so MIN_CN_CIDRS shares a
+# single source of truth with the build script (previously hardcoded as 4000
+# here vs 3000 there — inconsistent).
+_spec = importlib.util.spec_from_file_location(
     "generate_ip_list",
-    _os.path.join(_os.path.dirname(_os.path.dirname(_os.path.abspath(__file__))), "generate_ip_list.py"),
+    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "generate_ip_list.py"),
 )
-_gen = _ilu.module_from_spec(_spec)
+_gen = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_gen)
-_SANITY_THRESHOLDS = _gen.SANITY_THRESHOLDS
-MIN_CN_CIDRS = _SANITY_THRESHOLDS["CN"]  # single source of truth
+MIN_CN_CIDRS = _gen.SANITY_THRESHOLDS["CN"]  # single source of truth
 
 
 def load_cidrs(path: Path):
