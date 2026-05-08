@@ -2,7 +2,7 @@
   "schema_version": "3.2",
   "project": "ipnova",
   "version": "3.2.1",
-  "generated_at": "2026-05-08T07:35:28.498785+00:00",
+  "generated_at": "2026-05-08T16:51:17.950464+00:00",
   "regions": {
     "CN": {
       "region_code": "CN",
@@ -70023,8 +70023,8 @@
     "JP": {
       "region_code": "JP",
       "region_name": "Japan",
-      "total_cidrs": 3183,
-      "total_ips": 188630784,
+      "total_cidrs": 3184,
+      "total_ips": 188631296,
       "cidrs": [
         "1.0.16.0/20",
         "1.0.64.0/18",
@@ -71909,6 +71909,7 @@
         "162.4.28.0/23",
         "162.4.52.0/23",
         "162.4.79.0/24",
+        "162.4.98.0/23",
         "162.43.0.0/17",
         "163.42.0.0/15",
         "163.44.0.0/17",
@@ -86387,6 +86388,13 @@
         },
         {
           "cidr": "162.4.79.0/24",
+          "source": "apnic",
+          "asn": null,
+          "tier": null,
+          "confidence": "high"
+        },
+        {
+          "cidr": "162.4.98.0/23",
           "source": "apnic",
           "asn": null,
           "tier": null,
