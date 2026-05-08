@@ -1,6 +1,6 @@
 # IPNova — ipset restore — JP (Japan)
-# Generated : 2026-05-08 07:35:35 UTC
-# CIDRs     : 3183
+# Generated : 2026-05-08 16:51:25 UTC
+# CIDRs     : 3184
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -1891,6 +1891,7 @@ add ipnova_JP 162.4.26.0/23
 add ipnova_JP 162.4.28.0/23
 add ipnova_JP 162.4.52.0/23
 add ipnova_JP 162.4.79.0/24
+add ipnova_JP 162.4.98.0/23
 add ipnova_JP 162.43.0.0/17
 add ipnova_JP 163.42.0.0/15
 add ipnova_JP 163.44.0.0/17

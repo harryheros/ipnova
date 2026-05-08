@@ -2,7 +2,7 @@
   "schema_version": "3.2",
   "project": "ipnova",
   "version": "3.2.1",
-  "generated_at": "2026-05-08T07:35:28.498785+00:00",
+  "generated_at": "2026-05-08T16:51:17.950464+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -31,8 +31,8 @@
       "ips": 339456
     },
     "JP": {
-      "cidrs": 3183,
-      "ips": 188630784
+      "cidrs": 3184,
+      "ips": 188631296
     },
     "KR": {
       "cidrs": 1043,
@@ -62,7 +62,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32939,
+    "dynamic_prefixes": 32944,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -74,31 +74,31 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21463,
-    "source_networks": 21463,
-    "cidrs_kept": 21535,
+    "lines_processed": 21467,
+    "source_networks": 21467,
+    "cidrs_kept": 21539,
     "cidrs_excluded": 155,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22226,
-    "prefixes_after_collapse": 14585,
+    "prefixes_before_collapse": 22231,
+    "prefixes_after_collapse": 14586,
     "cloud_supplement": {
-      "prefixes_fetched": 5786,
+      "prefixes_fetched": 5788,
       "kept_per_region": {
-        "CN": 3324,
-        "SG": 1998,
-        "HK": 92,
+        "CN": 3325,
+        "SG": 1999,
+        "KR": 16,
         "JP": 31,
-        "KR": 16
+        "HK": 92
       },
       "dropped_other_country": 325,
       "dropped_unknown": 0,
-      "l0_local_hit": 0,
+      "l0_local_hit": 2,
       "cache_hit": 5786,
       "l1_success": 0,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 134.826,
+      "duration_seconds": 116.155,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "446d16f39ddaf794baa590ac75ce9fd4a0e58d5dff74d2f490786cbd1ab475e9"
+    "data_json_sha256": "ea64e0fdf4777cad26a0896bf4e8c9a3787ed680d4247b469d26164954ae30ed"
   }
 }
