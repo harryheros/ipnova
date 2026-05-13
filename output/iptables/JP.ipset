@@ -1,6 +1,6 @@
 # IPNova — ipset restore — JP (Japan)
-# Generated : 2026-05-11 05:56:19 UTC
-# CIDRs     : 3184
+# Generated : 2026-05-13 03:58:43 UTC
+# CIDRs     : 3194
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -214,6 +214,7 @@ add ipnova_JP 47.87.192.0/22
 add ipnova_JP 47.91.0.0/19
 add ipnova_JP 47.245.0.0/18
 add ipnova_JP 49.0.16.0/21
+add ipnova_JP 49.0.176.0/21
 add ipnova_JP 49.50.6.0/23
 add ipnova_JP 49.96.0.0/12
 add ipnova_JP 49.128.16.0/20
@@ -1570,7 +1571,16 @@ add ipnova_JP 125.215.64.0/18
 add ipnova_JP 125.252.64.0/18
 add ipnova_JP 125.252.128.0/18
 add ipnova_JP 125.254.56.0/22
-add ipnova_JP 126.0.0.0/9
+add ipnova_JP 126.0.0.0/11
+add ipnova_JP 126.32.0.0/12
+add ipnova_JP 126.48.0.0/14
+add ipnova_JP 126.52.0.0/17
+add ipnova_JP 126.52.160.0/19
+add ipnova_JP 126.52.192.0/18
+add ipnova_JP 126.53.0.0/16
+add ipnova_JP 126.54.0.0/15
+add ipnova_JP 126.56.0.0/13
+add ipnova_JP 126.64.0.0/10
 add ipnova_JP 126.128.0.0/11
 add ipnova_JP 126.160.0.0/12
 add ipnova_JP 126.176.0.0/13
@@ -2305,7 +2315,7 @@ add ipnova_JP 202.9.208.0/20
 add ipnova_JP 202.10.96.0/20
 add ipnova_JP 202.11.0.0/16
 add ipnova_JP 202.12.8.0/21
-add ipnova_JP 202.12.27.0/24
+add ipnova_JP 202.12.26.0/23
 add ipnova_JP 202.12.30.0/24
 add ipnova_JP 202.12.64.0/22
 add ipnova_JP 202.12.244.0/22
