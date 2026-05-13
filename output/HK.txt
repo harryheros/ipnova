@@ -1,10 +1,10 @@
 # Project     : ipnova
 # Version     : 3.2.1
 # Region      : Hong Kong
-# Last Updated: 2026-05-11 05:56:12 UTC
+# Last Updated: 2026-05-13 03:58:34 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
-# Total CIDRs : 2474
-# Total IPs   : 15,117,888
+# Total CIDRs : 2475
+# Total IPs   : 15,118,400
 # Note        : Each region is separated — this file contains Hong Kong only
 # ================================================
 1.36.0.0/16
@@ -1732,6 +1732,7 @@
 160.250.201.0/24
 161.81.0.0/16
 162.4.40.0/23
+162.4.114.0/23
 162.219.32.0/21
 162.219.80.0/21
 162.245.124.0/22
