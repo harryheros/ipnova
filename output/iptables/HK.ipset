@@ -1,6 +1,6 @@
 # IPNova — ipset restore — HK (Hong Kong)
-# Generated : 2026-05-13 03:58:43 UTC
-# CIDRs     : 2475
+# Generated : 2026-05-14 16:08:20 UTC
+# CIDRs     : 2507
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -1246,7 +1246,7 @@ add ipnova_HK 103.213.244.0/22
 add ipnova_HK 103.214.16.0/22
 add ipnova_HK 103.214.32.0/22
 add ipnova_HK 103.214.41.0/24
-add ipnova_HK 103.214.56.0/22
+add ipnova_HK 103.214.56.0/24
 add ipnova_HK 103.214.64.0/22
 add ipnova_HK 103.214.76.0/22
 add ipnova_HK 103.214.140.0/22
@@ -1784,8 +1784,24 @@ add ipnova_HK 175.158.100.0/22
 add ipnova_HK 175.159.0.0/16
 add ipnova_HK 175.176.152.0/22
 add ipnova_HK 175.176.192.0/22
+add ipnova_HK 177.0.128.0/20
+add ipnova_HK 177.2.16.0/20
+add ipnova_HK 177.2.176.0/20
+add ipnova_HK 177.3.32.0/20
+add ipnova_HK 177.3.80.0/20
+add ipnova_HK 177.4.0.0/20
+add ipnova_HK 177.4.32.0/20
+add ipnova_HK 177.4.80.0/20
+add ipnova_HK 177.5.48.0/20
+add ipnova_HK 177.5.64.0/20
+add ipnova_HK 177.5.112.0/20
+add ipnova_HK 177.5.176.0/20
+add ipnova_HK 177.6.176.0/20
+add ipnova_HK 177.7.128.0/20
+add ipnova_HK 177.201.224.0/20
 add ipnova_HK 177.210.0.0/15
 add ipnova_HK 178.107.32.0/20
+add ipnova_HK 179.236.96.0/20
 add ipnova_HK 180.92.180.0/22
 add ipnova_HK 180.131.160.0/19
 add ipnova_HK 180.149.236.0/22
@@ -1829,9 +1845,18 @@ add ipnova_HK 185.171.168.0/22
 add ipnova_HK 185.189.160.0/22
 add ipnova_HK 185.189.240.0/22
 add ipnova_HK 185.203.36.0/22
+add ipnova_HK 187.53.80.0/20
+add ipnova_HK 187.53.192.0/20
+add ipnova_HK 187.54.48.0/20
+add ipnova_HK 187.55.112.0/20
+add ipnova_HK 187.126.64.0/20
 add ipnova_HK 188.95.8.0/22
+add ipnova_HK 189.10.48.0/20
+add ipnova_HK 189.75.0.0/20
+add ipnova_HK 189.75.144.0/20
 add ipnova_HK 191.1.0.0/16
 add ipnova_HK 191.214.0.0/16
+add ipnova_HK 191.223.32.0/20
 add ipnova_HK 192.75.137.0/24
 add ipnova_HK 192.94.174.0/24
 add ipnova_HK 192.135.99.0/24
@@ -1852,7 +1877,14 @@ add ipnova_HK 199.9.24.0/21
 add ipnova_HK 199.43.19.0/24
 add ipnova_HK 199.43.45.0/24
 add ipnova_HK 199.43.63.0/24
+add ipnova_HK 200.97.32.0/20
+add ipnova_HK 200.217.96.0/20
+add ipnova_HK 200.222.224.0/20
+add ipnova_HK 200.225.144.0/20
 add ipnova_HK 201.5.0.0/16
+add ipnova_HK 201.15.128.0/20
+add ipnova_HK 201.15.160.0/20
+add ipnova_HK 201.15.208.0/20
 add ipnova_HK 202.0.160.0/20
 add ipnova_HK 202.0.180.0/22
 add ipnova_HK 202.1.2.0/24
