@@ -2,7 +2,7 @@
   "schema_version": "3.2",
   "project": "ipnova",
   "version": "3.2.1",
-  "generated_at": "2026-05-18T16:47:04.500458+00:00",
+  "generated_at": "2026-05-19T23:06:18.852640+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "target_regions": {
     "CN": "China (Mainland)",
@@ -15,8 +15,8 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5493,
-      "ips": 342931968
+      "cidrs": 5491,
+      "ips": 342929920
     },
     "HK": {
       "cidrs": 2507,
@@ -62,7 +62,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32935,
+    "dynamic_prefixes": 32951,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -74,31 +74,31 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21521,
-    "source_networks": 21521,
-    "cidrs_kept": 21593,
+    "lines_processed": 21519,
+    "source_networks": 21519,
+    "cidrs_kept": 21591,
     "cidrs_excluded": 155,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22281,
-    "prefixes_after_collapse": 14631,
+    "prefixes_before_collapse": 22279,
+    "prefixes_after_collapse": 14629,
     "cloud_supplement": {
-      "prefixes_fetched": 5805,
+      "prefixes_fetched": 5807,
       "kept_per_region": {
-        "CN": 3326,
-        "SG": 2012,
-        "HK": 92,
+        "SG": 2011,
+        "CN": 3329,
         "KR": 16,
+        "HK": 92,
         "JP": 31
       },
       "dropped_other_country": 328,
       "dropped_unknown": 0,
-      "l0_local_hit": 5239,
+      "l0_local_hit": 5241,
       "cache_hit": 23,
       "l1_success": 543,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 344.067,
+      "duration_seconds": 346.544,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -114,6 +114,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "3617b8c3d0886bf4b02e23a240b9df320307a5f07479045f624217beb05d3396"
+    "data_json_sha256": "64975c000f881418c9783d5fd27b25d14d0ec156108018183b42dd55412e5f89"
   }
 }
