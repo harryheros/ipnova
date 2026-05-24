@@ -1,6 +1,6 @@
 # IPNova — HAProxy ACL — SG (Singapore)
-# Generated : 2026-05-19 23:06:27 UTC
-# CIDRs     : 1614
+# Generated : 2026-05-24 16:46:34 UTC
+# CIDRs     : 1615
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage in haproxy.cfg (frontend or backend section):
@@ -1004,6 +1004,7 @@
 161.248.214.0/23
 162.4.56.0/23
 162.4.76.0/23
+162.4.172.0/23
 162.62.0.0/16
 162.128.0.0/16
 163.7.0.0/17
