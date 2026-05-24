@@ -1,6 +1,6 @@
 # IPNova — ipset restore — HK (Hong Kong)
-# Generated : 2026-05-19 23:06:27 UTC
-# CIDRs     : 2507
+# Generated : 2026-05-24 16:46:34 UTC
+# CIDRs     : 2509
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -446,6 +446,7 @@ add ipnova_HK 103.13.48.0/22
 add ipnova_HK 103.13.176.0/23
 add ipnova_HK 103.13.191.0/24
 add ipnova_HK 103.13.220.0/22
+add ipnova_HK 103.14.100.0/22
 add ipnova_HK 103.14.112.0/21
 add ipnova_HK 103.14.220.0/22
 add ipnova_HK 103.15.20.0/22
@@ -1497,6 +1498,7 @@ add ipnova_HK 116.92.224.0/20
 add ipnova_HK 116.92.240.0/21
 add ipnova_HK 116.193.152.0/22
 add ipnova_HK 116.193.158.0/23
+add ipnova_HK 116.193.164.0/22
 add ipnova_HK 116.193.168.0/22
 add ipnova_HK 116.197.176.0/20
 add ipnova_HK 116.204.156.0/22

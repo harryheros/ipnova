@@ -1,6 +1,6 @@
 # IPNova — ipset restore — CN (China (Mainland))
-# Generated : 2026-05-19 23:06:27 UTC
-# CIDRs     : 5491
+# Generated : 2026-05-24 16:46:34 UTC
+# CIDRs     : 5490
 # Project   : https://github.com/harryheros/ipnova
 #
 # Usage:
@@ -1039,7 +1039,6 @@ add ipnova_CN 103.13.124.0/22
 add ipnova_CN 103.13.196.0/22
 add ipnova_CN 103.13.244.0/22
 add ipnova_CN 103.14.84.0/22
-add ipnova_CN 103.14.100.0/22
 add ipnova_CN 103.14.132.0/22
 add ipnova_CN 103.14.136.0/22
 add ipnova_CN 103.14.156.0/22
@@ -3086,7 +3085,6 @@ add ipnova_CN 116.128.0.0/10
 add ipnova_CN 116.192.0.0/16
 add ipnova_CN 116.193.16.0/20
 add ipnova_CN 116.193.32.0/19
-add ipnova_CN 116.193.164.0/22
 add ipnova_CN 116.193.176.0/21
 add ipnova_CN 116.194.0.0/15
 add ipnova_CN 116.196.0.0/16
@@ -3753,6 +3751,7 @@ add ipnova_CN 161.248.112.0/23
 add ipnova_CN 161.248.136.0/23
 add ipnova_CN 162.4.54.0/23
 add ipnova_CN 162.4.136.0/23
+add ipnova_CN 162.4.168.0/23
 add ipnova_CN 162.14.0.0/16
 add ipnova_CN 162.105.0.0/16
 add ipnova_CN 163.0.0.0/16
