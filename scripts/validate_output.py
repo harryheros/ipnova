@@ -27,8 +27,24 @@ REGION_FILES = {
     "SG": OUTPUT_DIR / "SG.txt",
 }
 
-MAX_L2_RATIO = 0.60
+# L2 fallback ratio threshold.
+# Postmortem 5.2 measured the healthy baseline at ~0.6% (32 / 5745 prefixes).
+# Anything beyond a few percent indicates L1 (RIPEstat geoloc) is degraded
+# and prefixes are silently falling back to "ASN holder country", which
+# over-attributes overseas regions of CN cloud ASNs to CN. This is a
+# health signal, not a correctness gate — we warn loudly but do not fail
+# the build so transient RIPEstat hiccups don't block weekly publishes.
+# Real correctness gates are MIN_CN_CIDRS, MAX_HK_CIDRS, and cross-region
+# overlap detection, all of which still fail.
+MAX_L2_RATIO = 0.10
 _NETWORK_KEYS = {}
+# HK's APNIC allocation is naturally small and stable around the low
+# thousands. A sudden jump beyond MAX_HK_CIDRS suggests an upstream
+# anomaly: either APNIC re-classified large blocks, the BGP supplement
+# is mis-attributing prefixes (e.g. CN cloud overseas regions leaking
+# into HK), or the build pipeline collapse logic regressed. Set above
+# the historical maximum with comfortable headroom; revisit only if
+# real HK allocations grow past this.
 MAX_HK_CIDRS = 5000
 
 # Load SANITY_THRESHOLDS from generate_ip_list.py so MIN_CN_CIDRS shares a
@@ -140,7 +156,13 @@ def check_meta(meta: dict, region_counts: dict):
         l2_ratio = l2_fallback / prefixes_fetched
         info(f"L2 fallback ratio: {l2_ratio:.2%}")
         if l2_ratio > MAX_L2_RATIO:
-            fail(f"L2 fallback ratio too high: {l2_ratio:.2%} > {MAX_L2_RATIO:.2%}")
+            warn(
+                f"L2 fallback ratio {l2_ratio:.2%} exceeds healthy threshold "
+                f"{MAX_L2_RATIO:.2%}. RIPEstat geoloc (L1) may be degraded; "
+                f"cloud-ASN prefixes are falling back to holder-country "
+                f"attribution, which can over-assign overseas regions to CN. "
+                f"Inspect meta.json cloud_supplement counters."
+            )
 
 
 def main():

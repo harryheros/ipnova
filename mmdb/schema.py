@@ -5,16 +5,21 @@ Defines the data structure written into ipnova-apac.mmdb.
 Compatible with MaxMind GeoIP2 Country format.
 """
 
-# Regions covered by IPNova
-APAC_REGIONS = {
-    "CN": "China (Mainland)",
-    "HK": "Hong Kong",
-    "TW": "Taiwan",
-    "MO": "Macau",
-    "JP": "Japan",
-    "KR": "South Korea",
-    "SG": "Singapore",
-}
+import os
+import sys
+
+# Ensure project root is on sys.path so `import regions` resolves whether
+# this module is imported from build_formats.py (cwd = project root) or
+# directly via `python -m mmdb.schema` etc.
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if _PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, _PROJECT_ROOT)
+
+from regions import TARGET_REGIONS  # noqa: E402
+
+# Regions covered by IPNova — alias kept for backward compatibility with
+# code that imported APAC_REGIONS directly from this module.
+APAC_REGIONS = TARGET_REGIONS
 
 # Continent code for all APAC regions
 CONTINENT_CODE = "AS"

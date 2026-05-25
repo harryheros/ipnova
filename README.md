@@ -4,7 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.2.1-blue)
+![Version](https://img.shields.io/badge/version-3.3.0-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
@@ -68,8 +68,8 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/iptables/{CC}.ipset` | iptables ipset restore format |
 | `output/plain/{CC}.txt` | Plain CIDR list (no headers, for programmatic use) |
 | `output/terraform/{CC}.auto.tfvars.json` | Terraform variable file |
-| `output/GeoIP2-Country.mmdb` | MaxMind GeoIP2 drop-in alias |
-| `output/GeoLite2-Country.mmdb` | MaxMind GeoLite2 drop-in alias |
+| `output/GeoIP2-Country-compatible.mmdb` | MaxMind GeoIP2 schema-compatible alias |
+| `output/GeoLite2-Country-compatible.mmdb` | MaxMind GeoLite2 schema-compatible alias |
 | `output/checksums.txt` | SHA-256 checksums for all output files |
 
 For current CIDR counts and IP coverage per region, see `output/meta.json`.
@@ -84,9 +84,9 @@ Text files include metadata headers such as region, version, last updated timest
 # MMDB — primary branded build
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac.mmdb
 
-# MMDB — MaxMind drop-in aliases (zero-config replacement)
-https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoIP2-Country.mmdb
-https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoLite2-Country.mmdb
+# MMDB — schema-compatible aliases (rename locally if you need the literal MaxMind filename)
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoIP2-Country-compatible.mmdb
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoLite2-Country-compatible.mmdb
 
 # Plain text with headers (per region)
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
@@ -214,10 +214,26 @@ Each region now includes both:
 
 ## 📋 Changelog
 
+### v3.3.0
+
+- **Architecture**: extracted `TARGET_REGIONS` into `regions.py` as a single source of truth, eliminating definition drift between the build pipeline and `mmdb/schema.py`
+- **Correctness**: `enforce_mutual_exclusivity` now treats APNIC results as Tier 1 (authoritative) and BGP supplement as Tier 2 (gap-filling), so a misclassified supplement prefix can no longer displace an APNIC-assigned region block
+- **Reliability**: per-host RIPE Stat throttling enforced inside `http_get` (canonical hostname matching via `urlparse`, not substring), so callers can no longer accidentally bypass rate limits, and spoofed URLs cannot trigger throttling
+- **Operations**: `MAX_L2_RATIO` threshold tightened from 0.60 to 0.10 and downgraded from CI gate to loud warning — transient RIPEstat hiccups no longer block weekly publishes, while genuine L1 degradation is still surfaced
+- **MMDB validator**: rewritten as an explicit round-trip check rather than an "accuracy" check it could not actually perform; tolerates individual stale samples (warn-only), fails only when an entire region has zero matching samples
+- **Security/Provenance**: canary CIDR set embedded in published artifacts using RFC5737 documentation-reserved ranges (harmless for downstream firewall/ACL use, but enables forensic attribution of unattributed redistributions); `meta.json` gains a `build` section recording the commit SHA that produced the artifact
+- **HTTP**: `User-Agent` is now derived from `__version__` and includes the repository URL for contactability (was hardcoded and had drifted)
+- **CLI**: new `--skip-canary` flag for verification builds
+- **MaxMind aliases renamed**: `GeoIP2-Country.mmdb` → `GeoIP2-Country-compatible.mmdb` (and likewise for GeoLite2). The `-compatible` suffix avoids using MaxMind's trademarked product names directly; rename locally if a literal drop-in filename is required.
+- **iptables**: `ipset` maxelem sized dynamically (`max(num_cidrs * 2, 65536)`, rounded to next power of two) so future region growth doesn't silently truncate
+- **MMDB validator**: expanded MO sample set so a single IP holder change can't fail the region-coverage gate
+- **Documentation**: project-language consistency — translated `IPNOVA_MULTISOURCE_PROPOSAL.md` to English (`P0_5_POSTMORTEM.md` already English)
+- **Testing**: 4 new offline tests covering tier-layered enforce, hostname-based RIPE throttle classification, MMDB round-trip semantics, regions single-source-of-truth, User-Agent derivation, and canary CIDR well-formedness — 14 tests total
+
 ### v3.2.1
 
 - **New**: `output/cidr_objects` per-CIDR provenance metadata in `data.json` (schema v3.2) — each CIDR now carries `source`, `asn`, `tier`, and `confidence` fields
-- **New**: `output/GeoIP2-Country.mmdb` + `output/GeoLite2-Country.mmdb` — MaxMind drop-in aliases for zero-config migration
+- **New**: `output/GeoIP2-Country-compatible.mmdb` + `output/GeoLite2-Country-compatible.mmdb` — schema-compatible aliases (named with `-compatible` suffix to avoid using MaxMind's trademarked product names directly; rename locally if a literal drop-in is desired)
 - **New**: `output/haproxy/{CC}.acl` — HAProxy ACL format
 - **New**: `output/caddy/{CC}.conf` — Caddy remote_ip matcher format
 - **New**: `output/plain/{CC}.txt` — pure CIDR files with no comment headers (for programmatic consumption)
@@ -316,6 +332,16 @@ If IPNova is useful to you, consider giving it a ⭐ on GitHub.
 
 - **Non-commercial use**: Permitted under the terms of CC BY-NC-SA 4.0.
 - **Commercial use**: Commercial use, SaaS deployment, API resale, redistribution, or integration into paid products or services requires explicit prior written authorization from the author. See [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) or contact via [GitHub Issues](https://github.com/harryheros/ipnova/issues).
+
+---
+
+## 🛡️ Names and Provenance
+
+**Project names** — "IPNova", "DomainNova", "ShieldNova", "OsNova", "HarryWrt", and the umbrella "Nova Toolkit" — identify projects authored and maintained by the original author. Use of these names to describe forked, repackaged, or derivative products without attribution may constitute identity confusion and is not authorized.
+
+**Provenance fingerprinting** — published artifacts contain documentation-reserved CIDR ranges (RFC 5737) embedded for forensic attribution. These ranges are harmless for downstream use (they never route on the public Internet) but make unattributed redistribution detectable. See `regions.py` and `meta.json` for the per-release fingerprint set.
+
+If you build something useful on top of IPNova, attribution and a backlink to this repository are appreciated; if you intend to do so commercially, please reach out via the channels above.
 
 ---
 

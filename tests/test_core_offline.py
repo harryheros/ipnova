@@ -132,6 +132,315 @@ def test_target_regions_complete():
     assert set(generate_ip_list.TARGET_REGIONS.keys()) == expected
 
 
+def test_enforce_apnic_authoritative_over_supp():
+    """APNIC results must not be displaced by overlapping BGP supplement.
+
+    Scenario: APNIC assigns 1.0.0.0/24 to HK. A misclassified cloud ASN
+    BGP-announces 1.0.0.0/22 and the supplement pipeline labels it CN.
+    The new layered enforce must keep HK's 1.0.0.0/24 intact and only
+    grant CN the non-overlapping remainder (1.0.1.0/24 + 1.0.2.0/23).
+    """
+    import ipaddress as ip
+    region_data = {
+        "HK": [ip.ip_network("1.0.0.0/24")],
+    }
+    supp_data = {
+        "CN": [ip.ip_network("1.0.0.0/22")],
+    }
+    out = generate_ip_list.enforce_mutual_exclusivity(region_data, supp_data=supp_data)
+
+    hk_cidrs = {str(n) for n in out["HK"]}
+    cn_cidrs = {str(n) for n in out["CN"]}
+
+    assert "1.0.0.0/24" in hk_cidrs, "APNIC HK assignment must survive"
+    assert "1.0.0.0/24" not in cn_cidrs, "BGP supp must not eat APNIC HK block"
+    assert cn_cidrs == {"1.0.1.0/24", "1.0.2.0/23"}, (
+        f"CN should fill the gap, got {cn_cidrs}"
+    )
+
+
+def test_enforce_supp_none_backward_compat():
+    """Calling enforce without supp_data must behave like the original.
+
+    No supp means existing APNIC-only path; output should still be mutually
+    exclusive and identical to passing supp_data=None.
+    """
+    import ipaddress as ip
+    region_data = {
+        "CN": [ip.ip_network("1.0.0.0/22")],
+        "HK": [ip.ip_network("1.0.0.0/24")],
+    }
+    out_none = generate_ip_list.enforce_mutual_exclusivity(region_data)
+    out_explicit = generate_ip_list.enforce_mutual_exclusivity(region_data, supp_data=None)
+
+    assert {cc: [str(n) for n in nets] for cc, nets in out_none.items()} == \
+           {cc: [str(n) for n in nets] for cc, nets in out_explicit.items()}
+
+
+def test_http_get_ripe_throttle():
+    """Two successive RIPE Stat calls must be at least RIPE_REQUEST_INTERVAL apart.
+
+    Patches urlopen with a fake response; measures wall-clock between calls.
+    A non-RIPE URL must not be throttled. URLs that merely contain
+    'stat.ripe.net' in their query string must NOT be classified as RIPE.
+    """
+    import time
+    import urllib.request
+
+    g = generate_ip_list
+
+    # ---- 1. Pure hostname classification (no network calls) ----
+    assert g._is_ripe_host("https://stat.ripe.net/data/x") is True
+    assert g._is_ripe_host("https://STAT.RIPE.NET/data/x") is True  # case-insensitive
+    assert g._is_ripe_host("https://api.stat.ripe.net/x") is True   # subdomain
+    assert g._is_ripe_host("https://evil.com/?ref=stat.ripe.net") is False
+    assert g._is_ripe_host("https://stat.ripe.net.evil.com/x") is False  # not a real RIPE subdomain
+    assert g._is_ripe_host("https://ftp.apnic.net/x") is False
+    assert g._is_ripe_host("not-a-url") is False
+
+    # ---- 2. Throttle timing via patched urlopen ----
+    # Reset throttle state to make the test deterministic regardless of order
+    g._RIPE_LAST_CALL = 0.0
+
+    class _FakeResp:
+        def __init__(self, body=b'{"data":{"prefixes":[]}}', content_type="application/json"):
+            self._body = body
+            self.headers = {"Content-Type": content_type}
+        def read(self):
+            return self._body
+        def __enter__(self):
+            return self
+        def __exit__(self, *a):
+            return False
+
+    def fake_urlopen(req, timeout=None):
+        return _FakeResp()
+
+    original = urllib.request.urlopen
+    urllib.request.urlopen = fake_urlopen
+    try:
+        # Two RIPE calls back-to-back: second must be delayed
+        t0 = time.monotonic()
+        g.http_get("https://stat.ripe.net/data/announced-prefixes/data.json?resource=AS1")
+        t1 = time.monotonic()
+        g.http_get("https://stat.ripe.net/data/geoloc/data.json?resource=1.0.0.0/24")
+        t2 = time.monotonic()
+
+        # First call should be roughly instant (no prior RIPE call this test run)
+        assert (t1 - t0) < 0.5, f"first RIPE call delayed unexpectedly: {t1 - t0:.2f}s"
+        # Second call should be delayed close to RIPE_REQUEST_INTERVAL
+        gap = t2 - t1
+        assert gap >= g.RIPE_REQUEST_INTERVAL - 0.05, (
+            f"second RIPE call gap {gap:.2f}s < RIPE_REQUEST_INTERVAL "
+            f"{g.RIPE_REQUEST_INTERVAL}s"
+        )
+
+        # Non-RIPE URL must NOT be throttled even when _RIPE_LAST_CALL is fresh
+        g._RIPE_LAST_CALL = time.monotonic()
+        t3 = time.monotonic()
+        g.http_get("https://ftp.apnic.net/stats/apnic/delegated-apnic-latest",
+                   strict_decode=False)
+        t4 = time.monotonic()
+        assert (t4 - t3) < 0.5, f"non-RIPE call wrongly throttled: {t4 - t3:.2f}s"
+
+        # URL whose query string contains 'stat.ripe.net' must NOT be throttled
+        g._RIPE_LAST_CALL = time.monotonic()
+        t5 = time.monotonic()
+        g.http_get("https://example.com/x?ref=stat.ripe.net")
+        t6 = time.monotonic()
+        assert (t6 - t5) < 0.5, (
+            f"spoofed URL wrongly throttled: {t6 - t5:.2f}s "
+            "(host classification must use urlparse hostname, not substring)"
+        )
+    finally:
+        urllib.request.urlopen = original
+        g._RIPE_LAST_CALL = 0.0
+
+
+def test_mmdb_validator_roundtrip_semantics():
+    """MMDB validator should: pass when every region has at least one match,
+    tolerate individual stale samples (warn but pass), fail when any region
+    has zero matching samples, and fail on pathologically small files.
+    """
+    import os
+    import sys
+    import tempfile
+    import types
+
+    # Inject fake maxminddb so the test works without the real dep installed
+    fake_mmdb = types.ModuleType("maxminddb")
+
+    class _FakeReader:
+        def __init__(self, mapping):
+            self._m = mapping
+        def get(self, ip):
+            return self._m.get(ip)
+        def __enter__(self):
+            return self
+        def __exit__(self, *a):
+            return False
+
+    _mapping = {}
+
+    def open_database(path):
+        return _FakeReader(_mapping)
+
+    fake_mmdb.open_database = open_database
+    sys.modules['maxminddb'] = fake_mmdb
+
+    # Force fresh import of validator so it picks up the injected fake
+    for m in list(sys.modules):
+        if m.startswith('mmdb'):
+            del sys.modules[m]
+    mmdb_root = str(ROOT)
+    if mmdb_root not in sys.path:
+        sys.path.insert(0, mmdb_root)
+    from mmdb.validator import validate, SAMPLE_IPS
+
+    def good(cc):
+        return {"country": {"iso_code": cc, "names": {"en": cc}}}
+
+    def write_temp(size_kb):
+        fd, path = tempfile.mkstemp(suffix=".mmdb")
+        os.write(fd, b"X" * (size_kb * 1024))
+        os.close(fd)
+        return path
+
+    # 1) Happy path
+    _mapping.clear()
+    for cc, samples in SAMPLE_IPS.items():
+        for ip, _ in samples:
+            _mapping[ip] = good(cc)
+    p = write_temp(50)
+    try:
+        assert validate(p) is True, "happy path should pass"
+    finally:
+        os.unlink(p)
+
+    # 2) Individual stale sample: one mismatch in a region that has other matches
+    _mapping.clear()
+    for cc, samples in SAMPLE_IPS.items():
+        for i, (ip, _) in enumerate(samples):
+            if cc == "CN" and i == 1:
+                _mapping[ip] = good("US")  # drifted
+            else:
+                _mapping[ip] = good(cc)
+    p = write_temp(50)
+    try:
+        assert validate(p) is True, "single stale sample should warn but pass"
+    finally:
+        os.unlink(p)
+
+    # 3) Whole region missing
+    _mapping.clear()
+    for cc, samples in SAMPLE_IPS.items():
+        for ip, _ in samples:
+            _mapping[ip] = None if cc == "CN" else good(cc)
+    p = write_temp(50)
+    try:
+        assert validate(p) is False, "missing region should fail"
+    finally:
+        os.unlink(p)
+
+    # 4) File too small
+    p = write_temp(5)
+    try:
+        assert validate(p) is False, "tiny file should fail"
+    finally:
+        os.unlink(p)
+
+
+def test_regions_single_source_of_truth():
+    """regions.TARGET_REGIONS must be the same object referenced everywhere.
+
+    Drift between generate_ip_list.TARGET_REGIONS and mmdb.schema.APAC_REGIONS
+    used to be possible because both were defined independently. Now both
+    must point at regions.TARGET_REGIONS.
+    """
+    import sys
+    # Ensure project root is importable
+    mmdb_root = str(ROOT)
+    if mmdb_root not in sys.path:
+        sys.path.insert(0, mmdb_root)
+
+    import regions
+    from mmdb import schema as mmdb_schema
+
+    # Identity check (same object, not just equal contents) — guarantees
+    # any future edit goes through regions.py.
+    assert generate_ip_list.TARGET_REGIONS is regions.TARGET_REGIONS, (
+        "generate_ip_list.TARGET_REGIONS is not regions.TARGET_REGIONS"
+    )
+    assert mmdb_schema.APAC_REGIONS is regions.TARGET_REGIONS, (
+        "mmdb.schema.APAC_REGIONS is not regions.TARGET_REGIONS"
+    )
+    # And mmdb_schema also re-exports the original name
+    assert mmdb_schema.TARGET_REGIONS is regions.TARGET_REGIONS
+
+
+def test_user_agent_derives_from_version():
+    """USER_AGENT must always include __version__ and the repo URL.
+
+    Prevents the previous bug where the UA string was hardcoded to
+    'ipnova-bot/3.2' and drifted from __version__ as the project
+    bumped to 3.2.1.
+    """
+    g = generate_ip_list
+    assert g.__version__ in g.USER_AGENT, (
+        f"USER_AGENT {g.USER_AGENT!r} must contain __version__ "
+        f"{g.__version__!r}"
+    )
+    assert "github.com/harryheros/ipnova" in g.USER_AGENT, (
+        "USER_AGENT must include repo URL for contactability"
+    )
+    assert g.USER_AGENT.startswith("ipnova/"), (
+        "UA must start with project name + version, not legacy '-bot' suffix"
+    )
+
+
+def test_canary_cidrs_well_formed():
+    """Each region must have exactly one canary CIDR from RFC5737 test ranges.
+
+    RFC5737 reserves 192.0.2.0/24, 198.51.100.0/24, and 203.0.113.0/24 for
+    documentation; these ranges are guaranteed never to route on the public
+    Internet, making them safe to embed in published artifacts.
+    """
+    import ipaddress as ip
+    import sys
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    import regions
+
+    rfc5737 = [
+        ip.ip_network("192.0.2.0/24"),
+        ip.ip_network("198.51.100.0/24"),
+        ip.ip_network("203.0.113.0/24"),
+    ]
+
+    canaries = regions.canary_networks()
+    # Every target region must have a canary
+    assert set(canaries.keys()) == set(regions.TARGET_REGIONS.keys()), (
+        "canary regions must match TARGET_REGIONS exactly"
+    )
+
+    # Each canary must live inside an RFC5737 documentation block
+    for cc, canary in canaries.items():
+        inside = any(canary.subnet_of(test_net) for test_net in rfc5737)
+        assert inside, (
+            f"canary for {cc} = {canary} is NOT inside any RFC5737 "
+            f"documentation range; this would risk colliding with real "
+            f"public addresses"
+        )
+
+    # All canaries must be mutually exclusive (no two regions share a canary)
+    canary_list = list(canaries.values())
+    for i, a in enumerate(canary_list):
+        for b in canary_list[i + 1:]:
+            assert not a.overlaps(b), (
+                f"canary overlap detected: {a} overlaps {b}"
+            )
+
+
 if __name__ == "__main__":
     test_parse_normalize_and_write_outputs()
     print("  test_parse_normalize_and_write_outputs: PASS")
@@ -147,4 +456,18 @@ if __name__ == "__main__":
     print("  test_forbidden_asns_not_in_cloud_asns: PASS")
     test_target_regions_complete()
     print("  test_target_regions_complete: PASS")
+    test_enforce_apnic_authoritative_over_supp()
+    print("  test_enforce_apnic_authoritative_over_supp: PASS")
+    test_enforce_supp_none_backward_compat()
+    print("  test_enforce_supp_none_backward_compat: PASS")
+    test_http_get_ripe_throttle()
+    print("  test_http_get_ripe_throttle: PASS")
+    test_mmdb_validator_roundtrip_semantics()
+    print("  test_mmdb_validator_roundtrip_semantics: PASS")
+    test_regions_single_source_of_truth()
+    print("  test_regions_single_source_of_truth: PASS")
+    test_user_agent_derives_from_version()
+    print("  test_user_agent_derives_from_version: PASS")
+    test_canary_cidrs_well_formed()
+    print("  test_canary_cidrs_well_formed: PASS")
     print("\nAll offline tests passed.")

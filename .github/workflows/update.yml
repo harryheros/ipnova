@@ -29,10 +29,10 @@ jobs:
           pip install -r requirements.txt
 
       - name: Lint check
-        run: ruff check generate_ip_list.py scripts/ mmdb/
+        run: ruff check generate_ip_list.py regions.py scripts/ mmdb/
 
       - name: Syntax check
-        run: python -m py_compile generate_ip_list.py scripts/*.py mmdb/*.py tests/*.py
+        run: python -m py_compile generate_ip_list.py regions.py scripts/*.py mmdb/*.py tests/*.py
 
       - name: Offline smoke test
         run: python tests/test_core_offline.py

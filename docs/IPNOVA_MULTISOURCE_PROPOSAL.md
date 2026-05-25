@@ -1,151 +1,151 @@
-# IPNova 多源融合改造規範書 v0.2
+# IPNova Multi-Source Fusion Specification v0.2
 
-> Status: Implemented (2026-04-16) · Delivered: IPNova v3.0.0
+> Status: Implemented (2026-04-16) · Delivered in IPNova v3.0.0
 > Predecessor: DomainNova `PROPOSAL_MULTI_REGION.md`
-> Changelog from v0.1: AS55990 移除、Tier 3 擴充、geoloc 加 fallback、Tier 2 局限明確化、性能優化補充
+> Changelog from v0.1: AS55990 removed, Tier 3 expanded, geoloc fallback chain added, Tier 2 limitations made explicit, performance optimizations.
 
 ---
 
-## 1. 問題陳述
+## 1. Problem Statement
 
-### 1.1 觀察到的故障
-DomainNova 對 `ctrip.com` 的打分返回 `dns_cn=0`，被排除在 `dist/domains.txt` 之外。實際解析到的 IP 為 `8.153.170.107` 與 `8.153.91.124`，這是阿里雲上海 region 的公網段。`matched_cidr` 為空，說明 IPNova 的 `CN.txt` 不包含 `8.153.0.0/16`。
+### 1.1 Observed Failure
+DomainNova's scoring returned `dns_cn=0` for `ctrip.com`, excluding it from `dist/domains.txt`. The domain in fact resolved to `8.153.170.107` and `8.153.91.124`, which are Aliyun Shanghai region public addresses. `matched_cidr` was empty, indicating IPNova's `CN.txt` did not contain `8.153.0.0/16`.
 
-### 1.2 根本原因
-- IPNova 當前唯一數據源為 `ftp.apnic.net/stats/apnic/delegated-apnic-latest`
-- `8.0.0.0/8` 整個 /8 屬於 ARIN 管轄（歷史上 Level 3 / 現 Lumen），**從未出現在 APNIC delegated 文件中**
-- 阿里雲近年從 ARIN 體系購買/租用了 `8.128.0.0/10` 範圍內的多個段用於中國區業務
-- IPNova 的 `parse_and_cleanse` 邏輯只能對 APNIC 結果做減法（去除 Anycast/CDN ASN），無法補充 ARIN 段
-- 結論：**這是架構性盲區，不是腳本 bug**
+### 1.2 Root Cause
+- IPNova's only data source was `ftp.apnic.net/stats/apnic/delegated-apnic-latest`.
+- The entire `8.0.0.0/8` block is under ARIN administration (historically Level 3, now Lumen) and never appears in APNIC delegated files.
+- Aliyun acquired multiple segments within `8.128.0.0/10` from the ARIN system for use in their mainland China business.
+- IPNova's `parse_and_cleanse` logic could only subtract from APNIC results (remove Anycast/CDN ASNs); it had no mechanism to add ARIN-registered blocks.
+- Conclusion: this is an architectural blind spot, not a script bug.
 
-### 1.3 影響範圍
-所有部署在中國雲廠商海外購買 IP 段上的網站都會被誤判：
-- 阿里雲 8.x、47.x 段上的客戶（攜程、部分電商、SaaS 服務）
-- 騰訊雲、華為雲在 ARIN 體系下的同類段
-- 估計受影響域名：在 DomainNova 當前 ~700 行 seed.txt 中至少 20-50 個大站
+### 1.3 Impact Scope
+Every site hosted on overseas-purchased IP blocks held by Chinese cloud providers would be mis-classified:
+- Customers on Aliyun 8.x and 47.x ranges (Ctrip, various e-commerce and SaaS).
+- Equivalent ARIN-system ranges held by Tencent Cloud and Huawei Cloud.
+- Estimated affected domains: at least 20–50 large sites within DomainNova's current ~700-line seed.txt.
 
-### 1.4 商業影響
-這個盲區直接威脅 DomainNova 作為「精準 CN 基礎設施數據集」的商業價值。賣給合規客戶時，客戶用自己的已知資產一驗證就能發現漏報，信譽受損。
-
----
-
-## 2. 方案演化記錄
-
-### 2.1 已否決方案
-
-**方案 A — APNIC 補丁清單**
-手動維護一份「APNIC 漏收的 CN CIDR」靜態列表。
-**否決理由**：信息會過時，每次雲廠商買新段都要手動更新，不可持續。
-
-**方案 D — RIPE Stat geoloc 全量查詢**
-對 APNIC 結果之外的所有 IP 段逐個查 geoloc。
-**否決理由**：「APNIC 之外」是無界集合，查詢量不可估計。
-
-**方案 E — 雲廠商官方 IP 列表 fetcher**
-仿照 AWS `ip-ranges.json` 的模式，去阿里雲/騰訊雲/華為雲拉官方公開的全雲 IP 範圍 JSON。
-**否決理由**：實地調研確認三家均無此類官方公開資源。只有 ListRegions/DescribeRegions 這類「地域元數據」API 和零散的產品級 endpoint 文檔，無法覆蓋計算實例範圍。商業文化差異——中國雲廠商沒有公開全 IP 範圍的動力，因為其客戶基本不做跨境白名單操作。
-
-### 2.2 最終採納：方案 F + F1
-
-**F：BGP 路由表反推（基於 ASN 宣告）**
-通過 RIPE Stat 的 `announced-prefixes` API 拉取已知中國雲/互聯網公司 ASN 當前宣告的所有 BGP 前綴。BGP 是「網絡實際運行狀態」的信號，比任何註冊表都新鮮，且不受 RIR 邊界限制——無論前綴註冊在 APNIC 還是 ARIN，只要該 ASN 在宣告它，它就是該組織在用的網絡。
-
-**F1：RIPE Stat geoloc 二次定位（含 fallback）**
-對 F 拉到的每個前綴單獨查詢地理位置，按返回的國家代碼分桶到 CN/HK/TW/MO 對應的輸出文件。**這是解決「跨地區串庫」問題的唯一機制**——中國雲廠商在香港、新加坡、美西都有 region，這些段必須按地理位置精確分流。
-
-### 2.3 為什麼選 F+F1
-1. **零新依賴**：IPNova 已經在用 RIPE Stat 做 EXCLUDED_ASNS 的 BGP 查詢，所有 HTTP 客戶端、重試邏輯、rate limit 處理都是現成的，只是反向使用
-2. **數據新鮮度**：BGP 是實時運行狀態
-3. **天然解決串庫**：geoloc 二次定位從根源杜絕了香港段混入 CN.txt
-4. **完全免費無需 license key**
-5. **複用現有測試和維護心智模型**
+### 1.4 Business Impact
+This blind spot directly threatens DomainNova's commercial value as a "precise CN infrastructure dataset". When sold to compliance customers, a single validation against the customer's own known assets reveals the omissions, damaging credibility.
 
 ---
 
-## 3. ASN 分層模型
+## 2. Evolution of Approaches
 
-### 3.1 設計理念
-不是所有 ASN 都「等價」。直接平等對待會有兩類風險：（a）混入運營商 ASN 導致全國家寬被誤標；（b）混合 ASN 內部的跨境段串庫。本規範採用三層分類，明確每層的處理策略。
+### 2.1 Rejected Approaches
 
-### 3.2 Tier 1 — 純雲 ASN（高信任）
-這些 ASN 的宣告段絕大多數是雲機房 IP，幾乎沒有家寬或辦公網污染。
+**Approach A — APNIC patch list**
+Maintain a static "CIDRs APNIC is missing" file by hand.
+**Rejected**: information goes stale; every new IP purchase by a cloud provider requires a manual edit. Not sustainable.
 
-| ASN | 組織 | 說明 |
+**Approach D — Full RIPE Stat geoloc scan**
+Query geoloc for every IP block outside APNIC data.
+**Rejected**: "outside APNIC" is an unbounded set; query volume cannot be estimated.
+
+**Approach E — Cloud provider official IP list fetcher**
+Modeled on AWS `ip-ranges.json`: fetch official public cloud IP range JSON from Aliyun, Tencent Cloud, and Huawei Cloud.
+**Rejected**: field investigation confirmed none of the three publishes such a resource. Only `ListRegions`/`DescribeRegions`-style "region metadata" APIs and scattered product-level endpoint documentation exist, none of which cover compute-instance ranges. The cultural reason is straightforward: Chinese cloud customers rarely perform cross-border allowlisting, so providers have no incentive to publish full IP ranges.
+
+### 2.2 Adopted: Approach F + F1
+
+**F: BGP route reversal (ASN announcement based)**
+Use RIPE Stat's `announced-prefixes` API to pull all current BGP prefixes announced by known Chinese cloud / internet-company ASNs. BGP is a "live operational" signal — fresher than any registry, and independent of RIR boundaries: whether a prefix is registered with APNIC or ARIN, if the ASN is announcing it, the prefix is part of that organization's live network.
+
+**F1: RIPE Stat geoloc secondary classification (with fallback)**
+For each prefix collected via F, query geographic location separately and bucket into CN/HK/TW/MO output files by returned country code. This is the only mechanism that solves the "cross-region pollution" problem: Chinese cloud providers run regions in Hong Kong, Singapore, and the US West, and these prefixes must be precisely separated by geography.
+
+### 2.3 Why F+F1
+1. **No new dependencies**: IPNova already uses RIPE Stat for `announced-prefixes` queries against `EXCLUDED_ASNS`. All HTTP client code, retry logic, and rate-limiting are reused — only the direction of use is inverted.
+2. **Data freshness**: BGP reflects live state.
+3. **Cross-region separation is intrinsic**: geoloc secondary classification structurally prevents Hong Kong segments from leaking into CN.txt.
+4. **Free, no license key required.**
+5. **Reuses existing testing and maintenance mental model.**
+
+---
+
+## 3. ASN Tier Model
+
+### 3.1 Design Principle
+Not all ASNs are equivalent. Treating them uniformly creates two classes of risk: (a) including operator ASNs causes nationwide consumer broadband to be mislabeled; (b) within mixed ASNs, cross-border segments leak between regions. This specification adopts a three-tier classification with explicit per-tier handling.
+
+### 3.2 Tier 1 — Pure cloud ASNs (high trust)
+These ASNs' announced prefixes are almost exclusively cloud datacenter IPs, with negligible residential or office-network contamination.
+
+| ASN | Organization | Notes |
 |---|---|---|
-| AS37963 | Aliyun Computing Co., Ltd. | 阿里雲中國，核心 ASN |
-| AS45102 | Alibaba US Technology Co., Ltd. | 阿里雲海外主 ASN |
-| AS132203 | Tencent Cloud Computing (Beijing) | 騰訊雲國際 |
-| AS136907 | HUAWEI CLOUDS | 華為雲國際，乾淨的雲 ASN |
+| AS37963 | Aliyun Computing Co., Ltd. | Aliyun mainland, core ASN |
+| AS45102 | Alibaba US Technology Co., Ltd. | Aliyun overseas primary ASN |
+| AS132203 | Tencent Cloud Computing (Beijing) | Tencent Cloud International |
+| AS136907 | HUAWEI CLOUDS | Huawei Cloud International, clean cloud ASN |
 
-**處理策略**：geoloc 通過後直接寫入對應地區文件，元數據標記 `tier: 1, confidence: high`。
+**Handling**: prefixes that pass geoloc are written directly into the corresponding region file with metadata tag `tier: 1, confidence: high`.
 
-### 3.3 Tier 2 — 互聯網公司混合 ASN（中信任）
+### 3.3 Tier 2 — Internet company mixed ASNs (medium trust)
 
-| ASN | 組織 | 包含內容 |
+| ASN | Organization | Contents |
 |---|---|---|
-| AS45090 | Tencent Building, Kejizhongyi Avenue | 騰訊雲、微信、QQ、CDN、消費業務 |
-| AS38365 | Baidu, Inc. | 搜索、CDN、Baidu Cloud |
-| AS58593 | ByteDance | TikTok、抖音、CDN、火山引擎 |
+| AS45090 | Tencent Building, Kejizhongyi Avenue | Tencent Cloud, WeChat, QQ, CDN, consumer business |
+| AS38365 | Baidu, Inc. | Search, CDN, Baidu Cloud |
+| AS58593 | ByteDance | TikTok, Douyin, CDN, Volcano Engine |
 
-**處理策略**：geoloc 通過後寫入對應地區文件，元數據標記 `tier: 2, confidence: medium`。
+**Handling**: prefixes that pass geoloc are written into the corresponding region file with metadata tag `tier: 2, confidence: medium`.
 
-#### 3.3.1 Tier 2 已知局限（重要）
+#### 3.3.1 Tier 2 Known Limitations (Important)
 
-Tier 2 ASN 的宣告段內**確實會混入消費業務 IP**——騰訊家寬接入、字節跳動辦公網、百度企業專線等。對於這些段：
+Tier 2 ASN prefixes do contain consumer-business IPs — Tencent residential broadband, ByteDance office networks, Baidu enterprise circuits, and so on. For these prefixes:
 
-- **對「IP 國家歸屬」場景**：完全正確。這些 IP 本來就在中國，無論用途如何都應該屬於 CN.txt。
-- **對「機房/雲基礎設施識別」場景**：是污染。下游需要做二次過濾才能區分雲段和消費段。
+- **For the "IP country attribution" use case**: completely correct. These IPs are physically in China, and regardless of intended use should belong in CN.txt.
+- **For the "datacenter / cloud infrastructure identification" use case**: this is contamination. Downstream consumers must perform secondary filtering to distinguish cloud segments from consumer segments.
 
-**本規範的決策**：IPNova 不在自身層面解決這個污染。理由：
+**Decision in this specification**: IPNova does not resolve this contamination at its own layer. Rationale:
 
-1. **責任邊界**：IPNova 的職責是「IP 國家歸屬」，機房語義細分屬於下游問題
-2. **不可逆性**：任何過濾規則（如 prefix length 閾值、rDNS 探測）都會誤殺正常雲段，而誤殺的數據無法找回
-3. **成本不對等**：在 IPNova 層引入過濾會大幅增加複雜度（rDNS 查詢、緩存、超時處理），但收益僅服務於「機房識別」這一個下游場景
-4. **更好的歸屬**：未來如真有「精準雲機房識別」需求，應另立 `asnnova` 項目（ASN 元數據庫），與 IPNova 解耦
+1. **Responsibility boundary**: IPNova's job is IP country attribution; datacenter semantic refinement is a downstream concern.
+2. **Irreversibility**: any filter rule (prefix length threshold, rDNS probing, etc.) will collaterally exclude legitimate cloud segments, and excluded data cannot be recovered.
+3. **Cost asymmetry**: introducing filtering at the IPNova layer would add significant complexity (rDNS queries, caching, timeouts) while serving only the one downstream use case of datacenter identification.
+4. **Better placement**: if "precise cloud-datacenter identification" becomes a real need, the right answer is a separate `asnnova` project (ASN metadata database), decoupled from IPNova.
 
-**對下游消費者的承諾**：通過 `meta.json` 中 `confidence: medium` 標記讓下游明確知曉哪些前綴來自 Tier 2，下游可選擇是否信任這些條目。
+**Commitment to downstream consumers**: the `confidence: medium` tag in `meta.json` makes Tier 2 prefixes explicitly identifiable, so downstream consumers can choose whether to trust them.
 
-### 3.4 Tier 3 — 運營商 ASN（永久禁止）
-運營商骨幹 ASN 包含家寬、IDC、DSLAM 接入網、企業專線等所有類型，**範圍過大且語義不明確**。一旦混入會把全國家寬 IP 全標成「雲」或「機房」，下游打分模型徹底崩盤。
+### 3.4 Tier 3 — Operator ASNs (permanently forbidden)
+Operator backbone ASNs contain residential broadband, IDC, DSLAM access networks, and enterprise leased lines — too broad, with unclear semantics. Including them would label entire residential broadband ranges as "cloud" or "datacenter", collapsing any downstream scoring model.
 
-| ASN | 組織 |
+| ASN | Organization |
 |---|---|
 | AS58466 | China Telecom |
 | AS4134 | China Telecom Backbone |
 | AS4837 | China Unicom Backbone |
 | AS9808 | China Mobile |
-| AS4538 | CERNET（教育網骨幹） |
+| AS4538 | CERNET (education network backbone) |
 | AS17621 | China Unicom Shanghai |
 | AS9394 | China Railway Telecom |
 
-**處理策略**：硬編碼為 `FORBIDDEN_ASNS` 常量。腳本啟動時做 sanity check：如果 `CN_CLOUD_ASNS` 與 `FORBIDDEN_ASNS` 有交集，立即報錯退出。這是防呆設計，避免未來有人手滑把運營商 ASN 加進收錄列表。
+**Handling**: hard-coded as `FORBIDDEN_ASNS`. At module load, a sanity check raises `RuntimeError` immediately if `CN_CLOUD_ASNS` and `FORBIDDEN_ASNS` intersect. This is defensive design against future maintainers accidentally adding operator ASNs to the inclusion list.
 
-### 3.5 已評估但不收錄的 ASN
+### 3.5 Evaluated but Not Included
 
-| ASN | 組織 | 不收錄原因 |
+| ASN | Organization | Reason for exclusion |
 |---|---|---|
-| **AS55990** | Huawei Technologies Co., Ltd. | 過於混雜（企業辦公網 + 設備測試網 + 研發中心 + 部分雲），污染程度高於 Tier 2 平均水平，可能引入大量非機房 IP。華為雲的覆蓋僅依靠 AS136907 一個 Tier 1 ASN。未來若有需要可作為 optional 擴展源，需配合 rDNS 過濾才能納入。 |
+| **AS55990** | Huawei Technologies Co., Ltd. | Too heterogeneous (enterprise office + device test net + R&D + some cloud); contamination higher than the Tier 2 average; would inject a large volume of non-datacenter IPs. Huawei Cloud coverage relies on the single Tier 1 AS136907. Could be considered as an optional future source pending rDNS filtering. |
 
-### 3.6 不採納的設計
-某輪 Review 建議引入 `cloud_confidence: 0.6` 連續數字和 `tags: ["cloud","cdn","consumer"]` 標籤系統。本規範拒絕該建議：
-- 超出 IPNova 範圍（IP 歸屬庫 ≠ ASN 風控標籤系統）
-- confidence 數字的計算模型需要訓練數據，這是另一個項目
-- 商業價值錯配——IPNova 的核心是國家歸屬精度，不是雲 IP 細分
-- 應由獨立的 `asnnova` 項目承擔
+### 3.6 Rejected Designs
+A review iteration suggested introducing continuous `cloud_confidence: 0.6` values and a `tags: ["cloud", "cdn", "consumer"]` system. This specification rejects that:
+- Out of scope (IP attribution database ≠ ASN risk-scoring system).
+- Confidence scores require training data, which is a separate project.
+- Commercial value mismatch — IPNova's core is country attribution precision, not cloud-IP subdivision.
+- Belongs in a hypothetical separate `asnnova` project.
 
-本規範只引入兩級 tier 標記（1=high, 2=medium），不引入連續 confidence。
+This specification introduces only two tier tags (1 = high, 2 = medium); no continuous confidence is introduced.
 
 ---
 
-## 4. 技術改造設計
+## 4. Technical Implementation
 
-### 4.1 改動涉及的文件
-- `generate_ip_list.py`（主要改動）
-- `output/meta.json` schema 擴展
-- `README.md` 章節更新
-- `.github/workflows/update.yml`（延長 timeout）
+### 4.1 Files Touched
+- `generate_ip_list.py` (primary changes)
+- `output/meta.json` schema extensions
+- `README.md` documentation updates
+- `.github/workflows/update.yml` (extended timeout)
 
-### 4.2 新增常量
+### 4.2 New Constants
 
 ```python
 # Cloud / Internet Company ASNs for ARIN-gap supplementation
@@ -189,7 +189,7 @@ GEOLOC_REQUEST_INTERVAL = 0.5
 GEOLOC_CACHE_TTL_HOURS = 24
 ```
 
-### 4.3 新增函數：geoloc 三級 fallback
+### 4.3 New Function: geoloc 3-Level Fallback
 
 ```python
 def fetch_prefix_country(prefix: str, asn: int, cache: dict) -> Optional[str]:
@@ -239,7 +239,7 @@ def fetch_prefix_country(prefix: str, asn: int, cache: dict) -> Optional[str]:
     return None
 ```
 
-### 4.4 新增函數：cloud supplementary builder
+### 4.4 New Function: Cloud Supplementary Builder
 
 ```python
 def build_cloud_supplementary_networks(apnic_data) -> Dict[str, List[ipaddress.IPv4Network]]:
@@ -277,7 +277,7 @@ def build_cloud_supplementary_networks(apnic_data) -> Dict[str, List[ipaddress.I
     return result, stats
 ```
 
-### 4.5 主流程集成
+### 4.5 Main Pipeline Integration
 ```
 Step 1: APNIC download              (existing)
 Step 2: build EXCLUDED networks     (existing)
@@ -288,26 +288,26 @@ Step 6: sanity check                (existing, threshold bumped)
 Step 7: save outputs                (existing, with confidence metadata)
 ```
 
-### 4.6 合併邏輯
-對每個 region：`final = collapse_addresses(apnic_result + cloud_supplementary)`。`ipaddress.collapse_addresses` 自動去重和聚合相鄰段。
+### 4.6 Merge Logic
+Per region: `final = collapse_addresses(apnic_result + cloud_supplementary)`. `ipaddress.collapse_addresses` deduplicates and aggregates adjacent ranges automatically.
 
-### 4.7 性能預期與優化
-- 現有：1-2 分鐘
-- 改造後：10-20 分鐘
-- 主要開銷：geoloc 查詢數量 = ΣASN 宣告的前綴數，預估 2000-5000 次查詢 × rate limit
-- **本地緩存**：單次運行內建立 `geoloc_cache` dict，避免重複查詢相同前綴
-- **跨運行緩存**（可選 P0.5d 優化）：將 geoloc 結果持久化到 `output/.geoloc_cache.json`，TTL 24 小時，可進一步降低後續運行的查詢量
-- 後台 cron 任務可接受
+### 4.7 Performance Expectations and Optimizations
+- Current: 1–2 minutes
+- After change: 10–20 minutes
+- Main cost: geoloc query count = Σ prefixes announced per ASN, estimated 2,000–5,000 queries × rate limit
+- **In-run cache**: build a `geoloc_cache` dict within a single run to avoid duplicate prefix queries.
+- **Cross-run cache** (optional P0.5d optimization): persist geoloc results to `output/.geoloc_cache.json` with a 24-hour TTL, further reducing subsequent run query volume.
+- Acceptable for a background cron job.
 
-### 4.8 失敗模式與降級
-- 單個 ASN 查詢失敗：log warning，跳過該 ASN，繼續其他
-- 單個 prefix 三級 fallback 全部失敗：標記為 UNKNOWN，不寫入任何 region 文件
-- 整體 RIPE Stat 不可用：回退到純 APNIC 模式（與現有行為一致），meta.json 標記 `cloud_supplement: failed`
-- sanity check 失敗：腳本退出，不覆蓋上一次成功的輸出
+### 4.8 Failure Modes and Degradation
+- Single ASN query failure: log warning, skip the ASN, continue with others.
+- All three fallback levels fail for a single prefix: mark as UNKNOWN, do not write to any region file.
+- RIPE Stat entirely unavailable: fall back to APNIC-only mode (existing behavior); meta.json marks `cloud_supplement: failed`.
+- Sanity check failure: script exits without overwriting the last successful output.
 
 ---
 
-## 5. meta.json schema 擴展
+## 5. meta.json Schema Extension
 
 ```json
 {
@@ -342,71 +342,71 @@ Step 7: save outputs                (existing, with confidence metadata)
 
 ---
 
-## 6. 測試策略
+## 6. Test Strategy
 
-### 6.1 標杆驗證用例
-| 域名/IP | 期望結果 |
+### 6.1 Benchmark Test Cases
+| Domain / IP | Expected Outcome |
 |---|---|
-| ctrip.com → 8.153.x.x | 改造後 8.153.0.0/16 應在 CN.txt 中 |
-| 阿里雲 cn-hongkong region IP（如 47.x） | 應在 HK.txt，**不在** CN.txt |
-| China Telecom 家寬 IP | 應在 CN.txt（來自 APNIC 既有覆蓋），不應因 cloud supplement 流程出現重複 |
+| ctrip.com → 8.153.x.x | After change, `8.153.0.0/16` should be in CN.txt |
+| Aliyun cn-hongkong region IP (e.g. 47.x) | Should be in HK.txt, **not** in CN.txt |
+| China Telecom residential broadband IP | Should be in CN.txt (from existing APNIC coverage); must not be duplicated by the cloud supplement path |
 
-### 6.2 回歸測試
-改造後 CN.txt 行數應 **大於等於** 改造前（5493 個 CIDR），HK.txt 也應略增。如果反而減少，說明合併邏輯有 bug。
+### 6.2 Regression Test
+After the change, CN.txt line count must be **≥** the pre-change count (5,493 CIDRs); HK.txt should also see a small increase. A decrease indicates a bug in the merge logic.
 
-### 6.3 串庫驗證（負向測試）
-- 從阿里雲文檔取一兩個已知的香港 region 樣本前綴
-- 確認改造後 CN.txt **不包含**這些前綴
-- 確認它們出現在 HK.txt 中
+### 6.3 Cross-Region Pollution Test (Negative)
+- Take one or two known Aliyun Hong Kong region sample prefixes from Aliyun documentation.
+- Confirm CN.txt does **not** contain those prefixes after the change.
+- Confirm they appear in HK.txt.
 
-### 6.4 Tier 3 防呆測試
-單元測試：構造一個臨時把 AS58466 加入 CN_CLOUD_ASNS 的場景，確認 module load 階段立即拋 RuntimeError。
+### 6.4 Tier 3 Defensive Test
+Unit test: construct a scenario that temporarily adds AS58466 to `CN_CLOUD_ASNS`, and confirm the module-load phase immediately raises `RuntimeError`.
 
 ---
 
-## 7. 分階段路線圖
+## 7. Phased Roadmap
 
-| 階段 | 範圍 | 預估規模 |
+| Phase | Scope | Estimated Size |
 |---|---|---|
-| **P0.5a** | CN_CLOUD_ASNS / FORBIDDEN_ASNS 常量、`fetch_prefix_country` 三級 fallback、`build_cloud_supplementary_networks` | ~180 行 |
-| **P0.5b** | main 流程集成、合併邏輯、meta.json 擴展 | ~60 行 |
-| **P0.5c** | sanity check 升級、失敗降級邏輯、Tier 3 防呆測試 | ~40 行 |
-| **P0.5d** | README 更新、workflow timeout 調整、（可選）跨運行緩存、release v3.0 | 文檔為主 |
-| **P0.5e（驗證）** | 本地跑通 + ctrip.com 標杆驗證 + 串庫驗證 | 用戶執行 |
+| **P0.5a** | `CN_CLOUD_ASNS` / `FORBIDDEN_ASNS` constants, `fetch_prefix_country` 3-level fallback, `build_cloud_supplementary_networks` | ~180 lines |
+| **P0.5b** | Main pipeline integration, merge logic, meta.json extension | ~60 lines |
+| **P0.5c** | Sanity check upgrade, failure-degradation logic, Tier 3 defensive test | ~40 lines |
+| **P0.5d** | README update, workflow timeout adjustment, (optional) cross-run cache, release v3.0 | Docs-heavy |
+| **P0.5e (validation)** | Local run + ctrip.com benchmark + cross-region pollution test | User-executed |
 
-P0.5a-d 可在一輪對話內完成代碼改造。
-
----
-
-## 8. 與 DomainNova 的銜接
-
-P0.5 完成後，DomainNova 不需要任何代碼改動，直接重跑 `build_domains.py`：
-- ctrip.com 自動救回
-- 其他被誤殺的大站自動恢復
-- seed.txt 中那些「品牌名正確但 .com 主域實際在海外」的條目（bankofchina.com、icbc.com 等）依然被淘汰，這是正確行為
-- 之後進入 DomainNova P1（多地區改造）
+P0.5a-d can be completed in a single conversation window.
 
 ---
 
-## 9. 待校準參數
+## 8. Handoff to DomainNova
 
-| 參數 | 初版建議值 | 說明 |
+After P0.5 lands, DomainNova requires no code changes; simply re-run `build_domains.py`:
+- ctrip.com is recovered automatically.
+- Other previously-excluded major sites recover automatically.
+- Entries in seed.txt that have a correct brand name but whose `.com` primary domain is actually hosted overseas (bankofchina.com, icbc.com, etc.) remain excluded — this is the correct behavior.
+- DomainNova then proceeds to P1 (multi-region refactor).
+
+---
+
+## 9. Parameters Pending Calibration
+
+| Parameter | Initial Suggested Value | Notes |
 |---|---|---|
-| `GEOLOC_REQUEST_INTERVAL` | 0.5 秒 | RIPE Stat rate limit 緩衝 |
-| `GEOLOC_CACHE_TTL_HOURS` | 24 | 跨運行緩存有效期 |
-| sanity check CN 下限 | 5500 | 改造後預期 |
-| sanity check HK 下限 | 1100 | 預期略增 |
-| geoloc 失敗率閾值 | 30% | 超過則整體標記 degraded |
+| `GEOLOC_REQUEST_INTERVAL` | 0.5 s | RIPE Stat rate-limit buffer |
+| `GEOLOC_CACHE_TTL_HOURS` | 24 | Cross-run cache validity |
+| Sanity check CN minimum | 5,500 | Post-change expectation |
+| Sanity check HK minimum | 1,100 | Slight increase expected |
+| Geoloc failure-rate threshold | 30% | Above this, mark the run as degraded overall |
 
 ---
 
-## 10. 下輪對話啟動指令
+## 10. Implementation Kickoff (Historical)
 
-> **「開始 P0.5a-d：實施 IPNova 多源融合改造，按規範書 v0.2 執行」**
+> Begin P0.5a-d: implement IPNova multi-source fusion per specification v0.2.
 
-執行範圍：
-1. 修改 `generate_ip_list.py`
-2. 更新 `README.md`
-3. 更新 `.github/workflows/update.yml`
-4. 打包帶完整目錄結構的 zip（含 `generate_ip_list.py`，可通過 `ipnova_repo.sh` 完整性檢查）
-5. 用戶本地拉取後執行 P0.5e 驗證
+Scope:
+1. Modify `generate_ip_list.py`
+2. Update `README.md`
+3. Update `.github/workflows/update.yml`
+4. Package a zip with the full directory layout (including `generate_ip_list.py`, verifiable via `ipnova_repo.sh` integrity check)
+5. User executes local P0.5e validation
