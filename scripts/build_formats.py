@@ -6,8 +6,8 @@ Generates additional output formats from ipnova's data.json:
 
   MMDB:
     - ipnova-apac.mmdb          : Primary branded MMDB
-    - GeoIP2-Country.mmdb       : MaxMind GeoIP2 drop-in replacement
-    - GeoLite2-Country.mmdb     : MaxMind GeoLite2 drop-in replacement
+    - GeoIP2-Country-compatible.mmdb   : MaxMind GeoIP2 schema-compatible
+    - GeoLite2-Country-compatible.mmdb : MaxMind GeoLite2 schema-compatible
 
   JSON:
     - regions.json              : All regions combined
@@ -106,9 +106,14 @@ def collect_output_files(output_dir):
 
 def build_mmdb(data, output_dir):
     """
-    Build ipnova-apac.mmdb via mmdb.builder, then write
-    GeoIP2-Country.mmdb and GeoLite2-Country.mmdb as byte-identical
-    copies for zero-config drop-in replacement of MaxMind databases.
+    Build ipnova-apac.mmdb via mmdb.builder, then write -compatible aliases
+    as byte-identical copies. The aliases are *named differently* from
+    MaxMind's own product files on purpose: 'GeoIP2-Country' and
+    'GeoLite2-Country' are MaxMind trademarks, and shipping files with
+    those exact names risks brand confusion and trademark issues.
+    Users who need a literal drop-in replacement can rename locally:
+
+        cp GeoIP2-Country-compatible.mmdb GeoIP2-Country.mmdb
     """
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -131,15 +136,15 @@ def build_mmdb(data, output_dir):
         log.error("%s", e)
         return False
 
-    # Write drop-in aliases — exact byte copies so tools requiring specific
-    # filenames work without any configuration change.
+    # Schema-compatible aliases — same bytes, different (non-trademarked)
+    # filenames. See docstring above.
     with open(out_path, "rb") as src:
         primary_data = src.read()
-    for alias in ["GeoIP2-Country.mmdb", "GeoLite2-Country.mmdb"]:
+    for alias in ["GeoIP2-Country-compatible.mmdb", "GeoLite2-Country-compatible.mmdb"]:
         alias_path = os.path.join(output_dir, alias)
         with open(alias_path, "wb") as f:
             f.write(primary_data)
-        log.info("  %s — MaxMind drop-in alias", alias)
+        log.info("  %s — schema-compatible alias", alias)
 
     return True
 
@@ -337,16 +342,32 @@ def build_caddy(data, output_dir):
 # ================================================================
 
 def build_iptables(data, output_dir):
-    """Build iptables ipset restore format files."""
+    """Build iptables ipset restore format files.
+
+    The ipset `maxelem` parameter is sized dynamically to 2x the current
+    CIDR count, rounded up to the next power of two, with a floor of
+    65536 (legacy default). This keeps headroom for organic growth
+    without silently truncating future additions once a region crosses
+    the static cap.
+    """
     ipt_dir = os.path.join(output_dir, "iptables")
     os.makedirs(ipt_dir, exist_ok=True)
 
     regions = data.get("regions", {})
     timestamp = now_utc_str()
 
+    def _maxelem_for(n_cidrs):
+        target = max(n_cidrs * 2, 65536)
+        # Round up to next power of two for kernel-friendly sizing
+        size = 1
+        while size < target:
+            size *= 2
+        return size
+
     for cc, payload in regions.items():
         out_path = os.path.join(ipt_dir, f"{cc}.ipset")
         cidrs = payload.get("cidrs", [])
+        maxelem = _maxelem_for(len(cidrs))
         with open(out_path, "w", encoding="utf-8") as f:
             f.write(f"# IPNova — ipset restore — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
@@ -357,10 +378,10 @@ def build_iptables(data, output_dir):
             f.write(f"#   ipset restore < {cc}.ipset\n")
             f.write(f"#   iptables -I FORWARD -m set --match-set ipnova_{cc} dst -j ACCEPT\n")
             f.write("#\n")
-            f.write(f"create ipnova_{cc} hash:net family inet hashsize 4096 maxelem 65536\n")
+            f.write(f"create ipnova_{cc} hash:net family inet hashsize 4096 maxelem {maxelem}\n")
             for cidr in cidrs:
                 f.write(f"add ipnova_{cc} {cidr}\n")
-        log.info("  iptables/%s.ipset — %d CIDRs", cc, len(cidrs))
+        log.info("  iptables/%s.ipset — %d CIDRs (maxelem=%d)", cc, len(cidrs), maxelem)
     return True
 
 
@@ -523,7 +544,13 @@ def main():
     setup_logging(verbose=args.verbose)
 
     log.info("=" * 60)
-    log.info("  ipnova build_formats v3.2.1 — extended output generator")
+    # Read version from generate_ip_list at runtime so the banner cannot
+    # drift from the project's single version source.
+    _project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if _project_root not in sys.path:
+        sys.path.insert(0, _project_root)
+    from generate_ip_list import __version__ as _ipnova_version
+    log.info("  ipnova build_formats v%s — extended output generator", _ipnova_version)
     log.info("=" * 60)
 
     data = load_data_json(args.output_dir)
@@ -582,8 +609,8 @@ def main():
         archive_path = create_formats_archive(args.output_dir)
         core_files = [
             os.path.join(args.output_dir, "ipnova-apac.mmdb"),
-            os.path.join(args.output_dir, "GeoIP2-Country.mmdb"),
-            os.path.join(args.output_dir, "GeoLite2-Country.mmdb"),
+            os.path.join(args.output_dir, "GeoIP2-Country-compatible.mmdb"),
+            os.path.join(args.output_dir, "GeoLite2-Country-compatible.mmdb"),
             os.path.join(args.output_dir, "regions.json"),
             os.path.join(args.output_dir, "meta.json"),
             archive_path,
@@ -594,7 +621,7 @@ def main():
 
     log.info("Done. Output summary:")
     summary = [
-        ("mmdb",      "output/ipnova-apac.mmdb + GeoIP2-Country.mmdb + GeoLite2-Country.mmdb"),
+        ("mmdb",      "output/ipnova-apac.mmdb + GeoIP2-Country-compatible.mmdb + GeoLite2-Country-compatible.mmdb"),
         ("json",      "output/regions.json + output/json/{CC}.json"),
         ("plain",     "output/plain/{CC}.txt"),
         ("nginx",     "output/nginx/{CC}.conf"),

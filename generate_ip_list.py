@@ -7,6 +7,7 @@ Source  : APNIC RIR delegation data + BGP multi-source fusion (upstream, not der
 """
 
 import urllib.request
+import urllib.parse
 import ipaddress
 import hashlib
 import os
@@ -18,10 +19,23 @@ import json
 import logging
 from collections import defaultdict
 
+# Ensure the script's own directory is on sys.path so `import regions` works
+# regardless of the cwd from which generate_ip_list.py was invoked.
+_SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+if _SCRIPT_DIR not in sys.path:
+    sys.path.insert(0, _SCRIPT_DIR)
+
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.2.1"
+__version__ = "3.3.0"
+
+# HTTP User-Agent — single source: __version__ above, plus repo URL so
+# upstream operators (RIPE Stat, APNIC) can contact the maintainer if
+# our traffic ever misbehaves. Derived once at module load to avoid the
+# previous bug where the UA string was hardcoded to "ipnova-bot/3.2"
+# and silently drifted from __version__.
+USER_AGENT = f"ipnova/{__version__} (+https://github.com/harryheros/ipnova)"
 
 # ================================================================
 # Logging
@@ -107,15 +121,9 @@ ANYCAST_BLACKLIST = [
 # ================================================================
 # Target regions
 # ================================================================
-TARGET_REGIONS = {
-    "CN": "China (Mainland)",
-    "HK": "Hong Kong",
-    "TW": "Taiwan",
-    "MO": "Macau",
-    "JP": "Japan",
-    "KR": "South Korea",
-    "SG": "Singapore",
-}
+# Single source of truth lives in regions.py. Re-exported here so existing
+# `from generate_ip_list import TARGET_REGIONS` consumers keep working.
+from regions import TARGET_REGIONS  # noqa: E402  (intentional position)
 
 # ================================================================
 # Sanity thresholds: minimum expected CIDR counts per region
@@ -139,28 +147,70 @@ MAX_RETRIES = 3
 RETRY_BACKOFF_BASE = 2   # seconds, exponential: 2, 4, 8
 RIPE_REQUEST_INTERVAL = 1.5  # seconds between RIPE Stat requests
 
+# Per-host throttling: RIPE Stat has no documented per-IP rate limit but
+# burst traffic risks 429/503. http_get enforces RIPE_REQUEST_INTERVAL
+# between any two RIPE requests automatically, regardless of caller, so
+# callers don't need to remember to sleep.
+_RIPE_HOSTS = ("stat.ripe.net",)
+_RIPE_LAST_CALL = 0.0  # monotonic timestamp of last RIPE request
+
 
 # ================================================================
 # HTTP helpers with retry
 # ================================================================
-def http_get(url, timeout=30, retries=MAX_RETRIES, ua="ipnova-bot/3.2",
+def _is_ripe_host(url):
+    """Return True iff the URL's hostname is a RIPE Stat host.
+
+    Uses urlparse rather than substring matching so that pathological URLs
+    (e.g. https://evil.com/?ref=stat.ripe.net) cannot bypass intent or
+    falsely trigger throttling. Supports exact match and subdomain match
+    against any entry in _RIPE_HOSTS.
+    """
+    try:
+        host = urllib.parse.urlparse(url).hostname
+    except (ValueError, AttributeError):
+        return False
+    if not host:
+        return False
+    host = host.lower()
+    for ripe in _RIPE_HOSTS:
+        if host == ripe or host.endswith("." + ripe):
+            return True
+    return False
+
+
+def http_get(url, timeout=30, retries=MAX_RETRIES, ua=None,
              strict_decode=False, return_content_type=False):
     """
     Fetch URL with exponential backoff retry.
 
     Args:
+        ua: Optional User-Agent override; defaults to USER_AGENT (module
+            constant derived from __version__).
         strict_decode: If True, raise on non-UTF-8 bytes (use for APNIC).
                        If False, use errors='replace' (use for RIPE/error pages).
         return_content_type: If True, return (body, content_type) tuple.
 
     Returns response body as str, or raises on total failure.
+
+    RIPE Stat throttling: any URL whose hostname matches a RIPE Stat host
+    is automatically throttled to at most one request per
+    RIPE_REQUEST_INTERVAL seconds, regardless of which caller initiated it.
     """
-    headers = {"User-Agent": ua}
+    global _RIPE_LAST_CALL
+    headers = {"User-Agent": ua or USER_AGENT}
     decode_errors = "strict" if strict_decode else "replace"
     last_err = None
+    is_ripe = _is_ripe_host(url)
 
     for attempt in range(1, retries + 1):
         try:
+            if is_ripe:
+                gap = RIPE_REQUEST_INTERVAL - (time.monotonic() - _RIPE_LAST_CALL)
+                if gap > 0:
+                    time.sleep(gap)
+                _RIPE_LAST_CALL = time.monotonic()
+
             req = urllib.request.Request(url, headers=headers)
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 raw = resp.read()
@@ -298,7 +348,7 @@ def build_excluded_networks(skip_ripe=False):
         log.info("Fetching prefixes for %d blacklisted ASNs...", len(EXCLUDED_ASNS))
         sorted_asns = sorted(EXCLUDED_ASNS)
 
-        for i, asn in enumerate(sorted_asns):
+        for asn in sorted_asns:
             label = ASN_LABELS.get(asn, "Unknown")
             try:
                 nets = fetch_asn_prefixes(asn)
@@ -310,9 +360,9 @@ def build_excluded_networks(skip_ripe=False):
                 report["failed"].append(asn)
                 log.warning("  AS%-6d %-12s FAILED: %s", asn, label, e)
 
-            # Rate limit: pause between requests (skip after last)
-            if i < len(sorted_asns) - 1:
-                time.sleep(RIPE_REQUEST_INTERVAL)
+            # Note: per-host throttling is now enforced inside http_get for
+            # any RIPE Stat URL, so this loop no longer needs an explicit
+            # time.sleep(). Kept the iteration order stable for log clarity.
 
     # Evaluate failure rate
     total_asns = len(EXCLUDED_ASNS)
@@ -878,32 +928,65 @@ def parse_and_cleanse(raw_data, excluded_networks):
 
 
 
-def enforce_mutual_exclusivity(region_data):
+def enforce_mutual_exclusivity(region_data, supp_data=None):
     """Make region CIDR sets mutually exclusive before final normalization.
 
-    Earlier TARGET_REGIONS entries have precedence. This keeps APAC outputs
-    deterministic across TXT, JSON, Nginx, ipset and MMDB consumers, which may
-    otherwise disagree when two regions contain overlapping CIDRs.
+    Authority order:
+      Tier 1 — APNIC results (region_data) are authoritative; they claim
+               their CIDRs first.
+      Tier 2 — BGP supplement (supp_data) fills gaps APNIC doesn't cover.
+               Any supp CIDR overlapping an already-claimed APNIC CIDR
+               (regardless of which region claimed it) is trimmed.
+
+    Within each tier, earlier TARGET_REGIONS entries have precedence; this
+    only matters for the rare case of overlap inside the same tier and
+    keeps outputs deterministic across TXT, JSON, Nginx, ipset and MMDB
+    consumers, which may otherwise disagree when two regions contain
+    overlapping CIDRs.
+
+    Args:
+        region_data: dict[cc, list[IPv4Network]]  — APNIC-derived prefixes.
+        supp_data:   optional dict[cc, list[IPv4Network]] — BGP supplement.
+
+    Returns:
+        dict[cc, list[IPv4Network]] with all regions mutually exclusive.
     """
-    cleaned = {}
+    cleaned = {cc: [] for cc in TARGET_REGIONS}
     owned = []
 
-    for cc in TARGET_REGIONS:
-        cleaned_nets = []
-        for net in region_data.get(cc, []):
-            parts = subtract_excluded_from_network(net, owned) if owned else [net]
-            cleaned_nets.extend(parts)
+    def _claim(source_dict):
+        """Claim CIDRs from source_dict[cc] for each cc, subtracting whatever
+        is already in `owned`. Mutates `cleaned` and `owned` in place."""
+        nonlocal owned
+        for cc in TARGET_REGIONS:
+            cleaned_nets = []
+            for net in source_dict.get(cc, []):
+                parts = subtract_excluded_from_network(net, owned) if owned else [net]
+                cleaned_nets.extend(parts)
+            if not cleaned_nets:
+                continue
+            collapsed = sorted(
+                ipaddress.collapse_addresses(cleaned_nets),
+                key=lambda n: int(n.network_address),
+            )
+            # Merge with whatever this cc already has (relevant for Tier 2
+            # adding to Tier 1 results).
+            merged = sorted(
+                ipaddress.collapse_addresses(cleaned[cc] + collapsed),
+                key=lambda n: int(n.network_address),
+            )
+            cleaned[cc] = merged
+            owned.extend(collapsed)
+            owned = sorted(
+                ipaddress.collapse_addresses(owned),
+                key=lambda n: int(n.network_address),
+            )
 
-        collapsed = sorted(
-            ipaddress.collapse_addresses(cleaned_nets),
-            key=lambda n: int(n.network_address),
-        )
-        cleaned[cc] = collapsed
-        owned.extend(collapsed)
-        owned = sorted(
-            ipaddress.collapse_addresses(owned),
-            key=lambda n: int(n.network_address),
-        )
+    # Tier 1 — APNIC authoritative
+    _claim(region_data)
+    # Tier 2 — BGP supplement fills gaps
+    if supp_data:
+        _claim(supp_data)
 
     return cleaned
 
@@ -1000,6 +1083,42 @@ def sanity_check(normalized_data):
     log.info("Sanity check passed for all %d regions", len(SANITY_THRESHOLDS))
 
 
+def _detect_commit_sha():
+    """Best-effort detection of the commit that produced this build.
+
+    Preference order:
+      1. GITHUB_SHA env var (set in GitHub Actions)
+      2. `git rev-parse HEAD` (local clone with .git present)
+      3. None — recorded as 'unknown' in meta.json
+
+    Stored in meta.json under `build.commit_sha` so anyone receiving the
+    artifact can pin it to an exact source revision. Useful for both
+    legitimate consumers (reproducibility) and provenance audits.
+    """
+    sha = os.environ.get("GITHUB_SHA")
+    if sha:
+        return sha.strip()
+
+    try:
+        import subprocess
+        repo_root = os.path.dirname(os.path.abspath(__file__))
+        result = subprocess.run(
+            ["git", "-C", repo_root, "rev-parse", "HEAD"],
+            capture_output=True,
+            text=True,
+            timeout=3,
+            check=False,
+        )
+        if result.returncode == 0:
+            out = (result.stdout or "").strip()
+            if out:
+                return out
+    except Exception:
+        pass
+
+    return None
+
+
 # ================================================================
 # Output writers
 # ================================================================
@@ -1060,12 +1179,31 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
         f.write(data_json_str)
 
     # --- meta.json: enriched metadata for monitoring & pro integration ---
+    from regions import CANARY_CIDRS as _CANARY_CIDRS
+    commit_sha = _detect_commit_sha()
     meta_payload = {
         "schema_version": "3.2",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
         "source": "APNIC delegated + BGP multi-source fusion",
+        "build": {
+            # Pin this artifact to its source revision. Lets downstream
+            # consumers reproduce the build, and lets the author identify
+            # which version of the code produced a redistributed copy.
+            "commit_sha": commit_sha,
+            "user_agent": USER_AGENT,
+        },
+        "provenance": {
+            # Canary CIDR set embedded in published artifacts. These are
+            # RFC5737 documentation-reserved ranges that never route on
+            # the public Internet, so they are harmless for downstream
+            # firewall/ACL use but make unattributed redistribution
+            # detectable. Listed openly here — the point is forensic
+            # attribution, not concealment.
+            "canary_cidrs": _CANARY_CIDRS,
+            "canary_injected": parse_stats.get("canary_injected", 0),
+        },
         "target_regions": TARGET_REGIONS,
         "counts": {
             cc: {
@@ -1137,6 +1275,12 @@ def build_parser():
         help="Skip sanity check (not recommended for production)",
     )
     parser.add_argument(
+        "--skip-canary",
+        action="store_true",
+        help="Skip canary CIDR injection (for verification builds; "
+             "do NOT use for published artifacts)",
+    )
+    parser.add_argument(
         "-v", "--verbose",
         action="store_true",
         help="Enable debug-level logging",
@@ -1178,7 +1322,27 @@ def main():
     with StepTimer("Parse and filter"):
         region_data, parse_stats = parse_and_cleanse(raw_data, excluded_networks)
 
+    # Step 3.1: Inject canary CIDRs. These are RFC5737 documentation-reserved
+    # ranges that never route on the public Internet, so they are harmless
+    # for downstream consumers but act as provenance fingerprints — if an
+    # unattributed third-party dataset contains our exact canary set, that
+    # is strong evidence it was derived from IPNova. Injected as APNIC-tier
+    # so the canaries survive enforce_mutual_exclusivity even if a BGP-
+    # supplement prefix somehow overlaps them.
+    if not args.skip_canary:
+        from regions import canary_networks
+        canary_count = 0
+        for cc, canary_net in canary_networks().items():
+            region_data.setdefault(cc, []).append(canary_net)
+            canary_count += 1
+        log.info("Canary CIDRs injected: %d (one per region)", canary_count)
+        parse_stats["canary_injected"] = canary_count
+    else:
+        log.info("Canary CIDR injection skipped (--skip-canary)")
+        parse_stats["canary_injected"] = 0
+
     # Step 3.5: CN cloud ASN supplement
+    supp = None
     if args.skip_ripe or args.skip_cloud_supplement:
         log.info("Skipping cloud ASN supplement")
         supp_provenance = {}
@@ -1189,15 +1353,19 @@ def main():
     else:
         with StepTimer("Cloud ASN supplement"):
             supp, supp_provenance, supp_stats = build_cloud_supplementary_networks(region_data)
-        for cc, nets in supp.items():
-            region_data.setdefault(cc, []).extend(nets)
         parse_stats["cloud_supplement"] = supp_stats
 
-    parse_stats["prefixes_before_collapse"] = sum(len(v) for v in region_data.values())
+    # Count APNIC + (optional) BGP supp prefixes *before* enforce + collapse,
+    # so the meta stat reflects raw input volume.
+    parse_stats["prefixes_before_collapse"] = (
+        sum(len(v) for v in region_data.values())
+        + (sum(len(v) for v in supp.values()) if supp else 0)
+    )
 
     # Step 4: Normalize and aggregate
+    # APNIC results are authoritative (Tier 1); BGP supplement fills gaps (Tier 2).
     with StepTimer("Normalize and aggregate"):
-        region_data = enforce_mutual_exclusivity(region_data)
+        region_data = enforce_mutual_exclusivity(region_data, supp_data=supp)
         normalized_data = normalize_region_data(
             region_data,
             bgp_provenance=supp_provenance if not (args.skip_ripe or args.skip_cloud_supplement) else None,
