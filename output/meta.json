@@ -2,10 +2,10 @@
   "schema_version": "3.2",
   "project": "ipnova",
   "version": "3.3.0",
-  "generated_at": "2026-05-25T23:45:41.639225+00:00",
+  "generated_at": "2026-06-01T06:49:40.557012+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "build": {
-    "commit_sha": "6f917b093b8d8d361d3bc7531953f1af6192c411",
+    "commit_sha": "ee71d4350af9e7dc280a4d06977a56c73144c6f0",
     "user_agent": "ipnova/3.3.0 (+https://github.com/harryheros/ipnova)"
   },
   "provenance": {
@@ -31,12 +31,12 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5490,
-      "ips": 342927880
+      "cidrs": 5491,
+      "ips": 342928392
     },
     "HK": {
       "cidrs": 2509,
-      "ips": 15249736
+      "ips": 15250504
     },
     "TW": {
       "cidrs": 751,
@@ -47,8 +47,8 @@
       "ips": 339464
     },
     "JP": {
-      "cidrs": 3196,
-      "ips": 188625928
+      "cidrs": 3197,
+      "ips": 188626440
     },
     "KR": {
       "cidrs": 1044,
@@ -78,7 +78,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 32893,
+    "dynamic_prefixes": 32890,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -90,31 +90,31 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21520,
-    "source_networks": 21520,
-    "cidrs_kept": 21592,
+    "lines_processed": 21522,
+    "source_networks": 21522,
+    "cidrs_kept": 21594,
     "cidrs_excluded": 155,
     "excluded_source_networks": 89,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22287,
-    "prefixes_after_collapse": 14637,
+    "prefixes_before_collapse": 22291,
+    "prefixes_after_collapse": 14639,
     "cloud_supplement": {
-      "prefixes_fetched": 5818,
+      "prefixes_fetched": 5867,
       "kept_per_region": {
-        "CN": 3332,
-        "SG": 2014,
-        "JP": 31,
-        "KR": 16,
-        "HK": 92
+        "CN": 3339,
+        "SG": 2054,
+        "JP": 30,
+        "HK": 92,
+        "KR": 16
       },
-      "dropped_other_country": 333,
+      "dropped_other_country": 336,
       "dropped_unknown": 0,
-      "l0_local_hit": 5247,
-      "cache_hit": 23,
-      "l1_success": 548,
+      "l0_local_hit": 49,
+      "cache_hit": 5814,
+      "l1_success": 4,
       "l2_fallback": 0,
       "l3_fallback": 0,
-      "duration_seconds": 938.602,
+      "duration_seconds": 96.039,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -130,6 +130,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "fa8fd2b869c39dcb71067ba7d73cfd8295ff8b93154c46c202074c6d0ac34c04"
+    "data_json_sha256": "8491e26e4b48fd567cc6680e0fa225169fa5c74a877256113d3552beb1210ec0"
   }
 }
