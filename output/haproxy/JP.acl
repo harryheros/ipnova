@@ -1,7 +1,10 @@
 # IPNova — HAProxy ACL — JP (Japan)
-# Generated : 2026-06-01 06:49:46 UTC
-# CIDRs     : 3197
+# Generated : 2026-06-05 08:47:02 UTC
+# CIDRs     : 3189
 # Project   : https://github.com/harryheros/ipnova
+# Note      : output includes a few RFC5737 documentation-reserved
+#             CIDRs as provenance fingerprints; they never route on
+#             the public Internet and are safe to ignore.
 #
 # Usage in haproxy.cfg (frontend or backend section):
 #   acl is_JP src -f /path/to/ipnova/haproxy/JP.acl
@@ -204,14 +207,6 @@
 45.127.28.0/22
 45.251.67.0/24
 45.251.132.0/22
-47.74.0.0/18
-47.79.32.0/20
-47.79.80.0/20
-47.79.128.0/18
-47.81.64.0/18
-47.87.192.0/22
-47.91.0.0/19
-47.245.0.0/18
 49.0.16.0/21
 49.0.176.0/21
 49.50.6.0/23

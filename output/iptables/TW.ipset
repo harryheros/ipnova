@@ -1,7 +1,10 @@
 # IPNova — ipset restore — TW (Taiwan)
-# Generated : 2026-06-01 06:49:46 UTC
+# Generated : 2026-06-05 08:47:02 UTC
 # CIDRs     : 751
 # Project   : https://github.com/harryheros/ipnova
+# Note      : output includes a few RFC5737 documentation-reserved
+#             CIDRs as provenance fingerprints; they never route on
+#             the public Internet and are safe to ignore.
 #
 # Usage:
 #   ipset restore < TW.ipset
