@@ -1,9 +1,9 @@
 {
   "region": "KR",
   "region_name": "South Korea",
-  "total_cidrs": 1044,
-  "total_ips": 112519944,
-  "generated_at": "2026-06-01T06:49:46.831211+00:00",
+  "total_cidrs": 1040,
+  "total_ips": 112468744,
+  "generated_at": "2026-06-05T10:17:50.315352+00:00",
   "cidrs": [
     "1.11.0.0/16",
     "1.16.0.0/14",
@@ -104,9 +104,6 @@
     "45.250.204.0/22",
     "45.250.208.0/22",
     "45.250.220.0/22",
-    "47.80.0.0/18",
-    "47.80.128.0/17",
-    "47.87.224.0/22",
     "49.1.0.0/16",
     "49.8.0.0/14",
     "49.16.0.0/12",
@@ -698,7 +695,6 @@
     "137.68.0.0/16",
     "138.252.134.0/23",
     "139.5.224.0/22",
-    "139.95.128.0/22",
     "139.150.0.0/16",
     "141.223.0.0/16",
     "143.248.0.0/16",
@@ -1056,6 +1052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1063,6 +1060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1070,6 +1068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1077,13 +1076,15 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "1.201.0.0/16",
-      "source": "apnic",
-      "asn": null,
-      "tier": null,
+      "source": "bgp",
+      "asn": 132203,
+      "tier": 1,
+      "level": "L-1",
       "confidence": "high"
     },
     {
@@ -1091,6 +1092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1098,6 +1100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1105,6 +1108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1112,6 +1116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1119,6 +1124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1126,6 +1132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1133,6 +1140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1140,6 +1148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1147,6 +1156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1154,6 +1164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1161,6 +1172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1168,6 +1180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1175,6 +1188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1182,6 +1196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1189,6 +1204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1196,6 +1212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1203,6 +1220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1210,6 +1228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1217,6 +1236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1224,6 +1244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1231,6 +1252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1238,6 +1260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1245,6 +1268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1252,6 +1276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1259,6 +1284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1266,6 +1292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1273,6 +1300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1280,6 +1308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1287,6 +1316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1294,6 +1324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1301,6 +1332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1308,6 +1340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1315,6 +1348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1322,6 +1356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1329,6 +1364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1336,6 +1372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1343,6 +1380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1350,6 +1388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1357,6 +1396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1364,6 +1404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1371,6 +1412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1378,6 +1420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1385,6 +1428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1392,6 +1436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1399,6 +1444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1406,6 +1452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1413,6 +1460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1420,6 +1468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1427,6 +1476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1434,6 +1484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1441,6 +1492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1448,6 +1500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1455,6 +1508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1462,6 +1516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1469,6 +1524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1476,6 +1532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1483,6 +1540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1490,6 +1548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1497,6 +1556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1504,6 +1564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1511,6 +1572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1518,6 +1580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1525,6 +1588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1532,6 +1596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1539,6 +1604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1546,6 +1612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1553,6 +1620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1560,6 +1628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1567,6 +1636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1574,6 +1644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1581,6 +1652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1588,6 +1660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1595,6 +1668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1602,6 +1676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1609,6 +1684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1616,6 +1692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1623,6 +1700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1630,6 +1708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1637,6 +1716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1644,6 +1724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1651,6 +1732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1658,6 +1740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1665,6 +1748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1672,6 +1756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1679,6 +1764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1686,6 +1772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1693,6 +1780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1700,6 +1788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1707,6 +1796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1714,6 +1804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1721,6 +1812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1728,6 +1820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1735,6 +1828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1742,27 +1836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
-      "confidence": "high"
-    },
-    {
-      "cidr": "47.80.0.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "confidence": "high"
-    },
-    {
-      "cidr": "47.80.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "confidence": "high"
-    },
-    {
-      "cidr": "47.87.224.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1770,6 +1844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1777,6 +1852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1784,6 +1860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1791,6 +1868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1798,6 +1876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1805,6 +1884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1812,6 +1892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1819,6 +1900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1826,6 +1908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1833,6 +1916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1840,6 +1924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1847,6 +1932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1854,6 +1940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1861,6 +1948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1868,6 +1956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1875,6 +1964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1882,6 +1972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1889,6 +1980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1896,6 +1988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1903,6 +1996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1910,6 +2004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1917,6 +2012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1924,6 +2020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1931,6 +2028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1938,6 +2036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1945,6 +2044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1952,6 +2052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1959,6 +2060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1966,6 +2068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1973,6 +2076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1980,6 +2084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1987,6 +2092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1994,6 +2100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2001,6 +2108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2008,6 +2116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2015,6 +2124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2022,6 +2132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2029,6 +2140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2036,6 +2148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2043,6 +2156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2050,6 +2164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2057,6 +2172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2064,6 +2180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2071,6 +2188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2078,6 +2196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2085,6 +2204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2092,6 +2212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2099,6 +2220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2106,6 +2228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2113,6 +2236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2120,6 +2244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2127,6 +2252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2134,6 +2260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2141,6 +2268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2148,6 +2276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2155,6 +2284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2162,6 +2292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2169,6 +2300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2176,6 +2308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2183,6 +2316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2190,6 +2324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2197,6 +2332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2204,6 +2340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2211,6 +2348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2218,6 +2356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2225,6 +2364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2232,6 +2372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2239,6 +2380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2246,6 +2388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2253,6 +2396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2260,6 +2404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2267,6 +2412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2274,6 +2420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2281,6 +2428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2288,6 +2436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2295,6 +2444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2302,6 +2452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2309,6 +2460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2316,6 +2468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2323,6 +2476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2330,6 +2484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2337,6 +2492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2344,6 +2500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2351,6 +2508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2358,6 +2516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2365,6 +2524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2372,6 +2532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2379,6 +2540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2386,6 +2548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2393,6 +2556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2400,6 +2564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2407,6 +2572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2414,6 +2580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2421,6 +2588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2428,6 +2596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2435,6 +2604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2442,6 +2612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2449,6 +2620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2456,6 +2628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2463,6 +2636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2470,6 +2644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2477,6 +2652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2484,6 +2660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2491,6 +2668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2498,6 +2676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2505,6 +2684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2512,6 +2692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2519,6 +2700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2526,6 +2708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2533,6 +2716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2540,6 +2724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2547,6 +2732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2554,6 +2740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2561,6 +2748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2568,6 +2756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2575,6 +2764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2582,6 +2772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2589,6 +2780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2596,6 +2788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2603,6 +2796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2610,6 +2804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2617,6 +2812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2624,6 +2820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2631,6 +2828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2638,6 +2836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2645,6 +2844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2652,6 +2852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2659,6 +2860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2666,6 +2868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2673,6 +2876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2680,6 +2884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2687,6 +2892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2694,6 +2900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2701,6 +2908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2708,6 +2916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2715,6 +2924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2722,6 +2932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2729,6 +2940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2736,6 +2948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2743,6 +2956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2750,6 +2964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2757,6 +2972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2764,6 +2980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2771,6 +2988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2778,6 +2996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2785,6 +3004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2792,6 +3012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2799,6 +3020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2806,6 +3028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2813,6 +3036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2820,6 +3044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2827,6 +3052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2834,6 +3060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2841,6 +3068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2848,6 +3076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2855,6 +3084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2862,6 +3092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2869,6 +3100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2876,6 +3108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2883,6 +3116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2890,6 +3124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2897,6 +3132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2904,6 +3140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2911,6 +3148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2918,6 +3156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2925,6 +3164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2932,6 +3172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2939,6 +3180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2946,6 +3188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2953,6 +3196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2960,6 +3204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2967,6 +3212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2974,6 +3220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2981,6 +3228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2988,6 +3236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2995,6 +3244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3002,6 +3252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3009,6 +3260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3016,6 +3268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3023,6 +3276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3030,6 +3284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3037,6 +3292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3044,6 +3300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3051,6 +3308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3058,6 +3316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3065,6 +3324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3072,6 +3332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3079,6 +3340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3086,6 +3348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3093,6 +3356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3100,6 +3364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3107,6 +3372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3114,6 +3380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3121,6 +3388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3128,6 +3396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3135,6 +3404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3142,6 +3412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3149,6 +3420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3156,6 +3428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3163,6 +3436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3170,6 +3444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3177,6 +3452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3184,6 +3460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3191,6 +3468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3198,6 +3476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3205,6 +3484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3212,6 +3492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3219,6 +3500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3226,6 +3508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3233,6 +3516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3240,6 +3524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3247,6 +3532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3254,6 +3540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3261,6 +3548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3268,6 +3556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3275,6 +3564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3282,6 +3572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3289,6 +3580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3296,6 +3588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3303,6 +3596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3310,6 +3604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3317,6 +3612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3324,6 +3620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3331,6 +3628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3338,6 +3636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3345,6 +3644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3352,6 +3652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3359,6 +3660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3366,6 +3668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3373,6 +3676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3380,6 +3684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3387,6 +3692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3394,6 +3700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3401,6 +3708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3408,6 +3716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3415,6 +3724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3422,6 +3732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3429,6 +3740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3436,6 +3748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3443,6 +3756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3450,6 +3764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3457,6 +3772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3464,6 +3780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3471,6 +3788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3478,6 +3796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3485,6 +3804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3492,6 +3812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3499,6 +3820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3506,6 +3828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3513,6 +3836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3520,6 +3844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3527,6 +3852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3534,6 +3860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3541,6 +3868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3548,6 +3876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3555,6 +3884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3562,6 +3892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3569,6 +3900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3576,6 +3908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3583,6 +3916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3590,6 +3924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3597,6 +3932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3604,6 +3940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3611,6 +3948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3618,6 +3956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3625,6 +3964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3632,6 +3972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3639,6 +3980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3646,6 +3988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3653,6 +3996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3660,6 +4004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3667,6 +4012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3674,6 +4020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3681,6 +4028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3688,6 +4036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3695,6 +4044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3702,6 +4052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3709,6 +4060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3716,6 +4068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3723,6 +4076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3730,6 +4084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3737,6 +4092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3744,6 +4100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3751,6 +4108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3758,6 +4116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3765,6 +4124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3772,6 +4132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3779,6 +4140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3786,6 +4148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3793,6 +4156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3800,6 +4164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3807,6 +4172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3814,6 +4180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3821,6 +4188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3828,6 +4196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3835,6 +4204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3842,6 +4212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3849,6 +4220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3856,6 +4228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3863,6 +4236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3870,6 +4244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3877,6 +4252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3884,6 +4260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3891,6 +4268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3898,6 +4276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3905,6 +4284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3912,6 +4292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3919,6 +4300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3926,6 +4308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3933,6 +4316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3940,6 +4324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3947,6 +4332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3954,6 +4340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3961,6 +4348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3968,6 +4356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3975,6 +4364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3982,6 +4372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3989,6 +4380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3996,6 +4388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4003,6 +4396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4010,6 +4404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4017,6 +4412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4024,6 +4420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4031,6 +4428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4038,6 +4436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4045,6 +4444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4052,6 +4452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4059,6 +4460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4066,6 +4468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4073,6 +4476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4080,6 +4484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4087,6 +4492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4094,6 +4500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4101,6 +4508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4108,6 +4516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4115,6 +4524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4122,6 +4532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4129,6 +4540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4136,6 +4548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4143,6 +4556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4150,6 +4564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4157,6 +4572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4164,6 +4580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4171,6 +4588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4178,6 +4596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4185,6 +4604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4192,6 +4612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4199,6 +4620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4206,6 +4628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4213,6 +4636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4220,6 +4644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4227,6 +4652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4234,6 +4660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4241,6 +4668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4248,6 +4676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4255,6 +4684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4262,6 +4692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4269,6 +4700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4276,6 +4708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4283,6 +4716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4290,6 +4724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4297,6 +4732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4304,6 +4740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4311,6 +4748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4318,6 +4756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4325,6 +4764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4332,6 +4772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4339,6 +4780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4346,6 +4788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4353,6 +4796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4360,6 +4804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4367,6 +4812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4374,6 +4820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4381,6 +4828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4388,6 +4836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4395,6 +4844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4402,6 +4852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4409,6 +4860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4416,6 +4868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4423,6 +4876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4430,6 +4884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4437,6 +4892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4444,6 +4900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4451,6 +4908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4458,6 +4916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4465,6 +4924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4472,6 +4932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4479,6 +4940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4486,6 +4948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4493,6 +4956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4500,6 +4964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4507,6 +4972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4514,6 +4980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4521,6 +4988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4528,6 +4996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4535,6 +5004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4542,6 +5012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4549,6 +5020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4556,6 +5028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4563,6 +5036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4570,6 +5044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4577,6 +5052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4584,6 +5060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4591,6 +5068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4598,6 +5076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4605,6 +5084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4612,6 +5092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4619,6 +5100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4626,6 +5108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4633,6 +5116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4640,6 +5124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4647,6 +5132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4654,6 +5140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4661,6 +5148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4668,6 +5156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4675,6 +5164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4682,6 +5172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4689,6 +5180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4696,6 +5188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4703,6 +5196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4710,6 +5204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4717,6 +5212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4724,6 +5220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4731,6 +5228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4738,6 +5236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4745,6 +5244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4752,6 +5252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4759,6 +5260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4766,6 +5268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4773,6 +5276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4780,6 +5284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4787,6 +5292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4794,6 +5300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4801,6 +5308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4808,6 +5316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4815,6 +5324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4822,6 +5332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4829,6 +5340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4836,6 +5348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4843,6 +5356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4850,6 +5364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4857,6 +5372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4864,6 +5380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4871,6 +5388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4878,6 +5396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4885,6 +5404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4892,6 +5412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4899,6 +5420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4906,6 +5428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4913,6 +5436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4920,6 +5444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4927,6 +5452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4934,6 +5460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4941,6 +5468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4948,6 +5476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4955,6 +5484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4962,6 +5492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4969,6 +5500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4976,6 +5508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4983,6 +5516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4990,6 +5524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4997,6 +5532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5004,6 +5540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5011,6 +5548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5018,6 +5556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5025,6 +5564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5032,6 +5572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5039,6 +5580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5046,6 +5588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5053,6 +5596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5060,6 +5604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5067,6 +5612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5074,6 +5620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5081,6 +5628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5088,6 +5636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5095,6 +5644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5102,6 +5652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5109,6 +5660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5116,6 +5668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5123,6 +5676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5130,6 +5684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5137,6 +5692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5144,6 +5700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5151,6 +5708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5158,6 +5716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5165,6 +5724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5172,6 +5732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5179,6 +5740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5186,6 +5748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5193,6 +5756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5200,6 +5764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5207,6 +5772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5214,6 +5780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5221,6 +5788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5228,6 +5796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5235,6 +5804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5242,6 +5812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5249,6 +5820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5256,6 +5828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5263,6 +5836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5270,6 +5844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5277,6 +5852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5284,6 +5860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5291,6 +5868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5298,6 +5876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5305,6 +5884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5312,6 +5892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5319,6 +5900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5326,6 +5908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5333,6 +5916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5340,6 +5924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5347,6 +5932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5354,6 +5940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5361,6 +5948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5368,6 +5956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5375,6 +5964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5382,6 +5972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5389,6 +5980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5396,6 +5988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5403,6 +5996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5410,6 +6004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5417,6 +6012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5424,6 +6020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5431,6 +6028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5438,6 +6036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5445,6 +6044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5452,6 +6052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5459,6 +6060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5466,6 +6068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5473,6 +6076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5480,6 +6084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5487,6 +6092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5494,6 +6100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5501,6 +6108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5508,6 +6116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5515,6 +6124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5522,6 +6132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5529,6 +6140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5536,6 +6148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5543,6 +6156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5550,6 +6164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5557,6 +6172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5564,6 +6180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5571,6 +6188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5578,6 +6196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5585,6 +6204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5592,6 +6212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5599,6 +6220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5606,6 +6228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5613,6 +6236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5620,6 +6244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5627,6 +6252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5634,6 +6260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5641,6 +6268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5648,6 +6276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5655,6 +6284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5662,6 +6292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5669,6 +6300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5676,6 +6308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5683,6 +6316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5690,6 +6324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5697,6 +6332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5704,6 +6340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5711,6 +6348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5718,6 +6356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5725,6 +6364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5732,6 +6372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5739,6 +6380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5746,6 +6388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5753,6 +6396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5760,6 +6404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5767,6 +6412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5774,6 +6420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5781,6 +6428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5788,6 +6436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5795,6 +6444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5802,6 +6452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5809,6 +6460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5816,6 +6468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5823,6 +6476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5830,6 +6484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5837,6 +6492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5844,6 +6500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5851,6 +6508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5858,6 +6516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5865,6 +6524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5872,6 +6532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5879,6 +6540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5886,6 +6548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5893,6 +6556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5900,13 +6564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
-      "confidence": "high"
-    },
-    {
-      "cidr": "139.95.128.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5914,6 +6572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5921,6 +6580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5928,6 +6588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5935,6 +6596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5942,6 +6604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5949,6 +6612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5956,6 +6620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5963,6 +6628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5970,6 +6636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5977,6 +6644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5984,6 +6652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5991,6 +6660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -5998,6 +6668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6005,6 +6676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6012,6 +6684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6019,6 +6692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6026,6 +6700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6033,6 +6708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6040,6 +6716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6047,6 +6724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6054,6 +6732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6061,6 +6740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6068,6 +6748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6075,6 +6756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6082,6 +6764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6089,6 +6772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6096,6 +6780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6103,6 +6788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6110,6 +6796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6117,6 +6804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6124,6 +6812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6131,6 +6820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6138,6 +6828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6145,6 +6836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6152,6 +6844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6159,6 +6852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6166,6 +6860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6173,6 +6868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6180,6 +6876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6187,6 +6884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6194,6 +6892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6201,6 +6900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6208,6 +6908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6215,6 +6916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6222,6 +6924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6229,6 +6932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6236,6 +6940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6243,6 +6948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6250,6 +6956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6257,6 +6964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6264,6 +6972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6271,6 +6980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6278,6 +6988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6285,6 +6996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6292,6 +7004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6299,6 +7012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6306,6 +7020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6313,6 +7028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6320,6 +7036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6327,6 +7044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6334,6 +7052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6341,6 +7060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6348,6 +7068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6355,6 +7076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6362,6 +7084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6369,6 +7092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6376,6 +7100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6383,6 +7108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6390,6 +7116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6397,6 +7124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6404,6 +7132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6411,6 +7140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6418,6 +7148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6425,6 +7156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6432,6 +7164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6439,6 +7172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6446,6 +7180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6453,6 +7188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6460,6 +7196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6467,6 +7204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6474,6 +7212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6481,6 +7220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6488,6 +7228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6495,6 +7236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6502,6 +7244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6509,6 +7252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6516,6 +7260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6523,6 +7268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6530,6 +7276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6537,6 +7284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6544,6 +7292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6551,6 +7300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6558,6 +7308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6565,6 +7316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6572,6 +7324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6579,6 +7332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6586,6 +7340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6593,6 +7348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6600,6 +7356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6607,6 +7364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6614,6 +7372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6621,6 +7380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6628,6 +7388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6635,6 +7396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6642,6 +7404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6649,6 +7412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6656,6 +7420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6663,6 +7428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6670,6 +7436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6677,6 +7444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6684,6 +7452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6691,6 +7460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6698,6 +7468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6705,6 +7476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6712,6 +7484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6719,6 +7492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6726,6 +7500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6733,6 +7508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6740,6 +7516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6747,6 +7524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6754,6 +7532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6761,6 +7540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6768,6 +7548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6775,6 +7556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6782,6 +7564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6789,6 +7572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6796,6 +7580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6803,6 +7588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6810,6 +7596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6817,6 +7604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6824,6 +7612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6831,6 +7620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6838,6 +7628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6845,6 +7636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6852,6 +7644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6859,6 +7652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6866,6 +7660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6873,6 +7668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6880,6 +7676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6887,6 +7684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6894,6 +7692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6901,6 +7700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6908,6 +7708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6915,6 +7716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6922,6 +7724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6929,6 +7732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6936,6 +7740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6943,6 +7748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6950,6 +7756,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6957,6 +7764,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6964,6 +7772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6971,6 +7780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6978,6 +7788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6985,6 +7796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6992,6 +7804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6999,6 +7812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7006,6 +7820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7013,6 +7828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7020,6 +7836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7027,6 +7844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7034,6 +7852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7041,6 +7860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7048,6 +7868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7055,6 +7876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7062,6 +7884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7069,6 +7892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7076,6 +7900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7083,6 +7908,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7090,6 +7916,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7097,6 +7924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7104,6 +7932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7111,6 +7940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7118,6 +7948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7125,6 +7956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7132,6 +7964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7139,6 +7972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7146,6 +7980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7153,6 +7988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7160,6 +7996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7167,6 +8004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7174,6 +8012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7181,6 +8020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7188,6 +8028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7195,6 +8036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7202,6 +8044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7209,6 +8052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7216,6 +8060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7223,6 +8068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7230,6 +8076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7237,6 +8084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7244,6 +8092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7251,6 +8100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7258,6 +8108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7265,6 +8116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7272,6 +8124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7279,6 +8132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7286,6 +8140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7293,6 +8148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7300,6 +8156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7307,6 +8164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7314,6 +8172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7321,6 +8180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7328,6 +8188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7335,6 +8196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7342,6 +8204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7349,6 +8212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7356,6 +8220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7363,6 +8228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7370,6 +8236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7377,6 +8244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7384,6 +8252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7391,6 +8260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7398,6 +8268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7405,6 +8276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7412,6 +8284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7419,6 +8292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7426,6 +8300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7433,6 +8308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7440,6 +8316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7447,6 +8324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7454,6 +8332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7461,6 +8340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7468,6 +8348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7475,6 +8356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7482,6 +8364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7489,6 +8372,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7496,6 +8380,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7503,6 +8388,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7510,6 +8396,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7517,6 +8404,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7524,6 +8412,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7531,6 +8420,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7538,6 +8428,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7545,6 +8436,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7552,6 +8444,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7559,6 +8452,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7566,6 +8460,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7573,6 +8468,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7580,6 +8476,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7587,6 +8484,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7594,6 +8492,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7601,6 +8500,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7608,6 +8508,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7615,6 +8516,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7622,6 +8524,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7629,6 +8532,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7636,6 +8540,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7643,6 +8548,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7650,6 +8556,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7657,6 +8564,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7664,6 +8572,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7671,6 +8580,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7678,6 +8588,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7685,6 +8596,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7692,6 +8604,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7699,6 +8612,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7706,6 +8620,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7713,6 +8628,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7720,6 +8636,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7727,6 +8644,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7734,6 +8652,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7741,6 +8660,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7748,6 +8668,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7755,6 +8676,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7762,6 +8684,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7769,6 +8692,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7776,6 +8700,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7783,6 +8708,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7790,6 +8716,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7797,6 +8724,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7804,6 +8732,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7811,6 +8740,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7818,6 +8748,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7825,13 +8756,15 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "210.180.0.0/14",
-      "source": "apnic",
-      "asn": null,
-      "tier": null,
+      "source": "bgp",
+      "asn": 132203,
+      "tier": 1,
+      "level": "L-1",
       "confidence": "high"
     },
     {
@@ -7839,6 +8772,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7846,6 +8780,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7853,6 +8788,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7860,6 +8796,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7867,6 +8804,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7874,6 +8812,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7881,6 +8820,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7888,6 +8828,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7895,6 +8836,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7902,6 +8844,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7909,6 +8852,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7916,6 +8860,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7923,6 +8868,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7930,6 +8876,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7937,6 +8884,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7944,6 +8892,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7951,6 +8900,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7958,13 +8908,15 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "211.48.0.0/12",
-      "source": "apnic",
-      "asn": null,
-      "tier": null,
+      "source": "bgp",
+      "asn": 132203,
+      "tier": 1,
+      "level": "L-1",
       "confidence": "high"
     },
     {
@@ -7972,6 +8924,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7979,6 +8932,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7986,6 +8940,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7993,6 +8948,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8000,6 +8956,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8007,6 +8964,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8014,6 +8972,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8021,6 +8980,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8028,6 +8988,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8035,6 +8996,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8042,6 +9004,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8049,6 +9012,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8056,6 +9020,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8063,6 +9028,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8070,6 +9036,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8077,6 +9044,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8084,6 +9052,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8091,6 +9060,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8098,6 +9068,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8105,6 +9076,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8112,6 +9084,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8119,6 +9092,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8126,6 +9100,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8133,6 +9108,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8140,6 +9116,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8147,6 +9124,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8154,6 +9132,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8161,6 +9140,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8168,6 +9148,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8175,6 +9156,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8182,6 +9164,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8189,6 +9172,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8196,6 +9180,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8203,6 +9188,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8210,6 +9196,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8217,6 +9204,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8224,6 +9212,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8231,6 +9220,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8238,6 +9228,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8245,6 +9236,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8252,6 +9244,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8259,6 +9252,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8266,6 +9260,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8273,6 +9268,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8280,6 +9276,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8287,6 +9284,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8294,6 +9292,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8301,6 +9300,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8308,6 +9308,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8315,6 +9316,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8322,6 +9324,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8329,6 +9332,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8336,6 +9340,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8343,6 +9348,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8350,6 +9356,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8357,6 +9364,7 @@
       "source": "apnic",
       "asn": null,
       "tier": null,
+      "level": "L0",
       "confidence": "high"
     }
   ]
