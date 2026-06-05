@@ -1,0 +1,72 @@
+name: Provenance Fix Dry-Run (one-shot, read-only)
+
+# 一次性副作用偵察 workflow。
+# 复用主构建的 geoloc 缓存,在 Actions 环境跑 provenance 修法的 dry-run,
+# 只把对比报告打到日志和 Step Summary —— 不 commit、不 push、不碰 output/。
+# 跑完确认数字后,这个文件可以直接删掉。
+
+on:
+  workflow_dispatch:        # 仅手动触发
+
+permissions:
+  contents: read            # 只读权限,无法写回仓库(双保险)
+
+jobs:
+  dryrun:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 关键:恢复主构建留下的 geoloc 缓存,让 dry-run 走缓存命中、极少触网。
+      # cache key 与主 workflow 一致;因为 dry-run 阶段我们还没改
+      # generate_ip_list.py,hashFiles 不变,所以这里能命中主构建的缓存。
+      - name: Restore geoloc cache
+        uses: actions/cache/restore@v4
+        with:
+          path: output/.geoloc_cache.json
+          key: geoloc-cache-${{ runner.os }}-${{ hashFiles('generate_ip_list.py') }}
+          restore-keys: |
+            geoloc-cache-${{ runner.os }}-
+
+      - name: Report cache status
+        shell: bash
+        run: |
+          if [ -f output/.geoloc_cache.json ]; then
+            echo "✅ geoloc 缓存已恢复,dry-run 将走缓存命中"
+            python3 cache_probe.py || true
+          else
+            echo "⚠️ 缓存未命中 —— dry-run 会全量触网查 RIPEstat,可能被限流。"
+            echo "   建议:先手动跑一次主 workflow(Update IPNova Dataset)把缓存填好,再跑本 dry-run。"
+          fi
+
+      - name: Run provenance dry-run
+        id: dryrun
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 provenance_dryrun.py 2>&1 | tee /tmp/dryrun_report.txt
+
+      - name: Publish report to Step Summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## Provenance 修法 Dry-Run 报告"
+            echo ""
+            echo '```'
+            cat /tmp/dryrun_report.txt 2>/dev/null || echo "(无报告输出 —— 见上一步日志)"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
