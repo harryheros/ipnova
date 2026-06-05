@@ -8,6 +8,8 @@
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
+IPNova is designed as a reusable infrastructure intelligence dataset for networking, security, compliance, and attribution workflows.
+
 IPNova is part of the [Nova infrastructure toolkit](https://github.com/harryheros), providing the IP-level foundation for infrastructure attribution.
 
 IPNova is not a geolocation database.  
