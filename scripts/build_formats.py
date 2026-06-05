@@ -73,7 +73,23 @@ def load_data_json(output_dir):
         log.error("data.json not found at %s — run generate_ip_list.py first", path)
         sys.exit(1)
     with open(path, encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+
+    # Fail loud rather than silently substituting a stale default: data.json
+    # is the single source of truth for schema_version and version. If either
+    # is missing the upstream generate_ip_list.py output is malformed, and
+    # guessing a version here would propagate a wrong value into every
+    # derived format. Surface it instead.
+    for required in ("schema_version", "version"):
+        if not data.get(required):
+            log.error(
+                "data.json at %s is missing required field '%s' — "
+                "refusing to guess; regenerate it with generate_ip_list.py",
+                path, required,
+            )
+            sys.exit(1)
+
+    return data
 
 
 def now_utc_str():
@@ -101,7 +117,7 @@ def collect_output_files(output_dir):
 
 
 # ================================================================
-# Format 1: MMDB + drop-in aliases
+# Format 1: MMDB + schema-compatible aliases
 # ================================================================
 
 def build_mmdb(data, output_dir):
@@ -110,10 +126,9 @@ def build_mmdb(data, output_dir):
     as byte-identical copies. The aliases are *named differently* from
     MaxMind's own product files on purpose: 'GeoIP2-Country' and
     'GeoLite2-Country' are MaxMind trademarks, and shipping files with
-    those exact names risks brand confusion and trademark issues.
-    Users who need a literal drop-in replacement can rename locally:
-
-        cp GeoIP2-Country-compatible.mmdb GeoIP2-Country.mmdb
+    those exact names risks brand confusion and trademark issues. The
+    `-compatible` suffix keeps the format interoperable while making clear
+    this is an independent dataset, not a MaxMind product.
     """
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -161,9 +176,11 @@ def build_json_per_region(data, output_dir):
     regions = data.get("regions", {})
     generated_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
     combined = {
-        "schema_version": data.get("schema_version", "3.2"),
+        # schema_version & version are validated present in load_data_json,
+        # so we inherit them faithfully here — no hardcoded fallback.
+        "schema_version": data["schema_version"],
         "project": "ipnova",
-        "version": data.get("version", ""),
+        "version": data["version"],
         "generated_at": generated_at,
         "regions": {}
     }
@@ -176,7 +193,7 @@ def build_json_per_region(data, output_dir):
             "total_ips": payload.get("total_ips", 0),
             "generated_at": generated_at,
             "cidrs": payload.get("cidrs", []),
-            # v3.2: include cidr_objects so BGP provenance is available to
+            # include cidr_objects so BGP provenance is available to
             # consumers of per-region files, not just data.json
             "cidr_objects": payload.get("cidr_objects", []),
         }
@@ -239,6 +256,9 @@ def build_nginx(data, output_dir):
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
             f.write("# Project   : https://github.com/harryheros/ipnova\n")
+            f.write("# Note      : output includes a few RFC5737 documentation-reserved\n")
+            f.write("#             CIDRs as provenance fingerprints; they never route on\n")
+            f.write("#             the public Internet and are safe to ignore.\n")
             f.write("#\n")
             f.write("# Usage in nginx.conf:\n")
             f.write("#   geo $ipnova_country {\n")
@@ -279,6 +299,9 @@ def build_haproxy(data, output_dir):
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
             f.write("# Project   : https://github.com/harryheros/ipnova\n")
+            f.write("# Note      : output includes a few RFC5737 documentation-reserved\n")
+            f.write("#             CIDRs as provenance fingerprints; they never route on\n")
+            f.write("#             the public Internet and are safe to ignore.\n")
             f.write("#\n")
             f.write("# Usage in haproxy.cfg (frontend or backend section):\n")
             f.write(f"#   acl is_{cc} src -f /path/to/ipnova/haproxy/{cc}.acl\n")
@@ -325,6 +348,9 @@ def build_caddy(data, output_dir):
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
             f.write("# Project   : https://github.com/harryheros/ipnova\n")
+            f.write("# Note      : output includes a few RFC5737 documentation-reserved\n")
+            f.write("#             CIDRs as provenance fingerprints; they never route on\n")
+            f.write("#             the public Internet and are safe to ignore.\n")
             f.write("#\n")
             f.write("# Usage in Caddyfile:\n")
             f.write(f"#   @ipnova_{cc} {{\n")
@@ -373,6 +399,9 @@ def build_iptables(data, output_dir):
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
             f.write("# Project   : https://github.com/harryheros/ipnova\n")
+            f.write("# Note      : output includes a few RFC5737 documentation-reserved\n")
+            f.write("#             CIDRs as provenance fingerprints; they never route on\n")
+            f.write("#             the public Internet and are safe to ignore.\n")
             f.write("#\n")
             f.write("# Usage:\n")
             f.write(f"#   ipset restore < {cc}.ipset\n")
@@ -561,7 +590,7 @@ def main():
     results = {}
 
     if not args.skip_mmdb:
-        log.info("--- MMDB (+ MaxMind drop-in aliases) ---")
+        log.info("--- MMDB (+ schema-compatible aliases) ---")
         results["mmdb"] = build_mmdb(data, args.output_dir)
         log.info("")
 
