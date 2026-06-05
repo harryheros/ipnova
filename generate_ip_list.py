@@ -18,6 +18,7 @@ import datetime
 import json
 import logging
 from collections import defaultdict
+from bisect import bisect_right
 
 # Ensure the script's own directory is on sys.path so `import regions` works
 # regardless of the cwd from which generate_ip_list.py was invoked.
@@ -28,7 +29,7 @@ if _SCRIPT_DIR not in sys.path:
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.3.0"
+__version__ = "3.4.0"
 
 # HTTP User-Agent — single source: __version__ above, plus repo URL so
 # upstream operators (RIPE Stat, APNIC) can contact the maintainer if
@@ -821,11 +822,15 @@ def build_cloud_supplementary_networks(region_data):
             stats["kept_per_region"][cc] = (
                 stats["kept_per_region"].get(cc, 0) + len(conflict_free_parts)
             )
-            # Record pre-collapse provenance for each kept prefix
+            # Record pre-collapse provenance for each kept prefix.
+            # `level` (L0/L1/L2 from fetch_prefix_country above) is carried
+            # through so downstream confidence can reflect real signal
+            # strength instead of a hardcoded value.
             for part in conflict_free_parts:
                 _supp_provenance[cc][str(part)] = {
                     "asn": asn,
                     "tier": _ASN_TIER_MAP.get(asn),
+                    "level": level,
                 }
 
     for cc, nets in supp_raw.items():
@@ -991,6 +996,79 @@ def enforce_mutual_exclusivity(region_data, supp_data=None):
     return cleaned
 
 # ================================================================
+# Provenance interval matching (schema v3.3 — robust provenance)
+# ================================================================
+# Provenance used to be matched by exact CIDR string. But a supplement
+# prefix's string changes whenever it is collapsed (here and in
+# build_cloud_supplementary_networks) or trimmed (enforce_mutual_exclusivity),
+# so string matching silently lost provenance and mislabelled BGP prefixes
+# as "apnic". We now match by IP-range intersection, which survives any
+# collapse/trim, and carry the attribution `level` through to a real
+# confidence value.
+
+# level -> confidence. L2 (ASN-holder-country guess) is the weakest signal
+# and must not be advertised as "high". Unknown levels are treated as low.
+_LEVEL_CONFIDENCE = {"L0": "high", "L-1": "high", "L1": "medium", "L2": "low"}
+# rank for picking the most conservative level when a final CIDR spans
+# multiple source prefixes (higher = weaker).
+_LEVEL_RANK = {"L0": 0, "L-1": 0, "L1": 1, "L2": 2, "L3": 3}
+
+
+def _level_to_confidence(level):
+    return _LEVEL_CONFIDENCE.get(level, "low")
+
+
+class _ProvenanceIndex:
+    """Range-based provenance lookup for BGP supplement prefixes.
+
+    Built from pre-collapse supp_provenance (cc -> {cidr_str -> {asn,tier,level}}).
+    For any final CIDR, returns (asn, tier, level) of the intersecting source
+    prefixes (same cc only), taking the dominant source's asn/tier and the
+    most conservative (weakest) level. Returns None if no BGP source overlaps
+    (i.e. the CIDR is genuinely APNIC-derived).
+    """
+
+    def __init__(self, supp_provenance):
+        self._intervals = []  # (start_int, end_int, cc, meta)
+        for cc, by_cidr in (supp_provenance or {}).items():
+            for cidr_str, meta in by_cidr.items():
+                net = ipaddress.ip_network(cidr_str, strict=False)
+                self._intervals.append((
+                    int(net.network_address),
+                    int(net.broadcast_address),
+                    cc, meta,
+                ))
+        self._intervals.sort(key=lambda t: t[0])
+        self._starts = [t[0] for t in self._intervals]
+
+    def lookup(self, net, cc_hint=None):
+        if not self._intervals:
+            return None
+        lo = int(net.network_address)
+        hi = int(net.broadcast_address)
+        # All source prefixes with start <= hi may intersect; scan and test.
+        # Per-region source prefixes number in the hundreds–low thousands
+        # (fewer after collapse), so O(n) here is fine and never misses a
+        # large-span prefix whose start sits far to the left.
+        hits = []
+        cut = bisect_right(self._starts, hi)
+        for j in range(cut):
+            s, e, cc, meta = self._intervals[j]
+            if e < lo:
+                continue
+            if cc_hint is None or cc == cc_hint:
+                overlap = min(e, hi) - max(s, lo) + 1
+                hits.append((overlap, meta))
+        if not hits:
+            return None
+        hits.sort(key=lambda t: t[0], reverse=True)
+        dominant = hits[0][1]
+        weakest = max((m.get("level") for _, m in hits),
+                      key=lambda lv: _LEVEL_RANK.get(lv, 3))
+        return dominant.get("asn"), dominant.get("tier"), weakest
+
+
+# ================================================================
 # Normalization & aggregation
 # ================================================================
 def normalize_region_data(region_data, bgp_provenance=None):
@@ -1001,7 +1079,7 @@ def normalize_region_data(region_data, bgp_provenance=None):
         bgp_provenance:  optional dict[cc, dict[cidr_str, {asn, tier}]]
                          from build_cloud_supplementary_networks.
                          When supplied, each entry in cidr_objects carries
-                         source/asn/tier/confidence metadata (schema v3.2).
+                         source/asn/tier/level/confidence metadata (schema v3.3).
 
     Returns:
         normalized dict with both legacy `cidrs` (list[str]) for backward
@@ -1009,25 +1087,29 @@ def normalize_region_data(region_data, bgp_provenance=None):
     """
     normalized = {}
     prov = bgp_provenance or {}
+    # Build the range index once across all regions; lookup uses cc_hint to
+    # keep matches within the same region.
+    prov_index = _ProvenanceIndex(prov)
 
     for cc in TARGET_REGIONS:
         networks = region_data.get(cc, [])
         merged = sorted(ipaddress.collapse_addresses(networks))
 
         total_ips = sum(net.num_addresses for net in merged)
-        cc_prov = prov.get(cc, {})
 
         cidr_objects = []
         for net in merged:
             s = str(net)
-            if s in cc_prov:
-                entry = cc_prov[s]
+            hit = prov_index.lookup(net, cc_hint=cc)
+            if hit is not None:
+                asn, tier, level = hit
                 cidr_objects.append({
                     "cidr": s,
                     "source": "bgp",
-                    "asn": entry.get("asn"),
-                    "tier": entry.get("tier"),
-                    "confidence": "high",
+                    "asn": asn,
+                    "tier": tier,
+                    "level": level,
+                    "confidence": _level_to_confidence(level),
                 })
             else:
                 cidr_objects.append({
@@ -1035,6 +1117,7 @@ def normalize_region_data(region_data, bgp_provenance=None):
                     "source": "apnic",
                     "asn": None,
                     "tier": None,
+                    "level": "L0",
                     "confidence": "high",
                 })
 
@@ -1045,7 +1128,7 @@ def normalize_region_data(region_data, bgp_provenance=None):
             "total_ips": total_ips,
             # Legacy field — kept for backward compatibility
             "cidrs": [str(net) for net in merged],
-            # v3.2: per-CIDR provenance objects
+            # v3.3: per-CIDR provenance objects (now with level + real confidence)
             "cidr_objects": cidr_objects,
         }
 
@@ -1144,6 +1227,11 @@ def save_txt_outputs(normalized_data, output_dir="output"):
                 f"# Note        : Each region is separated — "
                 f"this file contains {payload['region_name']} only\n"
             )
+            f.write(
+                "# Provenance  : includes a few RFC5737 documentation-reserved "
+                "CIDRs as\n#               fingerprints; they never route publicly "
+                "and are safe to ignore\n"
+            )
             f.write("# " + "=" * 48 + "\n")
             for cidr in payload["cidrs"]:
                 f.write(cidr + "\n")
@@ -1163,7 +1251,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "3.2",
+        "schema_version": "3.3",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -1182,7 +1270,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
     from regions import CANARY_CIDRS as _CANARY_CIDRS
     commit_sha = _detect_commit_sha()
     meta_payload = {
-        "schema_version": "3.2",
+        "schema_version": "3.3",
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,

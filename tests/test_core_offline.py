@@ -49,7 +49,7 @@ def test_parse_normalize_and_write_outputs():
 
         data = json.loads((Path(tmpdir) / "data.json").read_text())
         meta = json.loads((Path(tmpdir) / "meta.json").read_text())
-        assert data["schema_version"] == "3.2"
+        assert data["schema_version"] == "3.3"
         assert meta["checksum"]["data_json_sha256"]
         assert "Japan" in (Path(tmpdir) / "JP.txt").read_text()
 
@@ -441,6 +441,70 @@ def test_canary_cidrs_well_formed():
             )
 
 
+def test_provenance_survives_collapse_and_level_confidence():
+    """Regression guard for the v3.3 provenance fix.
+
+    Two bugs were fixed:
+      (A) BGP supplement prefixes whose CIDR string changed via collapse/trim
+          were silently mislabelled source="apnic" (string-match lookup miss).
+      (B) confidence was hardcoded "high" for every prefix, so L2 (weakest,
+          ASN-holder-country guess) prefixes were advertised as high.
+
+    The fix matches provenance by IP-range intersection (survives collapse)
+    and maps level -> confidence (L0/L-1 high, L1 medium, L2 low). This test
+    must keep passing or the bugs have regressed.
+    """
+    import sys
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    import generate_ip_list as gen
+    net = ipaddress.ip_network
+
+    region_data = {cc: [] for cc in gen.TARGET_REGIONS}
+    # 8.152.0.0/15 + 8.154.0.0/15 collapse into 8.152.0.0/14 (string changes)
+    region_data["CN"] = [
+        net("8.152.0.0/14"),    # collapsed from two L1 BGP /15s
+        net("120.24.0.0/16"),   # an L2 (weak) BGP prefix
+        net("1.0.1.0/24"),      # genuine APNIC prefix
+    ]
+    bgp_prov = {"CN": {
+        "8.152.0.0/15":  {"asn": 37963, "tier": 1, "level": "L1"},
+        "8.154.0.0/15":  {"asn": 37963, "tier": 1, "level": "L1"},
+        "120.24.0.0/16": {"asn": 37963, "tier": 1, "level": "L2"},
+    }}
+
+    out = gen.normalize_region_data(region_data, bgp_provenance=bgp_prov)
+    objs = {o["cidr"]: o for o in out["CN"]["cidr_objects"]}
+
+    # (A) collapsed prefix must still be recognised as BGP, not apnic
+    a = objs["8.152.0.0/14"]
+    assert a["source"] == "bgp", f"BUG-A regressed: collapsed BGP mislabelled {a}"
+    assert a["asn"] == 37963 and a["tier"] == 1
+    assert a["confidence"] == "medium", f"L1 should map to medium, got {a}"
+
+    # (B) L2 weak prefix must be downgraded to low, not high
+    b = objs["120.24.0.0/16"]
+    assert b["source"] == "bgp" and b["level"] == "L2"
+    assert b["confidence"] == "low", f"BUG-B regressed: L2 not low, got {b}"
+
+    # genuine APNIC prefix unaffected
+    c = objs["1.0.1.0/24"]
+    assert c["source"] == "apnic" and c["confidence"] == "high"
+
+    # cross-region safety: querying CN prefix as JP must not claim it
+    jp = gen.normalize_region_data(
+        {**{cc: [] for cc in gen.TARGET_REGIONS}, "JP": [net("8.152.0.0/14")]},
+        bgp_provenance=bgp_prov,
+    )
+    jp_obj = jp["JP"]["cidr_objects"][0]
+    assert jp_obj["source"] == "apnic", "cross-region provenance leak"
+
+    # backward-compat: no provenance -> all apnic/high, no crash
+    out_none = gen.normalize_region_data(region_data, bgp_provenance=None)
+    assert all(o["source"] == "apnic" and o["confidence"] == "high"
+               for o in out_none["CN"]["cidr_objects"])
+
+
 if __name__ == "__main__":
     test_parse_normalize_and_write_outputs()
     print("  test_parse_normalize_and_write_outputs: PASS")
@@ -470,4 +534,6 @@ if __name__ == "__main__":
     print("  test_user_agent_derives_from_version: PASS")
     test_canary_cidrs_well_formed()
     print("  test_canary_cidrs_well_formed: PASS")
+    test_provenance_survives_collapse_and_level_confidence()
+    print("  test_provenance_survives_collapse_and_level_confidence: PASS")
     print("\nAll offline tests passed.")

@@ -4,7 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.3.0-blue)
+![Version](https://img.shields.io/badge/version-3.4.0-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
@@ -57,7 +57,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/JP.txt` | Japan IPv4 CIDR list |
 | `output/KR.txt` | South Korea IPv4 CIDR list |
 | `output/SG.txt` | Singapore IPv4 CIDR list |
-| `output/data.json` | Structured JSON dataset (schema v3.2, includes cidr_objects provenance) |
+| `output/data.json` | Structured JSON dataset (schema v3.3, includes cidr_objects provenance) |
 | `output/meta.json` | Enriched metadata with quality report |
 | `output/ipnova-apac.mmdb` | MaxMind-compatible MMDB database (all 7 regions) |
 | `output/regions.json` | Per-region combined JSON |
@@ -84,7 +84,7 @@ Text files include metadata headers such as region, version, last updated timest
 # MMDB — primary branded build
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac.mmdb
 
-# MMDB — schema-compatible aliases (rename locally if you need the literal MaxMind filename)
+# MMDB — schema-compatible aliases (same data as ipnova-apac.mmdb, named to avoid MaxMind's trademarks)
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoIP2-Country-compatible.mmdb
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoLite2-Country-compatible.mmdb
 
@@ -155,20 +155,30 @@ IPNova provides both:
 - **TXT outputs** for direct human-readable use
 - **JSON outputs** for system integration, future format conversion, and automation workflows
 
-### Schema v3.2
+### Schema v3.3
 
 `data.json` includes `schema_version`, `version`, and `total_ips` per region.
 
 Each region now includes both:
 - `cidrs` — flat list of CIDR strings (backward-compatible)
-- `cidr_objects` — per-CIDR provenance objects (new in v3.2):
+- `cidr_objects` — per-CIDR provenance objects:
 
 ```json
-{"cidr": "8.152.0.0/13", "source": "bgp",   "asn": 37963, "tier": 1,    "confidence": "high"}
-{"cidr": "1.0.1.0/24",   "source": "apnic",  "asn": null,  "tier": null, "confidence": "high"}
+{"cidr": "8.152.0.0/13", "source": "bgp",   "asn": 37963, "tier": 1,    "level": "L1", "confidence": "medium"}
+{"cidr": "1.0.1.0/24",   "source": "apnic",  "asn": null,  "tier": null, "level": "L0", "confidence": "high"}
 ```
 
 `source` is `"bgp"` for prefixes sourced from cloud ASN BGP announcements (the ARIN blind-spot coverage), and `"apnic"` for prefixes from APNIC delegation data.
+
+`level` (new in v3.3) records which attribution tier resolved the prefix's
+region: `L0` = APNIC containment (authoritative), `L1` = RIPEstat geoloc vote,
+`L2` = ASN-holder-country fallback (weakest). `confidence` is derived from
+`level`: `L0`/`L-1` → `high`, `L1` → `medium`, `L2` → `low`. This means a
+prefix attributed only by ASN-holder country is honestly marked `low` rather
+than overstated as `high`.
+
+> Provenance is matched to final CIDRs by IP-range intersection, so it stays
+> correct even after CIDRs are collapsed or trimmed during normalization.
 
 `meta.json` includes enriched quality metadata:
 - ASN exclusion success/failure report with mode indicator
@@ -208,11 +218,18 @@ Each region now includes both:
 7. Precisely subtract excluded prefixes (surgical removal, not blunt drop)
 8. Sanity check output against minimum thresholds
 9. Aggregate outputs into TXT and JSON formats with SHA-256 checksum
-10. Build extended formats: MMDB (+ MaxMind drop-in aliases), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
+10. Build extended formats: MMDB (+ schema-compatible aliases), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
 
 ---
 
 ## 📋 Changelog
+
+### v3.4.0
+
+- **Bugfix (provenance)**: `cidr_objects` provenance was matched to final CIDRs by exact string, but a BGP supplement prefix's string changes whenever it is collapsed or trimmed during normalization — so a large share of BGP-sourced prefixes were silently mislabelled `source: "apnic"`. Provenance is now matched by **IP-range intersection**, which survives any collapse/trim. The core region CIDR lists (TXT/MMDB/etc.) were never affected — only the `cidr_objects` metadata.
+- **Bugfix (confidence)**: `confidence` was hardcoded to `"high"` for every prefix, so `L2` (ASN-holder-country fallback, the weakest signal) was advertised as high-confidence. The attribution `level` (L0/L1/L2) is now carried through and `confidence` is derived from it: `L0`/`L-1` → `high`, `L1` → `medium`, `L2` → `low`.
+- **Schema v3.3**: `cidr_objects` gains a `level` field exposing the attribution tier. `confidence` values now span `high`/`medium`/`low` (previously always `high`). Backward-compatible additive change — existing `cidrs`, `source`, `asn`, `tier` fields are unchanged.
+- **Testing**: added `test_provenance_survives_collapse_and_level_confidence` — a regression guard that constructs a collapse scenario and asserts BGP prefixes keep their provenance and L2 prefixes are downgraded to `low`.
 
 ### v3.3.0
 
@@ -224,7 +241,7 @@ Each region now includes both:
 - **Security/Provenance**: canary CIDR set embedded in published artifacts using RFC5737 documentation-reserved ranges (harmless for downstream firewall/ACL use, but enables forensic attribution of unattributed redistributions); `meta.json` gains a `build` section recording the commit SHA that produced the artifact
 - **HTTP**: `User-Agent` is now derived from `__version__` and includes the repository URL for contactability (was hardcoded and had drifted)
 - **CLI**: new `--skip-canary` flag for verification builds
-- **MaxMind aliases renamed**: `GeoIP2-Country.mmdb` → `GeoIP2-Country-compatible.mmdb` (and likewise for GeoLite2). The `-compatible` suffix avoids using MaxMind's trademarked product names directly; rename locally if a literal drop-in filename is required.
+- **MaxMind aliases renamed**: `GeoIP2-Country.mmdb` → `GeoIP2-Country-compatible.mmdb` (and likewise for GeoLite2). The `-compatible` suffix avoids using MaxMind's trademarked product names directly.
 - **iptables**: `ipset` maxelem sized dynamically (`max(num_cidrs * 2, 65536)`, rounded to next power of two) so future region growth doesn't silently truncate
 - **MMDB validator**: expanded MO sample set so a single IP holder change can't fail the region-coverage gate
 - **Documentation**: project-language consistency — translated `IPNOVA_MULTISOURCE_PROPOSAL.md` to English (`P0_5_POSTMORTEM.md` already English)
@@ -233,7 +250,7 @@ Each region now includes both:
 ### v3.2.1
 
 - **New**: `output/cidr_objects` per-CIDR provenance metadata in `data.json` (schema v3.2) — each CIDR now carries `source`, `asn`, `tier`, and `confidence` fields
-- **New**: `output/GeoIP2-Country-compatible.mmdb` + `output/GeoLite2-Country-compatible.mmdb` — schema-compatible aliases (named with `-compatible` suffix to avoid using MaxMind's trademarked product names directly; rename locally if a literal drop-in is desired)
+- **New**: `output/GeoIP2-Country-compatible.mmdb` + `output/GeoLite2-Country-compatible.mmdb` — schema-compatible aliases (named with `-compatible` suffix to avoid using MaxMind's trademarked product names directly)
 - **New**: `output/haproxy/{CC}.acl` — HAProxy ACL format
 - **New**: `output/caddy/{CC}.conf` — Caddy remote_ip matcher format
 - **New**: `output/plain/{CC}.txt` — pure CIDR files with no comment headers (for programmatic consumption)
