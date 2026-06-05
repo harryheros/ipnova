@@ -140,9 +140,9 @@ python3 generate_ip_list.py --version                # Show version
 
 ## 🧩 Use Cases
 
-- Routing and traffic filtering
+- Routing and traffic classification
 - Firewall / ACL configuration
-- DNS / proxy traffic routing
+- DNS routing and infrastructure attribution
 - Network policy enforcement
 - Infrastructure-level traffic control
 
