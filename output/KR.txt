@@ -1,7 +1,7 @@
 # Project     : ipnova
 # Version     : 3.4.0
 # Region      : South Korea
-# Last Updated: 2026-06-05 10:17:41 UTC
+# Last Updated: 2026-06-08 07:21:27 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
 # Total CIDRs : 1040
 # Total IPs   : 112,468,744

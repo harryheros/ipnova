@@ -3,7 +3,7 @@
   "region_name": "Japan",
   "total_cidrs": 3189,
   "total_ips": 188543496,
-  "generated_at": "2026-06-05T10:17:50.315352+00:00",
+  "generated_at": "2026-06-08T07:21:36.862619+00:00",
   "cidrs": [
     "1.0.16.0/20",
     "1.0.64.0/18",
@@ -27350,10 +27350,10 @@
     },
     {
       "cidr": "210.160.0.0/12",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
