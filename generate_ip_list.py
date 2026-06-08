@@ -155,6 +155,62 @@ RIPE_REQUEST_INTERVAL = 1.5  # seconds between RIPE Stat requests
 _RIPE_HOSTS = ("stat.ripe.net",)
 _RIPE_LAST_CALL = 0.0  # monotonic timestamp of last RIPE request
 
+# ── RIPE Stat circuit breaker ───────────────────────────────────────────────
+# The existing throttle above limits *rate* (one request per interval) but not
+# *total duration / total volume*. During a wide RIPE Stat outage, every one of
+# hundreds of ASN/prefix queries fails and retries, and the throttle politely
+# spaces them out — producing a 50+ minute run that hammers RIPE Stat the whole
+# time. That sustained-volume pattern is what trips GitHub's abuse detection.
+#
+# The breaker adds the missing "stop" gate: once RIPE Stat has failed too many
+# times in a row, OR the cumulative RIPE phase has run too long, all further
+# RIPE requests fail fast (no network call, no retry, no sleep). The build then
+# degrades gracefully (uses cache / proceeds APNIC-only) instead of grinding on.
+# It only governs RIPE hosts; APNIC and other one-shot downloads are untouched.
+RIPE_BREAKER_MAX_CONSECUTIVE_FAILURES = 15   # trip after this many in a row
+RIPE_BREAKER_MAX_PHASE_SECONDS = 600         # hard wall-clock cap on RIPE phase (10 min)
+
+_RIPE_BREAKER_TRIPPED = False
+_RIPE_CONSECUTIVE_FAILURES = 0
+_RIPE_PHASE_START = 0.0  # monotonic; set on first RIPE request
+
+
+class RipeBreakerOpen(Exception):
+    """Raised when the RIPE Stat circuit breaker is open (fail fast, no network)."""
+
+
+def _ripe_breaker_check():
+    """Return True (and trip) if the breaker should be open for RIPE requests.
+
+    Trips on either condition:
+      - too many consecutive RIPE failures, or
+      - the RIPE phase has exceeded its wall-clock cap.
+    Once tripped it stays tripped for the rest of the run.
+    """
+    global _RIPE_BREAKER_TRIPPED
+    if _RIPE_BREAKER_TRIPPED:
+        return True
+    if _RIPE_CONSECUTIVE_FAILURES >= RIPE_BREAKER_MAX_CONSECUTIVE_FAILURES:
+        _RIPE_BREAKER_TRIPPED = True
+        log.error(
+            "RIPE Stat circuit breaker TRIPPED: %d consecutive failures. "
+            "Failing all further RIPE requests fast; build will degrade "
+            "gracefully (cache / APNIC-only) instead of hammering RIPE.",
+            _RIPE_CONSECUTIVE_FAILURES,
+        )
+        return True
+    if _RIPE_PHASE_START and (
+        time.monotonic() - _RIPE_PHASE_START > RIPE_BREAKER_MAX_PHASE_SECONDS
+    ):
+        _RIPE_BREAKER_TRIPPED = True
+        log.error(
+            "RIPE Stat circuit breaker TRIPPED: RIPE phase exceeded %ds cap. "
+            "Failing all further RIPE requests fast.",
+            RIPE_BREAKER_MAX_PHASE_SECONDS,
+        )
+        return True
+    return False
+
 
 # ================================================================
 # HTTP helpers with retry
@@ -199,10 +255,20 @@ def http_get(url, timeout=30, retries=MAX_RETRIES, ua=None,
     RIPE_REQUEST_INTERVAL seconds, regardless of which caller initiated it.
     """
     global _RIPE_LAST_CALL
+    global _RIPE_CONSECUTIVE_FAILURES, _RIPE_PHASE_START
     headers = {"User-Agent": ua or USER_AGENT}
     decode_errors = "strict" if strict_decode else "replace"
     last_err = None
     is_ripe = _is_ripe_host(url)
+
+    # Circuit breaker: once tripped, RIPE requests fail fast with no network
+    # call, no retry, no sleep — this is the gate that stops a wide RIPE outage
+    # from turning into a 50-minute hammering run. Non-RIPE URLs are unaffected.
+    if is_ripe:
+        if _RIPE_PHASE_START == 0.0:
+            _RIPE_PHASE_START = time.monotonic()
+        if _ripe_breaker_check():
+            raise RipeBreakerOpen(f"RIPE breaker open; skipped {url[:80]}")
 
     for attempt in range(1, retries + 1):
         try:
@@ -216,6 +282,8 @@ def http_get(url, timeout=30, retries=MAX_RETRIES, ua=None,
             with urllib.request.urlopen(req, timeout=timeout) as resp:
                 raw = resp.read()
                 body = raw.decode("utf-8", errors=decode_errors)
+                if is_ripe:
+                    _RIPE_CONSECUTIVE_FAILURES = 0  # success resets the streak
                 if return_content_type:
                     content_type = resp.headers.get("Content-Type", "")
                     return body, content_type
@@ -231,6 +299,11 @@ def http_get(url, timeout=30, retries=MAX_RETRIES, ua=None,
                 log.error("HTTP failed after %d attempts for %s: %s",
                           retries, url[:80], e)
 
+    # All retries exhausted. If this was a RIPE request, count it toward the
+    # breaker so a sustained outage trips the gate and later calls fail fast.
+    if is_ripe:
+        _RIPE_CONSECUTIVE_FAILURES += 1
+        _ripe_breaker_check()
     raise last_err
 
 
