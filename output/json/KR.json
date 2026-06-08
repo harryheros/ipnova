@@ -3,7 +3,7 @@
   "region_name": "South Korea",
   "total_cidrs": 1040,
   "total_ips": 112468744,
-  "generated_at": "2026-06-05T10:17:50.315352+00:00",
+  "generated_at": "2026-06-08T07:21:36.862619+00:00",
   "cidrs": [
     "1.11.0.0/16",
     "1.16.0.0/14",
@@ -1081,10 +1081,10 @@
     },
     {
       "cidr": "1.201.0.0/16",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8761,10 +8761,10 @@
     },
     {
       "cidr": "210.180.0.0/14",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8913,10 +8913,10 @@
     },
     {
       "cidr": "211.48.0.0/12",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {

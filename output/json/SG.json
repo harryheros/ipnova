@@ -1,9 +1,9 @@
 {
   "region": "SG",
   "region_name": "Singapore",
-  "total_cidrs": 1594,
-  "total_ips": 26547464,
-  "generated_at": "2026-06-05T10:17:50.315352+00:00",
+  "total_cidrs": 1598,
+  "total_ips": 26546952,
+  "generated_at": "2026-06-08T07:21:36.862619+00:00",
   "cidrs": [
     "1.21.224.0/19",
     "1.32.128.0/17",
@@ -860,7 +860,11 @@
     "129.226.0.0/15",
     "132.147.64.0/18",
     "134.42.225.0/24",
-    "134.65.64.0/18",
+    "134.65.64.0/19",
+    "134.65.96.0/20",
+    "134.65.112.0/21",
+    "134.65.120.0/22",
+    "134.65.124.0/23",
     "134.122.128.0/17",
     "137.132.0.0/19",
     "137.132.32.0/20",
@@ -1619,10 +1623,10 @@
     },
     {
       "cidr": "1.178.32.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1683,10 +1687,10 @@
     },
     {
       "cidr": "14.137.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1795,10 +1799,10 @@
     },
     {
       "cidr": "27.106.0.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1875,10 +1879,10 @@
     },
     {
       "cidr": "27.255.0.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1955,10 +1959,10 @@
     },
     {
       "cidr": "42.201.128.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1971,10 +1975,10 @@
     },
     {
       "cidr": "43.128.0.0/13",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -1987,18 +1991,18 @@
     },
     {
       "cidr": "43.152.0.0/13",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "43.160.0.0/12",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2019,10 +2023,10 @@
     },
     {
       "cidr": "43.225.140.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2251,10 +2255,10 @@
     },
     {
       "cidr": "43.255.104.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2555,18 +2559,18 @@
     },
     {
       "cidr": "46.250.160.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "49.0.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -2995,10 +2999,10 @@
     },
     {
       "cidr": "62.245.0.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3107,18 +3111,18 @@
     },
     {
       "cidr": "80.238.128.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "83.101.0.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3131,18 +3135,18 @@
     },
     {
       "cidr": "87.119.0.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "89.150.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3163,26 +3167,26 @@
     },
     {
       "cidr": "94.45.160.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "94.74.64.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "94.244.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -3195,34 +3199,34 @@
     },
     {
       "cidr": "101.32.0.0/16",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "101.33.0.0/17",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "101.44.0.0/16",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "101.46.0.0/15",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -4067,10 +4071,10 @@
     },
     {
       "cidr": "103.40.100.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6747,10 +6751,10 @@
     },
     {
       "cidr": "103.239.72.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -6771,10 +6775,10 @@
     },
     {
       "cidr": "103.240.156.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7115,10 +7119,10 @@
     },
     {
       "cidr": "103.255.60.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7171,18 +7175,18 @@
     },
     {
       "cidr": "110.238.64.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "110.239.64.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7203,10 +7207,10 @@
     },
     {
       "cidr": "111.91.0.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7227,10 +7231,10 @@
     },
     {
       "cidr": "111.119.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7387,10 +7391,10 @@
     },
     {
       "cidr": "114.119.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7443,10 +7447,10 @@
     },
     {
       "cidr": "115.30.32.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7483,10 +7487,10 @@
     },
     {
       "cidr": "115.167.32.0/20",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -7851,42 +7855,42 @@
     },
     {
       "cidr": "119.8.0.0/16",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "119.12.160.0/20",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "119.13.32.0/20",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "119.13.64.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "119.13.160.0/20",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8027,26 +8031,26 @@
     },
     {
       "cidr": "121.91.152.0/21",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "121.91.168.0/21",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "121.91.200.0/21",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8067,10 +8071,10 @@
     },
     {
       "cidr": "122.8.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8283,10 +8287,10 @@
     },
     {
       "cidr": "124.81.0.0/16",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8315,10 +8319,10 @@
     },
     {
       "cidr": "124.156.0.0/16",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8339,10 +8343,10 @@
     },
     {
       "cidr": "124.243.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8419,10 +8423,10 @@
     },
     {
       "cidr": "129.226.0.0/15",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8442,7 +8446,39 @@
       "confidence": "high"
     },
     {
-      "cidr": "134.65.64.0/18",
+      "cidr": "134.65.64.0/19",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
+      "confidence": "high"
+    },
+    {
+      "cidr": "134.65.96.0/20",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
+      "confidence": "high"
+    },
+    {
+      "cidr": "134.65.112.0/21",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
+      "confidence": "high"
+    },
+    {
+      "cidr": "134.65.120.0/22",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
+      "confidence": "high"
+    },
+    {
+      "cidr": "134.65.124.0/23",
       "source": "apnic",
       "asn": null,
       "tier": null,
@@ -8715,10 +8751,10 @@
     },
     {
       "cidr": "146.174.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8747,10 +8783,10 @@
     },
     {
       "cidr": "148.145.128.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8795,10 +8831,10 @@
     },
     {
       "cidr": "149.232.128.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8851,10 +8887,10 @@
     },
     {
       "cidr": "150.40.128.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -8883,10 +8919,10 @@
     },
     {
       "cidr": "150.109.0.0/16",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -9035,10 +9071,10 @@
     },
     {
       "cidr": "159.138.0.0/16",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -9411,10 +9447,10 @@
     },
     {
       "cidr": "162.62.0.0/16",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -9627,10 +9663,10 @@
     },
     {
       "cidr": "166.108.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -9731,10 +9767,10 @@
     },
     {
       "cidr": "170.106.0.0/16",
-      "source": "bgp",
-      "asn": 132203,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -9827,10 +9863,10 @@
     },
     {
       "cidr": "176.52.128.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -9891,10 +9927,10 @@
     },
     {
       "cidr": "180.87.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -10051,10 +10087,10 @@
     },
     {
       "cidr": "182.160.0.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -10107,26 +10143,26 @@
     },
     {
       "cidr": "183.87.32.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "183.87.64.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "183.87.128.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -10163,42 +10199,42 @@
     },
     {
       "cidr": "188.119.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "188.239.0.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "189.1.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "189.28.96.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "190.92.192.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -10467,10 +10503,10 @@
     },
     {
       "cidr": "201.77.32.0/20",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -11323,10 +11359,10 @@
     },
     {
       "cidr": "202.76.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -11763,10 +11799,10 @@
     },
     {
       "cidr": "202.170.88.0/21",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -12939,10 +12975,10 @@
     },
     {
       "cidr": "203.123.80.0/20",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -13275,10 +13311,10 @@
     },
     {
       "cidr": "203.167.20.0/22",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -13979,18 +14015,18 @@
     },
     {
       "cidr": "212.34.192.0/19",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
       "cidr": "213.250.128.0/18",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {
@@ -14075,10 +14111,10 @@
     },
     {
       "cidr": "219.83.0.0/17",
-      "source": "bgp",
-      "asn": 136907,
-      "tier": 1,
-      "level": "L-1",
+      "source": "apnic",
+      "asn": null,
+      "tier": null,
+      "level": "L0",
       "confidence": "high"
     },
     {

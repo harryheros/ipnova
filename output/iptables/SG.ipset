@@ -1,6 +1,6 @@
 # IPNova — ipset restore — SG (Singapore)
-# Generated : 2026-06-05 10:17:50 UTC
-# CIDRs     : 1594
+# Generated : 2026-06-08 07:21:37 UTC
+# CIDRs     : 1598
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -866,7 +866,11 @@ add ipnova_SG 129.126.0.0/16
 add ipnova_SG 129.226.0.0/15
 add ipnova_SG 132.147.64.0/18
 add ipnova_SG 134.42.225.0/24
-add ipnova_SG 134.65.64.0/18
+add ipnova_SG 134.65.64.0/19
+add ipnova_SG 134.65.96.0/20
+add ipnova_SG 134.65.112.0/21
+add ipnova_SG 134.65.120.0/22
+add ipnova_SG 134.65.124.0/23
 add ipnova_SG 134.122.128.0/17
 add ipnova_SG 137.132.0.0/19
 add ipnova_SG 137.132.32.0/20
