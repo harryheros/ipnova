@@ -1,6 +1,6 @@
 # IPNova — ipset restore — JP (Japan)
-# Generated : 2026-06-08 07:21:37 UTC
-# CIDRs     : 3189
+# Generated : 2026-07-01 08:18:13 UTC
+# CIDRs     : 3207
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -208,6 +208,10 @@ add ipnova_JP 45.126.156.0/22
 add ipnova_JP 45.127.28.0/22
 add ipnova_JP 45.251.67.0/24
 add ipnova_JP 45.251.132.0/22
+add ipnova_JP 47.79.88.0/21
+add ipnova_JP 47.79.160.0/20
+add ipnova_JP 47.91.0.0/19
+add ipnova_JP 47.245.0.0/18
 add ipnova_JP 49.0.16.0/21
 add ipnova_JP 49.0.176.0/21
 add ipnova_JP 49.50.6.0/23
@@ -1005,6 +1009,7 @@ add ipnova_JP 103.254.144.0/22
 add ipnova_JP 103.255.20.0/22
 add ipnova_JP 103.255.244.0/22
 add ipnova_JP 104.200.112.0/20
+add ipnova_JP 104.222.192.0/19
 add ipnova_JP 104.251.144.0/20
 add ipnova_JP 106.72.0.0/15
 add ipnova_JP 106.128.0.0/10
@@ -1863,6 +1868,8 @@ add ipnova_JP 160.204.0.0/16
 add ipnova_JP 160.215.0.0/16
 add ipnova_JP 160.222.193.0/24
 add ipnova_JP 160.233.0.0/16
+add ipnova_JP 160.236.22.0/23
+add ipnova_JP 160.236.48.0/23
 add ipnova_JP 160.237.0.0/16
 add ipnova_JP 160.238.1.0/24
 add ipnova_JP 160.238.2.0/23
@@ -1899,6 +1906,7 @@ add ipnova_JP 162.4.79.0/24
 add ipnova_JP 162.4.98.0/23
 add ipnova_JP 162.4.180.0/23
 add ipnova_JP 162.4.194.0/23
+add ipnova_JP 162.4.238.0/24
 add ipnova_JP 162.43.0.0/17
 add ipnova_JP 163.42.0.0/15
 add ipnova_JP 163.44.0.0/17
@@ -1991,6 +1999,7 @@ add ipnova_JP 170.249.64.0/21
 add ipnova_JP 170.249.96.0/19
 add ipnova_JP 171.2.0.0/15
 add ipnova_JP 172.86.208.0/20
+add ipnova_JP 172.97.80.0/20
 add ipnova_JP 172.122.0.0/15
 add ipnova_JP 173.234.64.0/22
 add ipnova_JP 175.28.4.0/22
@@ -2437,7 +2446,6 @@ add ipnova_JP 202.61.16.0/20
 add ipnova_JP 202.62.160.0/19
 add ipnova_JP 202.62.253.0/24
 add ipnova_JP 202.64.25.0/24
-add ipnova_JP 202.64.56.0/24
 add ipnova_JP 202.64.63.0/24
 add ipnova_JP 202.64.64.0/23
 add ipnova_JP 202.64.87.0/24
@@ -3068,7 +3076,17 @@ add ipnova_JP 218.112.0.0/12
 add ipnova_JP 218.128.0.0/12
 add ipnova_JP 218.176.0.0/13
 add ipnova_JP 218.185.128.0/18
-add ipnova_JP 218.216.0.0/13
+add ipnova_JP 218.216.0.0/14
+add ipnova_JP 218.220.0.0/15
+add ipnova_JP 218.222.0.0/16
+add ipnova_JP 218.223.0.0/21
+add ipnova_JP 218.223.8.0/22
+add ipnova_JP 218.223.12.0/23
+add ipnova_JP 218.223.15.0/24
+add ipnova_JP 218.223.16.0/20
+add ipnova_JP 218.223.32.0/19
+add ipnova_JP 218.223.64.0/18
+add ipnova_JP 218.223.128.0/17
 add ipnova_JP 218.224.0.0/14
 add ipnova_JP 218.228.0.0/15
 add ipnova_JP 218.230.0.0/16

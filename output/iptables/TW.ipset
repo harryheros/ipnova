@@ -1,5 +1,5 @@
 # IPNova — ipset restore — TW (Taiwan)
-# Generated : 2026-06-08 07:21:37 UTC
+# Generated : 2026-07-01 08:18:13 UTC
 # CIDRs     : 751
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
@@ -125,7 +125,6 @@ add ipnova_TW 103.36.116.0/22
 add ipnova_TW 103.37.4.0/23
 add ipnova_TW 103.37.36.0/22
 add ipnova_TW 103.38.146.0/23
-add ipnova_TW 103.39.34.0/23
 add ipnova_TW 103.42.112.0/23
 add ipnova_TW 103.42.144.0/21
 add ipnova_TW 103.43.48.0/22
@@ -539,6 +538,7 @@ add ipnova_TW 161.248.160.0/23
 add ipnova_TW 162.4.92.0/24
 add ipnova_TW 162.4.116.0/23
 add ipnova_TW 162.4.120.0/23
+add ipnova_TW 162.4.236.0/23
 add ipnova_TW 163.13.0.0/16
 add ipnova_TW 163.14.0.0/15
 add ipnova_TW 163.16.0.0/12
