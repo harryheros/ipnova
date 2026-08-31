@@ -208,7 +208,7 @@ def main():
         for domain in domains:
             try:
                 _, _, ips = socket.gethostbyname_ex(domain)
-            except Exception as e:
+            except OSError as e:
                 warn(f"DNS lookup failed for {domain}: {e}")
                 continue
 
