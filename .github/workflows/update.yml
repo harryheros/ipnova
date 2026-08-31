@@ -38,7 +38,7 @@ jobs:
         run: python tests/test_core_offline.py
 
       - name: Restore geoloc cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: output/.geoloc_cache.json
           key: geoloc-cache-${{ runner.os }}-${{ hashFiles('generate_ip_list.py') }}
@@ -67,7 +67,7 @@ jobs:
         run: python3 generate_ip_list.py
 
       - name: Save geoloc cache
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v5
         if: always()
         with:
           path: output/.geoloc_cache.json
