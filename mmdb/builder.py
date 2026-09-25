@@ -30,14 +30,15 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
     try:
         from mmdb_writer import MMDBWriter
         from netaddr import IPSet
-    except ImportError:
+    except ImportError as e:
         raise ImportError(
             "Required packages not installed.\n"
             "Install with: pip install mmdb-writer netaddr maxminddb"
-        )
+        ) from e
 
     from mmdb.schema import (
-        DATABASE_TYPE, DATABASE_DESCRIPTION, DATABASE_LANGUAGES, make_record
+        APAC_REGIONS, DATABASE_TYPE, DATABASE_DESCRIPTION, DATABASE_LANGUAGES,
+        make_record,
     )
 
     writer = MMDBWriter(
@@ -48,9 +49,14 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
     )
 
     total_inserted = 0
-    total_skipped = 0
+    failed = []
 
-    for cc, payload in normalized_data.items():
+    # Deterministic insertion order (TARGET_REGIONS order, then any extras).
+    order = [cc for cc in APAC_REGIONS if cc in normalized_data]
+    order += sorted(cc for cc in normalized_data if cc not in APAC_REGIONS)
+
+    for cc in order:
+        payload = normalized_data[cc]
         cidrs = payload.get("cidrs", [])
         if not cidrs:
             log.warning("  %s: no CIDRs, skipping", cc)
@@ -66,11 +72,16 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
                 cc, payload.get("region_name", cc), len(cidrs)
             )
         except Exception as e:
-            log.warning("  %s: insert failed — %s", cc, e)
-            total_skipped += len(cidrs)
+            log.error("  %s: insert failed — %s", cc, e)
+            failed.append(cc)
 
-    if total_skipped > 0:
-        log.warning("  %d CIDRs skipped due to errors", total_skipped)
+    # A partially written MMDB (one region silently missing) is worse than
+    # no MMDB: consumers would treat that region's IPs as "not APAC".
+    if failed:
+        raise RuntimeError(
+            f"MMDB build failed: insert errors for region(s) {failed}. "
+            "Check mmdb-writer and netaddr versions."
+        )
 
     if total_inserted == 0:
         raise RuntimeError(
@@ -80,7 +91,15 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
 
     out_path = os.path.join(output_dir, "ipnova-apac.mmdb")
     os.makedirs(output_dir, exist_ok=True)
-    writer.to_db_file(out_path)
+    # Write to a temp name first so a failed write never replaces the
+    # previously published database with a truncated file.
+    tmp_path = out_path + ".tmp"
+    try:
+        writer.to_db_file(tmp_path)
+        os.replace(tmp_path, out_path)
+    finally:
+        if os.path.exists(tmp_path):
+            os.unlink(tmp_path)
 
     size_kb = os.path.getsize(out_path) // 1024
     log.info(

@@ -8,17 +8,19 @@ Source  : APNIC RIR delegation data + BGP multi-source fusion (upstream, not der
 
 import urllib.request
 import urllib.parse
+import urllib.error
 import ipaddress
 import hashlib
 import os
 import sys
+import tempfile
 import time
 import argparse
 import datetime
 import json
 import logging
 from collections import defaultdict
-from bisect import bisect_right
+from bisect import bisect_left, bisect_right
 
 # Ensure the script's own directory is on sys.path so `import regions` works
 # regardless of the cwd from which generate_ip_list.py was invoked.
@@ -29,7 +31,10 @@ if _SCRIPT_DIR not in sys.path:
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.4.0"
+__version__ = "3.5.0"
+
+# Data-layer schema version (data.json / meta.json / regions.json).
+SCHEMA_VERSION = "3.4"
 
 # HTTP User-Agent — single source: __version__ above, plus repo URL so
 # upstream operators (RIPE Stat, APNIC) can contact the maintainer if
@@ -168,7 +173,11 @@ _RIPE_LAST_CALL = 0.0  # monotonic timestamp of last RIPE request
 # degrades gracefully (uses cache / proceeds APNIC-only) instead of grinding on.
 # It only governs RIPE hosts; APNIC and other one-shot downloads are untouched.
 RIPE_BREAKER_MAX_CONSECUTIVE_FAILURES = 15   # trip after this many in a row
-RIPE_BREAKER_MAX_PHASE_SECONDS = 600         # hard wall-clock cap on RIPE phase (10 min)
+# Hard wall-clock cap on the RIPE phase. v3.4 used 600s, but a cold-cache
+# cloud-supplement run alone measured ~560s (meta.json 2026-07-01), leaving
+# almost no headroom: the breaker would trip part-way through and silently
+# drop the remaining cloud prefixes. Overridable via --ripe-budget.
+RIPE_BREAKER_MAX_PHASE_SECONDS = 900
 
 _RIPE_BREAKER_TRIPPED = False
 _RIPE_CONSECUTIVE_FAILURES = 0
@@ -236,6 +245,19 @@ def _is_ripe_host(url):
     return False
 
 
+def _retry_after_seconds(err, cap=60):
+    """Return a bounded Retry-After delay (seconds) from a 429/503 error."""
+    if not isinstance(err, urllib.error.HTTPError) or err.code not in (429, 503):
+        return None
+    try:
+        value = err.headers.get("Retry-After") if err.headers else None
+        if value is None:
+            return None
+        return max(0, min(int(value), cap))
+    except (TypeError, ValueError):
+        return None
+
+
 def http_get(url, timeout=30, retries=MAX_RETRIES, ua=None,
              strict_decode=False, return_content_type=False):
     """
@@ -290,8 +312,18 @@ def http_get(url, timeout=30, retries=MAX_RETRIES, ua=None,
                 return body
         except Exception as e:
             last_err = e
+            # Permanent client errors (400/401/403/404/410/...) will not heal
+            # on retry; retrying only adds load on the upstream and delay to
+            # the build. 408 (timeout) and 429 (rate limited) are transient.
+            if (isinstance(e, urllib.error.HTTPError)
+                    and 400 <= e.code < 500 and e.code not in (408, 429)):
+                log.error("HTTP %d (not retryable) for %s", e.code, url[:80])
+                break
             if attempt < retries:
                 wait = RETRY_BACKOFF_BASE ** attempt
+                retry_after = _retry_after_seconds(e)
+                if retry_after is not None:
+                    wait = max(wait, retry_after)
                 log.warning("HTTP attempt %d/%d failed for %s: %s (retry in %ds)",
                             attempt, retries, url[:80], e, wait)
                 time.sleep(wait)
@@ -475,33 +507,62 @@ def build_excluded_networks(skip_ripe=False):
 # ================================================================
 # Parsing helpers
 # ================================================================
+class SortedNetworks:
+    """Collapsed, address-sorted IPv4 networks with O(log n) range lookup.
+
+    Collapsing guarantees the member networks are pairwise disjoint, which
+    makes both their start and end addresses monotonically increasing. The
+    set of members overlapping any query range is therefore one contiguous
+    slice, found with two binary searches.
+
+    v3.4 used a linear scan from the beginning of the list for every query,
+    which made enforce_mutual_exclusivity() O(N x M) (~10s on the published
+    dataset, far more on raw APNIC input). This index removes that cost
+    without changing results.
+    """
+
+    __slots__ = ("nets", "starts", "ends")
+
+    def __init__(self, networks=()):
+        v4 = [n for n in networks if n.version == 4]
+        self.nets = sorted(ipaddress.collapse_addresses(v4),
+                           key=lambda n: int(n.network_address)) if v4 else []
+        self.starts = [int(n.network_address) for n in self.nets]
+        self.ends = [int(n.broadcast_address) for n in self.nets]
+
+    def __len__(self):
+        return len(self.nets)
+
+    def __bool__(self):
+        return bool(self.nets)
+
+    def overlapping(self, network):
+        """Return members that overlap `network` (in address order)."""
+        lo = bisect_left(self.ends, int(network.network_address))
+        hi = bisect_right(self.starts, int(network.broadcast_address))
+        return self.nets[lo:hi] if lo < hi else []
+
+    def containing(self, network):
+        """Return the member that fully contains `network`, or None."""
+        hits = self.overlapping(network)
+        if len(hits) == 1 and network.subnet_of(hits[0]):
+            return hits[0]
+        return None
+
+
+def _as_sorted_networks(excluded):
+    if isinstance(excluded, SortedNetworks):
+        return excluded
+    return SortedNetworks(excluded or [])
+
+
 def _find_relevant_excluded(network, excluded_sorted):
+    """Return only the excluded networks whose range overlaps `network`.
+
+    Accepts a SortedNetworks index (fast path) or any iterable of networks
+    (converted on the fly; kept for backward compatibility).
     """
-    Binary-search style pre-filter: return only excluded networks
-    whose IP range overlaps with `network`.
-
-    Since excluded_sorted is sorted by network_address, we can skip
-    entries that are entirely before or after our network range.
-    """
-    net_start = int(network.network_address)
-    net_end = int(network.broadcast_address)
-    relevant = []
-
-    for ex in excluded_sorted:
-        ex_start = int(ex.network_address)
-        ex_end = int(ex.broadcast_address)
-
-        # Excluded network is entirely after our range — stop
-        if ex_start > net_end:
-            break
-
-        # Excluded network is entirely before our range — skip
-        if ex_end < net_start:
-            continue
-
-        relevant.append(ex)
-
-    return relevant
+    return _as_sorted_networks(excluded_sorted).overlapping(network)
 
 
 def subtract_excluded_from_network(network, excluded_sorted):
@@ -511,7 +572,8 @@ def subtract_excluded_from_network(network, excluded_sorted):
     - Do NOT drop the entire network merely because it overlaps
       with an excluded subnet.
     - Cut out only the excluded portions and keep the remainder.
-    - Uses pre-filtering to skip irrelevant excluded networks.
+    - `excluded_sorted` may be a SortedNetworks index (preferred for
+      repeated calls) or a plain list of networks.
 
     Returns:
         list[IPv4Network]
@@ -642,9 +704,17 @@ def fetch_asn_country(asn):
 
 
 _GEOLOC_CACHE_PATH = os.path.join("output", ".geoloc_cache.json")
-_GEOLOC_CACHE_TTL_HOURS = 168  # 7 days, slightly longer than weekly cron
+# 10 days. v3.4 used exactly 168h (7 days) with a weekly cron, so entries
+# written during last Monday's run were typically a few minutes *past* the
+# TTL by the next Monday's run and got discarded (meta.json showed 1 cache
+# hit out of 1,866 prefixes). The TTL must comfortably exceed the cron period.
+_GEOLOC_CACHE_TTL_HOURS = 240
 _GEOLOC_CACHE_RULE_VERSION = "2026-04-13-l1-located-resources-pct-vote"
 _GEOLOC_CACHE = None  # lazy-loaded dict {prefix: {"cc": str, "level": str, "ts": iso}}
+
+
+def _utc_now_iso():
+    return datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z")
 
 
 def _load_geoloc_cache():
@@ -689,60 +759,99 @@ def _save_geoloc_cache():
             "version": 2,
             "rule_version": _GEOLOC_CACHE_RULE_VERSION,
             "ttl_hours": _GEOLOC_CACHE_TTL_HOURS,
-            "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
+            "generated_at": _utc_now_iso(),
             "entries": _GEOLOC_CACHE,
         }
-        with open(_GEOLOC_CACHE_PATH, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=2, ensure_ascii=False)
-            f.write("\n")
+        _atomic_write_text(
+            _GEOLOC_CACHE_PATH,
+            json.dumps(payload, indent=2, ensure_ascii=False) + "\n",
+        )
         log.info("[cloud-supp] saved %d geoloc cache entries", len(_GEOLOC_CACHE))
     except Exception as e:
         log.warning("[cloud-supp] geoloc cache save failed: %s", e)
 
 
+def build_region_index(region_data):
+    """Return {cc: SortedNetworks} for fast containment / overlap queries."""
+    index = {}
+    for cc, nets in (region_data or {}).items():
+        index[cc] = nets if isinstance(nets, SortedNetworks) else SortedNetworks(nets)
+    return index
+
+
+def _region_index(region_data):
+    if not region_data:
+        return {}
+    if all(isinstance(v, SortedNetworks) for v in region_data.values()):
+        return region_data
+    return build_region_index(region_data)
+
+
+def _cache_put(cache, prefix, cc, level):
+    cache[prefix] = {
+        "cc": cc,
+        "level": level,
+        "ts": _utc_now_iso(),
+        "rule_version": _GEOLOC_CACHE_RULE_VERSION,
+    }
+
+
 def fetch_prefix_country(prefix, asn, region_data=None):
     """
-    Three-level fallback for a prefix's country code.
+    Multi-level lookup for a prefix's country code.
 
-    L0: in-memory APNIC region_data containment (no HTTP, fastest)
-    L1: RIPEstat geoloc
-    L2: ASN holder country
-    L3: None
+    L0: in-memory APNIC region containment (no HTTP, authoritative for
+        this build). Checked FIRST so a fresh APNIC delegation always
+        beats a cached answer from a previous week. Not cached.
+    L-1 (cache): persistent geoloc cache of earlier L1/L2 answers.
+    L1: RIPEstat geoloc (majority of covered_percentage).
+    L2: ASN holder country (weak signal).
+    L3: None.
 
-    Returns (cc_or_None, level_str).
+    `region_data` may be dict[cc, list[network]] or the prebuilt index
+    from build_region_index() (much faster for repeated calls).
+
+    Returns (cc_or_None, level_str, from_cache).
+
+    `level_str` is always the level of the *original* evidence (L0/L1/L2/L3).
+    v3.4 returned the pseudo-level "L-1" for cache hits, which mapped to
+    confidence "high" — so a weak L2 guess got silently promoted to "high"
+    confidence on every run after the first. The cache hit is now reported
+    separately via `from_cache`.
     """
-    cache = _load_geoloc_cache()
-    rec = cache.get(prefix)
-    if rec:
-        return rec.get("cc"), "L-1"
-    if region_data:
+    index = _region_index(region_data)
+    if index:
         try:
             target = ipaddress.ip_network(prefix, strict=False)
-            for rcc, nets in region_data.items():
-                for n in nets:
-                    if n.version != target.version:
-                        continue
-                    if target.subnet_of(n):
-                        cache[prefix] = {
-                            "cc": rcc,
-                            "level": "L0",
-                            "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-                            "rule_version": _GEOLOC_CACHE_RULE_VERSION,
-                        }
-                        return rcc, "L0"
-        except Exception:
+            if target.version == 4:
+                for rcc, idx in index.items():
+                    if idx.containing(target) is not None:
+                        return rcc, "L0", False
+        except ValueError:
             pass
+
+    cache = _load_geoloc_cache()
+    rec = cache.get(prefix)
+    # Only network-derived answers are served from cache. Legacy "L0" entries
+    # (written by v3.4) depend on that week's APNIC data, so they are ignored
+    # and re-derived instead of being trusted blindly.
+    if rec and rec.get("cc") and rec.get("level") in ("L1", "L2"):
+        return rec["cc"], rec["level"], True
 
     try:
         url = f"https://stat.ripe.net/data/geoloc/data.json?resource={prefix}"
         body, _ = http_get(url, timeout=10, retries=1, return_content_type=True)
         payload = json.loads(body.strip())
         data = payload.get("data") or {}
-        # Current RIPE Stat API (v0.9.7+) wraps locations under located_resources
+        # Current RIPE Stat API (v0.9.7+) wraps locations under located_resources.
+        # Several located_resources may be returned (one per more-specific);
+        # aggregate across all of them rather than only the first.
         located = data.get("located_resources") or []
         locs = []
         if located:
-            locs = located[0].get("locations") or []
+            for res in located:
+                if isinstance(res, dict):
+                    locs.extend(res.get("locations") or [])
         else:
             # Backward compat for older/simpler response shape
             locs = data.get("locations") or []
@@ -752,6 +861,8 @@ def fetch_prefix_country(prefix, asn, region_data=None):
             # (e.g. 0% coverage in an unrelated country).
             by_country = {}
             for loc in locs:
+                if not isinstance(loc, dict):
+                    continue
                 c = (loc.get("country") or "").upper().strip()
                 if len(c) != 2:
                     continue
@@ -762,31 +873,19 @@ def fetch_prefix_country(prefix, asn, region_data=None):
                     pct = 0.0
                 by_country[c] = by_country.get(c, 0.0) + pct
             if by_country:
-                cc = max(by_country.items(), key=lambda kv: kv[1])[0]
-                if len(cc) == 2:
-                    cache[prefix] = {
-                        "cc": cc,
-                        "level": "L1",
-                        "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-                        "rule_version": _GEOLOC_CACHE_RULE_VERSION,
-                    }
-                    return cc, "L1"
-    except Exception:
-        pass
+                # Deterministic tie-break: highest share, then country code.
+                cc = max(by_country.items(), key=lambda kv: (kv[1], kv[0]))[0]
+                _cache_put(cache, prefix, cc, "L1")
+                return cc, "L1", False
+    except Exception as e:
+        log.debug("[cloud-supp] geoloc lookup failed for %s: %s", prefix, e)
 
     cc = fetch_asn_country(asn)
     if cc in TARGET_REGIONS:
-        cache[prefix] = {
-            "cc": cc,
-            "level": "L2",
-            "ts": datetime.datetime.now(datetime.timezone.utc).isoformat().replace("+00:00", "Z"),
-            "rule_version": _GEOLOC_CACHE_RULE_VERSION,
-        }
-        return cc, "L2"
+        _cache_put(cache, prefix, cc, "L2")
+        return cc, "L2", False
 
-    return None, "L3"
-
-
+    return None, "L3", False
 
 
 def subtract_region_conflicts(network, cc, region_data):
@@ -796,23 +895,22 @@ def subtract_region_conflicts(network, cc, region_data):
     non-cloud regional ownership. Cloud supplement data must not create
     cross-region overlaps because TXT, JSON, ipset, Nginx, and MMDB consumers
     may resolve overlaps differently.
+
+    `region_data` may be dict[cc, list[network]] or a build_region_index()
+    result.
     """
+    index = _region_index(region_data)
     conflicts = []
-    for other_cc, nets in (region_data or {}).items():
+    for other_cc, idx in index.items():
         if other_cc == cc:
             continue
-        for n in nets:
-            if n.version == network.version and n.overlaps(network):
-                conflicts.append(n)
+        conflicts.extend(idx.overlapping(network))
 
     if not conflicts:
         return [network]
 
-    conflicts = sorted(
-        ipaddress.collapse_addresses(conflicts),
-        key=lambda n: int(n.network_address),
-    )
-    return subtract_excluded_from_network(network, conflicts)
+    return subtract_excluded_from_network(network, SortedNetworks(conflicts))
+
 
 def build_cloud_supplementary_networks(region_data):
     """Fetch cloud ASN prefixes, classify by country, keep TARGET_REGIONS only.
@@ -832,6 +930,9 @@ def build_cloud_supplementary_networks(region_data):
         "l1_success": 0,
         "l2_fallback": 0,
         "l3_fallback": 0,
+        "dropped_region_conflict": 0,
+        "trimmed_region_conflict": 0,
+        "asns_failed": [],
         "duration_seconds": 0.0,
         "asn_count": len(CN_CLOUD_ASNS),
         "tier1_asn_count": len(CN_CLOUD_ASNS_TIER1),
@@ -843,6 +944,9 @@ def build_cloud_supplementary_networks(region_data):
     # provenance: cc -> {cidr_str -> {asn, tier}} — pre-collapse, for metadata
     _supp_provenance: dict = defaultdict(dict)
     _t0 = time.time()
+    # Build the APNIC containment / conflict index once; v3.4 rescanned every
+    # region list linearly for each of ~1,900 prefixes.
+    region_index = build_region_index(region_data)
 
     log.info("[cloud-supp] build_cloud_supplementary_networks start")
 
@@ -851,16 +955,17 @@ def build_cloud_supplementary_networks(region_data):
             prefixes = fetch_asn_prefixes(asn)
         except Exception as e:
             log.warning("[cloud-supp] ASN %s (%s) fetch failed: %s", asn, name, e)
+            stats["asns_failed"].append(asn)
             continue
 
         for p in prefixes:
             stats["prefixes_fetched"] += 1
 
-            cc, level = fetch_prefix_country(str(p), asn, region_data)
+            cc, level, from_cache = fetch_prefix_country(str(p), asn, region_index)
 
-            if level == "L-1":
+            if from_cache:
                 stats["cache_hit"] += 1
-            elif level == "L0":
+            if level == "L0":
                 stats["l0_local_hit"] += 1
             elif level == "L1":
                 stats["l1_success"] += 1
@@ -883,13 +988,13 @@ def build_cloud_supplementary_networks(region_data):
                 stats["dropped_unknown"] += 1
                 continue
 
-            conflict_free_parts = subtract_region_conflicts(net, cc, region_data)
+            conflict_free_parts = subtract_region_conflicts(net, cc, region_index)
             if not conflict_free_parts:
-                stats["dropped_region_conflict"] = stats.get("dropped_region_conflict", 0) + 1
+                stats["dropped_region_conflict"] += 1
                 continue
 
             if len(conflict_free_parts) != 1 or conflict_free_parts[0] != net:
-                stats["trimmed_region_conflict"] = stats.get("trimmed_region_conflict", 0) + 1
+                stats["trimmed_region_conflict"] += 1
 
             supp_raw[cc].extend(conflict_free_parts)
             stats["kept_per_region"][cc] = (
@@ -920,23 +1025,13 @@ def parse_and_cleanse(raw_data, excluded_networks):
     and filter out excluded networks.
 
     Optimisation:
-    - Pre-collapse excluded_networks
-    - Sort for binary-search pre-filtering in subtract step
+    - Pre-collapse excluded_networks into a SortedNetworks index so each
+      subtraction only touches the overlapping slice (binary search).
     """
-    # Pre-process: collapse + sort excluded networks
-    try:
-        collapsed_excluded = sorted(
-            ipaddress.collapse_addresses(excluded_networks),
-            key=lambda n: int(n.network_address),
-        )
-        log.debug("Collapsed %d excluded networks -> %d",
-                  len(excluded_networks), len(collapsed_excluded))
-    except Exception:
-        collapsed_excluded = sorted(
-            excluded_networks,
-            key=lambda n: int(n.network_address),
-        )
-        log.debug("Could not collapse excluded networks, using sorted raw list")
+    # Pre-process: collapse + index excluded networks once (O(log n) lookups)
+    collapsed_excluded = SortedNetworks(excluded_networks)
+    log.debug("Collapsed %d excluded networks -> %d",
+              len(excluded_networks), len(collapsed_excluded))
 
     result = defaultdict(list)
     stats = {
@@ -1006,7 +1101,7 @@ def parse_and_cleanse(raw_data, excluded_networks):
 
 
 
-def enforce_mutual_exclusivity(region_data, supp_data=None):
+def enforce_mutual_exclusivity(region_data, supp_data=None, return_claims=False):
     """Make region CIDR sets mutually exclusive before final normalization.
 
     Authority order:
@@ -1023,50 +1118,77 @@ def enforce_mutual_exclusivity(region_data, supp_data=None):
     overlapping CIDRs.
 
     Args:
-        region_data: dict[cc, list[IPv4Network]]  — APNIC-derived prefixes.
-        supp_data:   optional dict[cc, list[IPv4Network]] — BGP supplement.
+        region_data:   dict[cc, list[IPv4Network]]  — APNIC-derived prefixes.
+        supp_data:     optional dict[cc, list[IPv4Network]] — BGP supplement.
+        return_claims: if True, also return the address space each region
+                       actually gained from Tier 2 (used for provenance, so
+                       an APNIC block is never labelled "bgp" merely because
+                       a BGP prefix inside it was trimmed away).
 
     Returns:
-        dict[cc, list[IPv4Network]] with all regions mutually exclusive.
+        dict[cc, list[IPv4Network]] with all regions mutually exclusive,
+        or (that dict, dict[cc, list[IPv4Network]] tier2_claims) when
+        return_claims=True.
     """
     cleaned = {cc: [] for cc in TARGET_REGIONS}
-    owned = []
+    tier2_claims = {cc: [] for cc in TARGET_REGIONS}
+    owned = SortedNetworks()
 
-    def _claim(source_dict):
+    def _claim(source_dict, claims_out=None):
         """Claim CIDRs from source_dict[cc] for each cc, subtracting whatever
-        is already in `owned`. Mutates `cleaned` and `owned` in place."""
+        is already owned. Mutates `cleaned` (and `claims_out`) in place."""
         nonlocal owned
         for cc in TARGET_REGIONS:
             cleaned_nets = []
             for net in source_dict.get(cc, []):
+                if net.version != 4:
+                    continue
                 parts = subtract_excluded_from_network(net, owned) if owned else [net]
                 cleaned_nets.extend(parts)
             if not cleaned_nets:
                 continue
-            collapsed = sorted(
-                ipaddress.collapse_addresses(cleaned_nets),
-                key=lambda n: int(n.network_address),
-            )
+            collapsed = list(ipaddress.collapse_addresses(cleaned_nets))
+            if claims_out is not None:
+                claims_out[cc] = sorted(
+                    ipaddress.collapse_addresses(claims_out[cc] + collapsed),
+                    key=lambda n: int(n.network_address),
+                )
             # Merge with whatever this cc already has (relevant for Tier 2
             # adding to Tier 1 results).
-            merged = sorted(
+            cleaned[cc] = sorted(
                 ipaddress.collapse_addresses(cleaned[cc] + collapsed),
                 key=lambda n: int(n.network_address),
             )
-            cleaned[cc] = merged
-            owned.extend(collapsed)
-            owned = sorted(
-                ipaddress.collapse_addresses(owned),
-                key=lambda n: int(n.network_address),
-            )
+            owned = SortedNetworks(owned.nets + collapsed)
 
     # Tier 1 — APNIC authoritative
     _claim(region_data)
     # Tier 2 — BGP supplement fills gaps
     if supp_data:
-        _claim(supp_data)
+        _claim(supp_data, tier2_claims)
 
+    if return_claims:
+        return cleaned, tier2_claims
     return cleaned
+
+
+def restrict_provenance_to_claims(supp_provenance, tier2_claims):
+    """Rebuild BGP provenance so it covers only address space that really
+    entered the dataset through the Tier-2 supplement.
+
+    Returns dict[cc, dict[cidr_str, meta]] keyed by the claimed networks.
+    """
+    index = _ProvenanceIndex(supp_provenance)
+    out = {}
+    for cc, nets in (tier2_claims or {}).items():
+        for net in nets:
+            hit = index.lookup(net, cc_hint=cc)
+            if hit is None:
+                continue
+            asn, tier, level = hit
+            out.setdefault(cc, {})[str(net)] = {"asn": asn, "tier": tier, "level": level}
+    return out
+
 
 # ================================================================
 # Provenance interval matching (schema v3.3 — robust provenance)
@@ -1081,10 +1203,15 @@ def enforce_mutual_exclusivity(region_data, supp_data=None):
 
 # level -> confidence. L2 (ASN-holder-country guess) is the weakest signal
 # and must not be advertised as "high". Unknown levels are treated as low.
-_LEVEL_CONFIDENCE = {"L0": "high", "L-1": "high", "L1": "medium", "L2": "low"}
+_LEVEL_CONFIDENCE = {"L0": "high", "L1": "medium", "L2": "low"}
 # rank for picking the most conservative level when a final CIDR spans
 # multiple source prefixes (higher = weaker).
-_LEVEL_RANK = {"L0": 0, "L-1": 0, "L1": 1, "L2": 2, "L3": 3}
+_LEVEL_RANK = {"L0": 0, "L1": 1, "L2": 2, "L3": 3}
+
+
+# Minimum fraction of a final CIDR's addresses that must come from the BGP
+# supplement for the CIDR to be labelled source="bgp".
+BGP_MAJORITY_SHARE = 0.5
 
 
 def _level_to_confidence(level):
@@ -1115,6 +1242,12 @@ class _ProvenanceIndex:
         self._starts = [t[0] for t in self._intervals]
 
     def lookup(self, net, cc_hint=None):
+        hit = self.lookup_with_share(net, cc_hint=cc_hint)
+        return None if hit is None else hit[:3]
+
+    def lookup_with_share(self, net, cc_hint=None):
+        """Like lookup(), plus the fraction (0..1] of `net`'s addresses that
+        are covered by matching BGP source prefixes."""
         if not self._intervals:
             return None
         lo = int(net.network_address)
@@ -1124,21 +1257,36 @@ class _ProvenanceIndex:
         # (fewer after collapse), so O(n) here is fine and never misses a
         # large-span prefix whose start sits far to the left.
         hits = []
+        spans = []
         cut = bisect_right(self._starts, hi)
         for j in range(cut):
             s, e, cc, meta = self._intervals[j]
             if e < lo:
                 continue
             if cc_hint is None or cc == cc_hint:
-                overlap = min(e, hi) - max(s, lo) + 1
-                hits.append((overlap, meta))
+                a, b = max(s, lo), min(e, hi)
+                hits.append((b - a + 1, meta))
+                spans.append((a, b))
         if not hits:
             return None
-        hits.sort(key=lambda t: t[0], reverse=True)
+        # Deterministic dominant pick: largest overlap, then lowest ASN.
+        hits.sort(key=lambda t: (-t[0], t[1].get("asn") or 0))
         dominant = hits[0][1]
         weakest = max((m.get("level") for _, m in hits),
                       key=lambda lv: _LEVEL_RANK.get(lv, 3))
-        return dominant.get("asn"), dominant.get("tier"), weakest
+        # Union of covered spans (source prefixes may overlap each other).
+        spans.sort()
+        covered = 0
+        cur_a, cur_b = spans[0]
+        for a, b in spans[1:]:
+            if a <= cur_b + 1:
+                cur_b = max(cur_b, b)
+            else:
+                covered += cur_b - cur_a + 1
+                cur_a, cur_b = a, b
+        covered += cur_b - cur_a + 1
+        share = covered / (hi - lo + 1)
+        return dominant.get("asn"), dominant.get("tier"), weakest, share
 
 
 # ================================================================
@@ -1173,9 +1321,14 @@ def normalize_region_data(region_data, bgp_provenance=None):
         cidr_objects = []
         for net in merged:
             s = str(net)
-            hit = prov_index.lookup(net, cc_hint=cc)
-            if hit is not None:
-                asn, tier, level = hit
+            hit = prov_index.lookup_with_share(net, cc_hint=cc)
+            # A final CIDR is attributed to BGP only when the BGP supplement
+            # contributed the majority of its addresses. Otherwise a large
+            # APNIC block that merely absorbed a small adjacent/inner BGP
+            # prefix during collapse would be mislabelled "bgp" (v3.4 did
+            # this for e.g. 47.96.0.0/11).
+            if hit is not None and hit[3] >= BGP_MAJORITY_SHARE:
+                asn, tier, level, _share = hit
                 cidr_objects.append({
                     "cidr": s,
                     "source": "bgp",
@@ -1278,6 +1431,46 @@ def _detect_commit_sha():
 # ================================================================
 # Output writers
 # ================================================================
+def _atomic_write_text(path, text):
+    """Write text to `path` atomically (temp file + os.replace).
+
+    A crash or cancelled CI job mid-write can no longer leave a truncated
+    CN.txt / data.json behind for the commit step to publish.
+    """
+    directory = os.path.dirname(path) or "."
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".tmp-", dir=directory)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+            f.write(text)
+        os.replace(tmp, path)
+    except BaseException:
+        try:
+            os.unlink(tmp)
+        except OSError:
+            pass
+        raise
+
+
+class _AtomicTextFile:
+    """Context manager collecting writes, committed atomically on success."""
+
+    def __init__(self, path):
+        self.path = path
+        self._chunks = []
+
+    def write(self, text):
+        self._chunks.append(text)
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc, tb):
+        if exc_type is None:
+            _atomic_write_text(self.path, "".join(self._chunks))
+        return False
+
+
 def save_txt_outputs(normalized_data, output_dir="output"):
     """Write per-region .txt files with metadata headers."""
     os.makedirs(output_dir, exist_ok=True)
@@ -1288,7 +1481,7 @@ def save_txt_outputs(normalized_data, output_dir="output"):
     for cc, payload in normalized_data.items():
         filepath = os.path.join(output_dir, f"{cc}.txt")
 
-        with open(filepath, "w", encoding="utf-8") as f:
+        with _AtomicTextFile(filepath) as f:
             f.write("# Project     : ipnova\n")
             f.write(f"# Version     : {__version__}\n")
             f.write(f"# Region      : {payload['region_name']}\n")
@@ -1324,7 +1517,7 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
 
     # --- data.json: the primary dataset ---
     data_payload = {
-        "schema_version": "3.3",
+        "schema_version": SCHEMA_VERSION,
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -1336,14 +1529,13 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
     # SHA-256 checksum for data integrity (ipnova-pro can verify downloads)
     data_sha256 = hashlib.sha256(data_json_str.encode("utf-8")).hexdigest()
 
-    with open(os.path.join(output_dir, "data.json"), "w", encoding="utf-8") as f:
-        f.write(data_json_str)
+    _atomic_write_text(os.path.join(output_dir, "data.json"), data_json_str)
 
     # --- meta.json: enriched metadata for monitoring & pro integration ---
     from regions import CANARY_CIDRS as _CANARY_CIDRS
     commit_sha = _detect_commit_sha()
     meta_payload = {
-        "schema_version": "3.3",
+        "schema_version": SCHEMA_VERSION,
         "project": "ipnova",
         "version": __version__,
         "generated_at": generated_at,
@@ -1354,6 +1546,8 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
             # which version of the code produced a redistributed copy.
             "commit_sha": commit_sha,
             "user_agent": USER_AGENT,
+            "python": sys.version.split()[0],
+            "ripe": parse_stats.get("ripe"),
         },
         "provenance": {
             # Canary CIDR set embedded in published artifacts. These are
@@ -1398,9 +1592,10 @@ def save_json_outputs(normalized_data, asn_report, parse_stats, output_dir="outp
         },
     }
 
-    with open(os.path.join(output_dir, "meta.json"), "w", encoding="utf-8") as f:
-        json.dump(meta_payload, f, indent=2, ensure_ascii=False)
-        f.write("\n")
+    _atomic_write_text(
+        os.path.join(output_dir, "meta.json"),
+        json.dumps(meta_payload, indent=2, ensure_ascii=False) + "\n",
+    )
 
     log.info("  data.json - structured dataset (sha256: %s...)", data_sha256[:16])
     log.info("  meta.json - enriched metadata written")
@@ -1442,6 +1637,14 @@ def build_parser():
              "do NOT use for published artifacts)",
     )
     parser.add_argument(
+        "--ripe-budget",
+        type=int,
+        default=RIPE_BREAKER_MAX_PHASE_SECONDS,
+        metavar="SECONDS",
+        help="Wall-clock cap for all RIPE Stat traffic before the circuit "
+             f"breaker trips (default: {RIPE_BREAKER_MAX_PHASE_SECONDS})",
+    )
+    parser.add_argument(
         "-v", "--verbose",
         action="store_true",
         help="Enable debug-level logging",
@@ -1457,10 +1660,26 @@ def build_parser():
 # ================================================================
 # Main
 # ================================================================
-def main():
+def ripe_breaker_status():
+    """Snapshot of the RIPE circuit breaker, recorded in meta.json so a
+    degraded (partially supplemented) build is visible to consumers."""
+    return {
+        "breaker_tripped": _RIPE_BREAKER_TRIPPED,
+        "consecutive_failures": _RIPE_CONSECUTIVE_FAILURES,
+        "phase_seconds": (round(time.monotonic() - _RIPE_PHASE_START, 1)
+                          if _RIPE_PHASE_START else 0.0),
+        "phase_budget_seconds": RIPE_BREAKER_MAX_PHASE_SECONDS,
+    }
+
+
+def main(argv=None):
+    global RIPE_BREAKER_MAX_PHASE_SECONDS
     parser = build_parser()
-    args = parser.parse_args()
+    args = parser.parse_args(argv)
     setup_logging(verbose=args.verbose)
+    if args.ripe_budget <= 0:
+        parser.error("--ripe-budget must be a positive number of seconds")
+    RIPE_BREAKER_MAX_PHASE_SECONDS = args.ripe_budget
     set_geoloc_cache_path(args.output_dir)
 
     log.info("=" * 55)
@@ -1526,14 +1745,27 @@ def main():
     # Step 4: Normalize and aggregate
     # APNIC results are authoritative (Tier 1); BGP supplement fills gaps (Tier 2).
     with StepTimer("Normalize and aggregate"):
-        region_data = enforce_mutual_exclusivity(region_data, supp_data=supp)
+        region_data, tier2_claims = enforce_mutual_exclusivity(
+            region_data, supp_data=supp, return_claims=True,
+        )
+        # Provenance only for address space that actually came from Tier 2.
+        claimed_provenance = (
+            restrict_provenance_to_claims(supp_provenance, tier2_claims)
+            if supp_provenance else None
+        )
         normalized_data = normalize_region_data(
-            region_data,
-            bgp_provenance=supp_provenance if not (args.skip_ripe or args.skip_cloud_supplement) else None,
+            region_data, bgp_provenance=claimed_provenance,
         )
     parse_stats["prefixes_after_collapse"] = sum(
         v.get("total_cidrs", 0) for v in normalized_data.values()
     )
+
+    parse_stats["ripe"] = ripe_breaker_status()
+    if _RIPE_BREAKER_TRIPPED:
+        log.warning(
+            "RIPE circuit breaker tripped during this run — exclusion and/or "
+            "cloud supplement data may be incomplete (recorded in meta.json)."
+        )
 
     # Step 5: Sanity check
     if not args.skip_sanity:
@@ -1560,9 +1792,13 @@ def main():
 if __name__ == "__main__":
     try:
         main()
-    except RuntimeError as e:
-        log.error("FATAL: %s", e)
-        sys.exit(1)
     except KeyboardInterrupt:
         log.warning("Interrupted by user")
         sys.exit(130)
+    except RuntimeError as e:
+        log.error("FATAL: %s", e)
+        sys.exit(1)
+    except Exception as e:  # network errors, I/O errors, etc.
+        log.error("FATAL: %s: %s", type(e).__name__, e,
+                  exc_info=log.isEnabledFor(logging.DEBUG))
+        sys.exit(1)

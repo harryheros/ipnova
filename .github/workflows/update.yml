@@ -2,46 +2,78 @@ name: Update IPNova Dataset
 
 on:
   schedule:
-    - cron: "0 2 * * 1"    # Every Monday at 02:00 UTC
+    - cron: "17 2 * * 1"   # Every Monday 02:17 UTC: full dataset build
+    - cron: "17 3 * * 4"   # Every Thursday: geoloc cache keep-alive only
   workflow_dispatch:         # Manual trigger
 
 permissions:
   contents: write
   issues: write
 
+# Never let two dataset builds race on the same branch (manual + scheduled).
+concurrency:
+  group: ipnova-update-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  PYTHONUNBUFFERED: "1"
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+
 jobs:
+  # GitHub evicts caches that have not been accessed for 7 days — exactly the
+  # weekly build period — so the geoloc cache was routinely gone by the next
+  # Monday. A mid-week restore counts as an access and keeps it alive.
+  cache-keepalive:
+    if: github.event_name == 'schedule' && github.event.schedule == '17 3 * * 4'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Touch geoloc cache
+        uses: actions/cache/restore@v5
+        with:
+          path: output/.geoloc_cache.json
+          key: geoloc-cache-${{ runner.os }}-keepalive-${{ github.run_id }}
+          restore-keys: |
+            geoloc-cache-${{ runner.os }}-
+
   update:
+    if: github.event_name != 'schedule' || github.event.schedule == '17 2 * * 1'
     runs-on: ubuntu-latest
     timeout-minutes: 60
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.12"
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            requirements-dev.txt
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install -r requirements.txt -r requirements-dev.txt
 
       - name: Lint check
-        run: ruff check generate_ip_list.py regions.py scripts/ mmdb/
+        run: ruff check .
 
-      - name: Syntax check
-        run: python -m py_compile generate_ip_list.py regions.py scripts/*.py mmdb/*.py tests/*.py
-
-      - name: Offline smoke test
-        run: python tests/test_core_offline.py
+      - name: Offline test suite
+        run: python -m pytest -q tests/
 
       - name: Restore geoloc cache
-        uses: actions/cache@v5
+        uses: actions/cache/restore@v5
         with:
           path: output/.geoloc_cache.json
-          key: geoloc-cache-${{ runner.os }}-${{ hashFiles('generate_ip_list.py') }}
+          # Caches are immutable per key. v3.4 saved under the same key it
+          # restored from, so after the first run every save was rejected
+          # ("cache already exists") and the cache never refreshed. Each run
+          # now saves under a unique key and restores the newest by prefix.
+          key: geoloc-cache-${{ runner.os }}-${{ github.run_id }}
           restore-keys: |
             geoloc-cache-${{ runner.os }}-
 
@@ -51,13 +83,7 @@ jobs:
         run: |
           set -euo pipefail
           if [ -f output/meta.json ]; then
-            prev_meta="$(python3 - <<'PY'
-          import json
-          with open('output/meta.json', 'r', encoding='utf-8') as f:
-              meta = json.load(f)
-          print(json.dumps(meta.get('counts', {}), separators=(',', ':')))
-          PY
-          )"
+            prev_meta="$(python3 -c 'import json;print(json.dumps(json.load(open("output/meta.json",encoding="utf-8")).get("counts",{}),separators=(",",":")))')"
             echo "prev_meta=$prev_meta" >> "$GITHUB_OUTPUT"
           else
             echo 'prev_meta={}' >> "$GITHUB_OUTPUT"
@@ -68,27 +94,23 @@ jobs:
 
       - name: Save geoloc cache
         uses: actions/cache/save@v5
-        if: always()
+        if: always() && hashFiles('output/.geoloc_cache.json') != ''
         with:
           path: output/.geoloc_cache.json
-          key: geoloc-cache-${{ runner.os }}-${{ hashFiles('generate_ip_list.py') }}
+          key: geoloc-cache-${{ runner.os }}-${{ github.run_id }}
 
       - name: Validate output
-        id: validate
         run: python3 scripts/validate_output.py
-        timeout-minutes: 21
+        timeout-minutes: 10
 
       - name: Generate extended formats
         run: |
           python3 scripts/build_formats.py --release-assets
           # Remove any accidentally nested output directories
           if [ -d "output/output" ]; then
-            echo "[warn] Removing nested output/output/ directory"
+            echo "::warning::Removing nested output/output/ directory"
             rm -rf output/output
           fi
-
-      - name: Record validation result
-        run: echo "VALIDATION_STATUS=passed" >> $GITHUB_ENV
 
       - name: Generate diff report
         env:
@@ -120,10 +142,14 @@ jobs:
           report = '\n'.join(lines) if lines else 'First run or no previous data'
           print(report)
 
-          # Write to a temp location (not committed to repo)
           os.makedirs('/tmp/ipnova', exist_ok=True)
           with open('/tmp/ipnova/diff_report.txt', 'w', encoding='utf-8') as f:
               f.write(report + '\n')
+
+          summary = os.environ.get('GITHUB_STEP_SUMMARY')
+          if summary:
+              with open(summary, 'a', encoding='utf-8') as f:
+                  f.write('### IPNova CIDR count diff\n\n```\n' + report + '\n```\n')
           PY
 
       - name: Commit and push changes
@@ -131,47 +157,66 @@ jobs:
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           # Remove legacy files if present
-          git rm -f output/.gitkeep 2>/dev/null || true
-          git rm -f output/diff_report.txt 2>/dev/null || true
+          git rm -f --quiet output/.gitkeep 2>/dev/null || true
+          git rm -f --quiet output/diff_report.txt 2>/dev/null || true
 
           git add output/
 
           if git diff --cached --quiet; then
             echo "No changes detected."
-          else
-            DIFF_SUMMARY=""
-            if [ -f /tmp/ipnova/diff_report.txt ]; then
-              DIFF_SUMMARY=$(cat /tmp/ipnova/diff_report.txt)
-            fi
-            git commit -m "chore: update dataset $(date -u '+%Y-%m-%d')" -m "$DIFF_SUMMARY"
-            git push
+            exit 0
           fi
+
+          DIFF_SUMMARY=""
+          if [ -f /tmp/ipnova/diff_report.txt ]; then
+            DIFF_SUMMARY=$(cat /tmp/ipnova/diff_report.txt)
+          fi
+          git commit -m "chore: update dataset $(date -u '+%Y-%m-%d')" -m "$DIFF_SUMMARY"
+
+          # The build takes a while; someone may have pushed meanwhile.
+          # Rebase onto the latest branch tip (dataset-only commit, so
+          # conflicts are not expected) and retry a few times.
+          for attempt in 1 2 3; do
+            if git push; then
+              exit 0
+            fi
+            echo "::warning::push rejected (attempt $attempt), rebasing"
+            git pull --rebase --autostash
+            sleep $((attempt * 5))
+          done
+          echo "::error::failed to push after 3 attempts"
+          exit 1
 
   notify-failure:
     runs-on: ubuntu-latest
     needs: update
-    if: ${{ needs.update.result == 'failure' }}
+    if: ${{ failure() }}
     timeout-minutes: 5
 
     steps:
       - name: Create failure issue
-        uses: actions/github-script@v7
+        # v7 ran on Node 20, which GitHub removed from hosted runners on
+        # 2026-09-16 — the failure notifier itself would no longer run.
+        uses: actions/github-script@v9
         with:
           script: |
             const title = `Dataset update failed — ${new Date().toISOString().split('T')[0]}`;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = [
               '## IPNova automated update failed',
               '',
-              `**Workflow run:** ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              `**Workflow run:** ${runUrl}`,
               '',
               'Possible causes:',
               '- APNIC upstream unavailable or returned abnormal data',
               '- RIPE Stat API failure rate exceeded 50%',
               '- Sanity check failed (CIDR counts below minimum thresholds)',
-              '- Lint check failed',
+              '- Output integrity / cross-region overlap check failed',
+              '- MMDB build or format generation failed',
+              '- Lint or offline tests failed',
               '',
               'Please investigate the workflow logs and re-run manually if needed.',
             ].join('\n');
@@ -191,5 +236,13 @@ jobs:
                 title,
                 body,
                 labels: ['ci-failure'],
+              });
+            } else {
+              // Keep a single open issue, but record every failed run on it.
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues.data[0].number,
+                body: `Another failed run: ${runUrl}`,
               });
             }

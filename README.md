@@ -4,7 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.4.0-blue)
+![Version](https://img.shields.io/badge/version-3.5.0-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
@@ -29,9 +29,9 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 - Precise CIDR subtraction — excluded prefixes are surgically removed, not bluntly dropped
 - CN / HK / TW / MO / JP / KR / SG fully separated
 - **Multi-source fusion (v3.0)**: supplements APNIC data with BGP-announced prefixes from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance), resolving ARIN-registered IP blocks invisible to APNIC-only pipelines
-- **Four-level country attribution**: L-1 persistent cache → L0 in-memory APNIC containment → L1 RIPEstat geoloc (coverage-weighted vote) → L2 ASN holder country fallback
+- **Multi-level country attribution**: L0 in-memory APNIC containment (always checked first) → persistent cache of earlier L1/L2 answers → L1 RIPEstat geoloc (coverage-weighted vote) → L2 ASN holder country fallback
 - **ASN tier model**: Tier 1 (pure cloud), Tier 2 (mixed internet company), Tier 3 (operator backbone, hard-forbidden)
-- **Rule-versioned cache**: 168-hour TTL with semantic rule versioning for instant invalidation on classification logic changes; 15× speedup from cold to warm runs
+- **Rule-versioned cache**: 240-hour TTL (outlives the weekly cron) with semantic rule versioning for instant invalidation on classification logic changes; 15× speedup from cold to warm runs
 - **Defensive operator exclusion**: `FORBIDDEN_ASNS` with module-load assertion prevents accidental inclusion of China Telecom/Unicom/Mobile backbone ASNs
 - Accurate CIDR generation via `summarize_address_range`
 - CIDR aggregation for optimized size and performance
@@ -44,7 +44,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 - Per-step timing for performance diagnostics
 - CLI with `argparse` for flexible usage
 - Fully automated updates via GitHub Actions with failure notifications
-- Zero external dependencies — Python 3.10+ standard library only
+- Core generator has zero external dependencies — Python 3.10+ standard library only (MMDB outputs need `requirements.txt`)
 
 ---
 
@@ -134,9 +134,25 @@ python3 generate_ip_list.py --help
 python3 generate_ip_list.py -o custom_output/       # Custom output directory
 python3 generate_ip_list.py --skip-ripe              # Skip all RIPE Stat queries (static blacklist only)
 python3 generate_ip_list.py --skip-cloud-supplement  # Skip CN cloud ASN supplement (APNIC-only output)
+python3 generate_ip_list.py --ripe-budget 1200       # Wall-clock cap (s) for RIPE Stat traffic (default 900)
 python3 generate_ip_list.py -v                       # Verbose (debug) logging
 python3 generate_ip_list.py --version                # Show version
 ```
+
+### Extended formats, validation and tests
+
+```bash
+pip install -r requirements.txt                      # MMDB dependencies
+python3 scripts/build_formats.py                     # MMDB / Nginx / HAProxy / Caddy / ipset / Terraform ...
+python3 scripts/validate_output.py                   # Integrity, overlap, count gates + DNS samples
+python3 scripts/validate_output.py --skip-dns        # Offline validation
+
+pip install -r requirements-dev.txt                  # ruff + pytest
+ruff check .
+python -m pytest -q tests/                           # or: python3 tests/test_core_offline.py
+```
+
+`build_formats.py` exits non-zero if any requested format fails (use `--skip-mmdb` when the MMDB dependencies are not installed).
 
 ---
 
@@ -157,7 +173,7 @@ IPNova provides both:
 - **TXT outputs** for direct human-readable use
 - **JSON outputs** for system integration, future format conversion, and automation workflows
 
-### Schema v3.3
+### Schema v3.4
 
 `data.json` includes `schema_version`, `version`, and `total_ips` per region.
 
@@ -170,12 +186,13 @@ Each region now includes both:
 {"cidr": "1.0.1.0/24",   "source": "apnic",  "asn": null,  "tier": null, "level": "L0", "confidence": "high"}
 ```
 
-`source` is `"bgp"` for prefixes sourced from cloud ASN BGP announcements (the ARIN blind-spot coverage), and `"apnic"` for prefixes from APNIC delegation data.
+`source` is `"bgp"` for prefixes sourced from cloud ASN BGP announcements (the ARIN blind-spot coverage), and `"apnic"` for prefixes from APNIC delegation data. Since v3.5 (schema 3.4) a final CIDR is labelled `"bgp"` only when the BGP supplement actually contributed the majority of its addresses; an APNIC block is no longer relabelled just because a BGP prefix inside or next to it was merged during collapse.
 
 `level` (new in v3.3) records which attribution tier resolved the prefix's
 region: `L0` = APNIC containment (authoritative), `L1` = RIPEstat geoloc vote,
 `L2` = ASN-holder-country fallback (weakest). `confidence` is derived from
-`level`: `L0`/`L-1` → `high`, `L1` → `medium`, `L2` → `low`. This means a
+`level`: `L0` → `high`, `L1` → `medium`, `L2` → `low` (cached answers keep
+their original level). This means a
 prefix attributed only by ASN-holder country is honestly marked `low` rather
 than overstated as `high`.
 
@@ -186,6 +203,7 @@ than overstated as `high`.
 - ASN exclusion success/failure report with mode indicator
 - Parsing statistics (source networks, kept, excluded, errors)
 - Cloud supplement stats: per-level signal attribution (L0/L1/L2/L3)
+- RIPE circuit-breaker state (`build.ripe`) — shows whether a build was degraded
 - Sanity check thresholds
 - SHA-256 checksum of `data.json` for integrity verification
 
@@ -193,7 +211,7 @@ than overstated as `high`.
 
 ## 🔄 Update Schedule
 
-- Automatically updated **weekly** (Monday 02:00 UTC)
+- Automatically updated **weekly** (Monday 02:17 UTC), with a mid-week cache keep-alive
 - Manual trigger supported via GitHub Actions
 - **Failure notifications**: auto-creates GitHub Issue on CI failure
 
@@ -225,6 +243,22 @@ than overstated as `high`.
 ---
 
 ## 📋 Changelog
+
+### v3.5.0
+
+- **CI (critical)**: `actions/github-script` v7 → v9. v7 runs on Node 20, which GitHub removed from hosted runners on 2026-09-16, so the failure-notification job could no longer run. Also `actions/checkout` v6 → v7, Python 3.12 → 3.13, pip caching, a `concurrency` guard, and push-with-rebase retry.
+- **Bugfix (geoloc cache never refreshed)**: the workflow saved the cache under the same key it restored from; Actions caches are immutable, so every save after the first was rejected. Each run now saves under a unique key. The TTL (168h) also equalled the cron period, so last week's entries were expired by the time they were read — raised to 240h — and a Thursday keep-alive prevents GitHub's 7-day eviction.
+- **Bugfix (confidence inflation)**: cache hits were returned as level `L-1` and mapped to `confidence: "high"`, promoting weak `L2` guesses to high confidence on every warm run. The original level is now preserved.
+- **Bugfix (stale cache vs fresh APNIC)**: APNIC containment (L0) is now checked before the cache, so a new APNIC delegation always wins over last week's cached answer.
+- **Bugfix (provenance)**: APNIC blocks such as `47.96.0.0/11` were labelled `source: "bgp"` because a same-region BGP prefix inside them was recorded in provenance even after being trimmed away. Provenance now covers only address space actually claimed from the BGP tier, and uses a majority-share rule (schema 3.4).
+- **Bugfix (silent MMDB failure)**: `build_formats.py` logged MMDB failures but exited 0, so CI committed a run with a stale MMDB. It now exits 1 and skips release assets. The MMDB builder also refuses to write a database with a region missing.
+- **Bugfix (validator crash)**: `validate_output.py` crashed on `--skip-ripe` builds (`cloud_supplement: null`).
+- **HTTP**: permanent 4xx errors are no longer retried; `429`/`503` honour `Retry-After` (bounded).
+- **RIPE breaker**: default budget 600s → 900s (a cold cloud-supplement run measured ~560s), configurable via `--ripe-budget`; breaker state is recorded in `meta.json`.
+- **Performance**: range subtraction now uses a binary-search index (`SortedNetworks`) — mutual-exclusivity enforcement went from ~9.7s to ~0.4s with identical output; cloud-supplement L0/conflict checks no longer rescan every region list per prefix.
+- **Robustness**: all outputs are written atomically; the release tarball is reproducible (sorted entries, fixed mtime/owner); `checksums.txt` no longer lists gitignored release artifacts.
+- **Validation**: new hard gates — `data.json` SHA-256 must match `meta.json`, and every `<CC>.txt` must match `data.json`. DNS samples resolve in parallel with a real deadline (`gethostbyname_ex` ignores socket timeouts); `--output-dir` / `--skip-dns` added. Stale DNS samples that moved behind global CDNs were replaced.
+- **Tooling**: `requirements-dev.txt` (ruff, pytest) split from runtime requirements; `pyproject.toml` with ruff/pytest config; lint now covers tests. 11 new regression tests (26 total), including randomized brute-force checks of subtraction and mutual exclusivity. Fixed a test that leaked a fake `maxminddb` module into later tests.
 
 ### v3.4.0
 
