@@ -1,12 +1,12 @@
 # IPNova runtime dependencies
+#
+# generate_ip_list.py itself is standard-library only (Python 3.10+).
+# These packages are needed by scripts/build_formats.py for the MMDB outputs.
 # Install: pip install -r requirements.txt
 
 # MMDB generation
 mmdb-writer>=0.2.6
-netaddr>=0.7.0
+netaddr>=0.8.0
 
 # MMDB validation / reading
-maxminddb>=3.0.0
-
-# Linting
-ruff>=0.4.0
+maxminddb>=2.6.0

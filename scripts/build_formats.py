@@ -47,8 +47,11 @@ import json
 import logging
 import os
 import sys
+import contextlib
 import datetime
+import gzip
 import tarfile
+import tempfile
 import hashlib
 
 log = logging.getLogger("ipnova.formats")
@@ -90,6 +93,23 @@ def load_data_json(output_dir):
             sys.exit(1)
 
     return data
+
+
+@contextlib.contextmanager
+def atomic_text_writer(path):
+    """Open `path` for text writing; the file only appears (via os.replace)
+    once the block completes without error."""
+    directory = os.path.dirname(path) or "."
+    os.makedirs(directory, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(prefix=".tmp-", dir=directory)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as f:
+            yield f
+        os.replace(tmp, path)
+    except BaseException:
+        with contextlib.suppress(OSError):
+            os.unlink(tmp)
+        raise
 
 
 def now_utc_str():
@@ -157,8 +177,10 @@ def build_mmdb(data, output_dir):
         primary_data = src.read()
     for alias in ["GeoIP2-Country-compatible.mmdb", "GeoLite2-Country-compatible.mmdb"]:
         alias_path = os.path.join(output_dir, alias)
-        with open(alias_path, "wb") as f:
+        tmp_path = alias_path + ".tmp"
+        with open(tmp_path, "wb") as f:
             f.write(primary_data)
+        os.replace(tmp_path, alias_path)
         log.info("  %s — schema-compatible alias", alias)
 
     return True
@@ -198,14 +220,14 @@ def build_json_per_region(data, output_dir):
             "cidr_objects": payload.get("cidr_objects", []),
         }
         out_path = os.path.join(json_dir, f"{cc}.json")
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             json.dump(region_data, f, indent=2, ensure_ascii=False)
             f.write("\n")
         combined["regions"][cc] = region_data
         log.info("  json/%s.json — %d CIDRs", cc, payload.get("total_cidrs", 0))
 
     combined_path = os.path.join(output_dir, "regions.json")
-    with open(combined_path, "w", encoding="utf-8") as f:
+    with atomic_text_writer(combined_path) as f:
         json.dump(combined, f, indent=2, ensure_ascii=False)
         f.write("\n")
     log.info("  regions.json — all %d regions combined", len(regions))
@@ -229,7 +251,7 @@ def build_plain(data, output_dir):
     for cc, payload in regions.items():
         out_path = os.path.join(plain_dir, f"{cc}.txt")
         cidrs = payload.get("cidrs", [])
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             for cidr in cidrs:
                 f.write(f"{cidr}\n")
         log.info("  plain/%s.txt — %d CIDRs (no headers)", cc, len(cidrs))
@@ -251,7 +273,7 @@ def build_nginx(data, output_dir):
     for cc, payload in regions.items():
         out_path = os.path.join(nginx_dir, f"{cc}.conf")
         cidrs = payload.get("cidrs", [])
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             f.write(f"# IPNova — Nginx geo module — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
@@ -294,7 +316,7 @@ def build_haproxy(data, output_dir):
     for cc, payload in regions.items():
         out_path = os.path.join(haproxy_dir, f"{cc}.acl")
         cidrs = payload.get("cidrs", [])
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             f.write(f"# IPNova — HAProxy ACL — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
@@ -343,7 +365,7 @@ def build_caddy(data, output_dir):
         # but very long lines hurt readability and some editors.
         chunk_size = 500
         chunks = [cidrs[i:i + chunk_size] for i in range(0, len(cidrs), chunk_size)]
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             f.write(f"# IPNova — Caddy remote_ip matcher — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
@@ -394,7 +416,7 @@ def build_iptables(data, output_dir):
         out_path = os.path.join(ipt_dir, f"{cc}.ipset")
         cidrs = payload.get("cidrs", [])
         maxelem = _maxelem_for(len(cidrs))
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             f.write(f"# IPNova — ipset restore — {cc} ({payload.get('region_name', cc)})\n")
             f.write(f"# Generated : {timestamp}\n")
             f.write(f"# CIDRs     : {len(cidrs)}\n")
@@ -455,7 +477,7 @@ def build_terraform(data, output_dir):
             },
             var_name: cidrs,
         }
-        with open(out_path, "w", encoding="utf-8") as f:
+        with atomic_text_writer(out_path) as f:
             json.dump(out_data, f, indent=2, ensure_ascii=False)
             f.write("\n")
         log.info("  terraform/%s.auto.tfvars.json — %d CIDRs", cc, len(cidrs))
@@ -482,14 +504,18 @@ def build_checksums(output_dir):
     ]
     count = 0
     for fpath in all_files:
-        if os.path.basename(fpath) in ("checksums.txt", "SHA256SUMS"):
+        base = os.path.basename(fpath)
+        # Release-only artifacts are gitignored and regenerated after this
+        # step; listing them here would publish stale/unreproducible hashes.
+        if base in ("checksums.txt", "SHA256SUMS", "ipnova-formats.tar.gz") \
+                or base.endswith(".tmp"):
             continue
         digest = sha256_file(fpath)
         rel = os.path.relpath(fpath, output_dir)
         lines.append(f"{digest}  {rel}")
         count += 1
 
-    with open(sums_path, "w", encoding="utf-8") as f:
+    with atomic_text_writer(sums_path) as f:
         f.write("\n".join(lines) + "\n")
 
     log.info("  checksums.txt — %d files checksummed", count)
@@ -504,14 +530,36 @@ def create_formats_archive(output_dir):
     """Bundle all compatibility formats into ipnova-formats.tar.gz."""
     archive_path = os.path.join(output_dir, "ipnova-formats.tar.gz")
 
-    with tarfile.open(archive_path, "w:gz") as tar:
-        for name in os.listdir(output_dir):
+    def _normalize(info):
+        # Reproducible archive: no owner names/ids, fixed mtime, sane modes.
+        info.uid = info.gid = 0
+        info.uname = info.gname = ""
+        info.mtime = 0
+        info.mode = 0o755 if info.isdir() else 0o644
+        return info
+
+    def _add_tree(tar, path, arcname):
+        if os.path.isdir(path):
+            tar.add(path, arcname=arcname, recursive=False, filter=_normalize)
+            for child in sorted(os.listdir(path)):
+                if child.startswith("."):
+                    continue
+                _add_tree(tar, os.path.join(path, child), f"{arcname}/{child}")
+        else:
+            tar.add(path, arcname=arcname, filter=_normalize)
+
+    tmp_path = archive_path + ".tmp"
+    with open(tmp_path, "wb") as raw, \
+            gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as gz, \
+            tarfile.open(fileobj=gz, mode="w", format=tarfile.PAX_FORMAT) as tar:
+        for name in sorted(os.listdir(output_dir)):
             if name.endswith(".txt") and not name.startswith("."):
-                tar.add(os.path.join(output_dir, name), arcname=f"txt/{name}")
+                _add_tree(tar, os.path.join(output_dir, name), f"txt/{name}")
         for name in ["json", "nginx", "haproxy", "caddy", "iptables", "plain", "terraform"]:
             path = os.path.join(output_dir, name)
             if os.path.exists(path):
-                tar.add(path, arcname=name)
+                _add_tree(tar, path, name)
+    os.replace(tmp_path, archive_path)
 
     log.info("  ipnova-formats.tar.gz — bundled all compatibility formats")
     return archive_path
@@ -521,7 +569,7 @@ def create_sha256sums(output_dir, files):
     """Generate SHA256SUMS for core release assets."""
     sums_path = os.path.join(output_dir, "SHA256SUMS")
 
-    with open(sums_path, "w", encoding="utf-8") as f:
+    with atomic_text_writer(sums_path) as f:
         for file_path in files:
             if not os.path.exists(file_path):
                 continue
@@ -633,7 +681,11 @@ def main():
     build_checksums(args.output_dir)
     log.info("")
 
-    if args.release_assets:
+    failed = sorted(k for k, ok in results.items() if not ok)
+
+    if args.release_assets and failed:
+        log.error("Skipping release assets because these formats failed: %s", failed)
+    elif args.release_assets:
         log.info("--- Release assets ---")
         archive_path = create_formats_archive(args.output_dir)
         core_files = [
@@ -666,6 +718,13 @@ def main():
     if results.get("release_assets"):
         log.info("  %-12s %s", "release:", "output/ipnova-formats.tar.gz + SHA256SUMS")
 
+    if failed:
+        # v3.4 logged the error and exited 0, so CI happily committed a run
+        # whose MMDB had not been rebuilt (stale file left in place).
+        log.error("FAILED formats: %s", ", ".join(failed))
+        return 1
+    return 0
+
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

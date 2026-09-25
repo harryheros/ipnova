@@ -1,31 +1,57 @@
 #!/usr/bin/env python3
+"""
+validate_output.py — post-build validation for IPNova outputs.
+
+Hard gates (exit 1):
+  - required files present and non-empty
+  - data.json SHA-256 matches meta.json checksum
+  - every <CC>.txt matches data.json's CIDR list exactly
+  - CN count >= sanity threshold, HK count <= MAX_HK_CIDRS
+  - no cross-region CIDR overlap
+
+Soft signals (warnings only):
+  - L2 fallback ratio, RIPE circuit breaker state
+  - DNS sample regressions (DNS answers jitter; never block a publish)
+
+Usage:
+    python3 scripts/validate_output.py [--output-dir output] [--skip-dns]
+"""
+import argparse
 import bisect
-import importlib.util
+import concurrent.futures
+import hashlib
 import ipaddress
 import json
-import os
 import socket
 import sys
 from pathlib import Path
 
-socket.setdefaulttimeout(5)
-
 ROOT = Path(__file__).resolve().parent.parent
-OUTPUT_DIR = ROOT / "output"
-TESTS_DIR = ROOT / "tests"
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
 
-META_PATH = OUTPUT_DIR / "meta.json"
+from regions import TARGET_REGIONS  # noqa: E402
+
+TESTS_DIR = ROOT / "tests"
 SAMPLES_PATH = TESTS_DIR / "samples.json"
 
-REGION_FILES = {
-    "CN": OUTPUT_DIR / "CN.txt",
-    "HK": OUTPUT_DIR / "HK.txt",
-    "TW": OUTPUT_DIR / "TW.txt",
-    "MO": OUTPUT_DIR / "MO.txt",
-    "JP": OUTPUT_DIR / "JP.txt",
-    "KR": OUTPUT_DIR / "KR.txt",
-    "SG": OUTPUT_DIR / "SG.txt",
-}
+# Filled in by configure(); kept as module globals for backward compatibility.
+OUTPUT_DIR = ROOT / "output"
+META_PATH = OUTPUT_DIR / "meta.json"
+REGION_FILES = {cc: OUTPUT_DIR / f"{cc}.txt" for cc in TARGET_REGIONS}
+
+# socket.gethostbyname_ex() ignores socket.setdefaulttimeout(), so v3.4 could
+# stall for the resolver's own timeout per domain, serially. Lookups now run
+# in a thread pool with a hard per-lookup deadline.
+DNS_TIMEOUT_SECONDS = 8
+DNS_WORKERS = 16
+
+
+def configure(output_dir):
+    global OUTPUT_DIR, META_PATH, REGION_FILES
+    OUTPUT_DIR = Path(output_dir).resolve()
+    META_PATH = OUTPUT_DIR / "meta.json"
+    REGION_FILES = {cc: OUTPUT_DIR / f"{cc}.txt" for cc in TARGET_REGIONS}
 
 # L2 fallback ratio threshold.
 # Postmortem 5.2 measured the healthy baseline at ~0.6% (32 / 5745 prefixes).
@@ -48,14 +74,9 @@ _NETWORK_KEYS = {}
 MAX_HK_CIDRS = 5000
 
 # Load SANITY_THRESHOLDS from generate_ip_list.py so MIN_CN_CIDRS shares a
-# single source of truth with the build script (previously hardcoded as 4000
-# here vs 3000 there — inconsistent).
-_spec = importlib.util.spec_from_file_location(
-    "generate_ip_list",
-    os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "generate_ip_list.py"),
-)
-_gen = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(_gen)
+# single source of truth with the build script.
+import generate_ip_list as _gen  # noqa: E402
+
 MIN_CN_CIDRS = _gen.SANITY_THRESHOLDS["CN"]  # single source of truth
 
 
@@ -141,8 +162,50 @@ def info(msg: str):
     print(f"[INFO] {msg}")
 
 
+def check_integrity(meta: dict, region_nets: dict):
+    """data.json must match meta.json's checksum and every <CC>.txt."""
+    data_path = OUTPUT_DIR / "data.json"
+    if not data_path.exists():
+        fail(f"{data_path} is missing")
+
+    raw = data_path.read_bytes()
+    expected = (meta.get("checksum") or {}).get("data_json_sha256")
+    actual = hashlib.sha256(raw).hexdigest()
+    if not expected:
+        fail("meta.json has no checksum.data_json_sha256")
+    if actual != expected:
+        fail(f"data.json sha256 {actual[:16]}... != meta.json {expected[:16]}...")
+    info("data.json checksum matches meta.json")
+
+    data = json.loads(raw.decode("utf-8"))
+    regions = data.get("regions") or {}
+    for cc, nets in region_nets.items():
+        payload = regions.get(cc)
+        if payload is None:
+            fail(f"data.json has no region {cc}")
+        txt_list = [str(n) for n in nets]
+        json_list = [str(ipaddress.ip_network(c)) for c in payload.get("cidrs", [])]
+        json_list.sort(key=lambda c: int(ipaddress.ip_network(c).network_address))
+        if txt_list != json_list:
+            fail(f"{cc}.txt ({len(txt_list)} CIDRs) does not match data.json "
+                 f"({len(json_list)} CIDRs)")
+        if payload.get("total_cidrs") != len(json_list):
+            fail(f"data.json {cc}.total_cidrs={payload.get('total_cidrs')} "
+                 f"but cidrs has {len(json_list)} entries")
+        objs = payload.get("cidr_objects")
+        if objs is not None and [o.get("cidr") for o in objs] != payload.get("cidrs"):
+            fail(f"data.json {cc}.cidr_objects is out of sync with cidrs")
+    info("Region TXT files match data.json")
+
+
 def check_meta(meta: dict, region_counts: dict):
-    cloud = (meta.get("parsing", {}) or {}).get("cloud_supplement", {})
+    ripe = (meta.get("build", {}) or {}).get("ripe") or {}
+    if ripe.get("breaker_tripped"):
+        warn("RIPE circuit breaker tripped during the build — cloud supplement "
+             "and/or exclusion data may be incomplete.")
+
+    # cloud_supplement is null / {"skipped": true} for --skip-ripe builds
+    cloud = (meta.get("parsing") or {}).get("cloud_supplement") or {}
     prefixes_fetched = cloud.get("prefixes_fetched", 0)
     l2_fallback = cloud.get("l2_fallback", 0)
 
@@ -165,11 +228,107 @@ def check_meta(meta: dict, region_counts: dict):
             )
 
 
-def main():
-    if not META_PATH.exists():
-        fail("output/meta.json is missing")
+def resolve_all(domains):
+    """Resolve domains concurrently. Returns {domain: list[ip] | Exception}."""
+    results = {}
+    pool = concurrent.futures.ThreadPoolExecutor(max_workers=DNS_WORKERS)
+    try:
+        futures = {pool.submit(socket.gethostbyname_ex, d): d for d in domains}
+        done, pending = concurrent.futures.wait(futures, timeout=DNS_TIMEOUT_SECONDS)
+        for fut in done:
+            d = futures[fut]
+            try:
+                results[d] = fut.result()[2]
+            except OSError as e:
+                results[d] = e
+        for fut in pending:
+            results[futures[fut]] = TimeoutError(
+                f"lookup exceeded {DNS_TIMEOUT_SECONDS}s")
+    finally:
+        # Don't wait for stuck resolver threads; they are daemonic enough to
+        # be abandoned at interpreter exit.
+        pool.shutdown(wait=False, cancel_futures=True)
+    return results
 
-    if not SAMPLES_PATH.exists():
+
+def matched_regions(ips, region_nets):
+    found = []
+    for ip in ips:
+        for r in TARGET_REGIONS:
+            if r not in found and ip_in_region(ip, region_nets[r]):
+                found.append(r)
+    return found
+
+
+def check_dns_samples(samples, region_nets):
+    all_domains = sorted({d for ds in samples.values() for d in ds})
+    resolved = resolve_all(all_domains)
+
+    hard_failures = []
+    edge_warnings = []
+
+    for expected_region, domains in samples.items():
+        for domain in domains:
+            ips = resolved.get(domain)
+            if isinstance(ips, Exception):
+                warn(f"DNS lookup failed for {domain}: {ips}")
+                continue
+            if not ips:
+                warn(f"No A record for {domain}")
+                continue
+
+            regions_hit = matched_regions(ips, region_nets)
+
+            if expected_region == "INTL":
+                if not regions_hit:
+                    info(f"PASS sample: {domain} -> {ips} -> INTL")
+                else:
+                    hard_failures.append((domain, expected_region, ips))
+            elif expected_region == "EDGE":
+                edge_warnings.append((domain, ips, regions_hit))
+                info(f"EDGE sample: {domain} -> {ips} -> {regions_hit or ['UNCLASSIFIED']}")
+            elif expected_region in TARGET_REGIONS:
+                if expected_region in regions_hit:
+                    info(f"PASS sample: {domain} -> {ips} -> {expected_region}")
+                elif expected_region == "CN":
+                    hard_failures.append((domain, expected_region, ips))
+                else:
+                    warn(f"{domain}: expected {expected_region}, got {ips}")
+            else:
+                warn(f"Unknown sample region {expected_region} for {domain}")
+
+    if edge_warnings:
+        print("\n[WARN] Edge sample results:")
+        for domain, ips, hit in edge_warnings:
+            print(f"  - {domain}: {ips} -> {hit or ['UNCLASSIFIED']}")
+
+    if hard_failures:
+        print("\n[WARN] DNS sample regression (may be transient DNS jitter):")
+        for domain, expected_region, ips in hard_failures:
+            print(f"  - {domain}: expected {expected_region}, got IPs {ips}")
+        print("[INFO] DNS failures are warnings only; static checks (overlap, counts) are authoritative")
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(
+        prog="validate_output",
+        description="Validate IPNova build outputs",
+    )
+    parser.add_argument("-o", "--output-dir", default=str(ROOT / "output"),
+                        help="Output directory to validate (default: output)")
+    parser.add_argument("--skip-dns", action="store_true",
+                        help="Skip live DNS sample checks (offline use)")
+    return parser
+
+
+def main(argv=None):
+    args = build_parser().parse_args(argv)
+    configure(args.output_dir)
+
+    if not META_PATH.exists():
+        fail(f"{META_PATH} is missing")
+
+    if not args.skip_dns and not SAMPLES_PATH.exists():
         fail("tests/samples.json is missing")
 
     for region, path in REGION_FILES.items():
@@ -181,9 +340,6 @@ def main():
     with META_PATH.open("r", encoding="utf-8") as f:
         meta = json.load(f)
 
-    with SAMPLES_PATH.open("r", encoding="utf-8") as f:
-        samples = json.load(f)
-
     region_nets = {}
     region_counts = {}
     for region, path in REGION_FILES.items():
@@ -192,6 +348,7 @@ def main():
         region_counts[region] = len(nets)
         info(f"{region}: {len(nets)} CIDRs loaded")
 
+    check_integrity(meta, region_nets)
     check_meta(meta, region_counts)
 
     overlaps = find_cross_region_overlaps(region_nets)
@@ -201,89 +358,16 @@ def main():
             print(f"  - {left_cc} {left_cidr} overlaps {right_cc} {right_cidr}")
         fail("Region datasets must be mutually exclusive")
 
-    hard_failures = []
-    edge_warnings = []
-
-    for expected_region, domains in samples.items():
-        for domain in domains:
-            try:
-                _, _, ips = socket.gethostbyname_ex(domain)
-            except OSError as e:
-                warn(f"DNS lookup failed for {domain}: {e}")
-                continue
-
-            if not ips:
-                warn(f"No A record for {domain}")
-                continue
-
-            if expected_region == "INTL":
-                intl_ok = True
-                for ip in ips:
-                    for r in ("CN", "HK", "TW", "MO", "JP", "KR", "SG"):
-                        if ip_in_region(ip, region_nets[r]):
-                            intl_ok = False
-                            break
-                    if not intl_ok:
-                        break
-
-                if intl_ok:
-                    info(f"PASS sample: {domain} -> {ips} -> INTL")
-                else:
-                    hard_failures.append((domain, expected_region, ips))
-                continue
-
-            if expected_region == "EDGE":
-                matched_regions = []
-                for ip in ips:
-                    for r in ("CN", "HK", "TW", "MO", "JP", "KR", "SG"):
-                        if ip_in_region(ip, region_nets[r]) and r not in matched_regions:
-                            matched_regions.append(r)
-
-                edge_warnings.append((domain, ips, matched_regions))
-                info(f"EDGE sample: {domain} -> {ips} -> {matched_regions or ['UNCLASSIFIED']}")
-                continue
-
-            if expected_region in ("HK", "TW", "MO", "JP", "KR", "SG"):
-                matched = False
-                for ip in ips:
-                    if ip_in_region(ip, region_nets[expected_region]):
-                        matched = True
-                        break
-
-                if matched:
-                    info(f"PASS sample: {domain} -> {ips} -> {expected_region}")
-                else:
-                    warn(f"{domain}: expected {expected_region}, got {ips}")
-                continue
-
-            if expected_region == "CN":
-                matched = False
-                for ip in ips:
-                    if ip_in_region(ip, region_nets["CN"]):
-                        matched = True
-                        break
-
-                if matched:
-                    info(f"PASS sample: {domain} -> {ips} -> CN")
-                else:
-                    hard_failures.append((domain, expected_region, ips))
-                continue
-
-            warn(f"Unknown sample region {expected_region} for {domain}")
-
-    if edge_warnings:
-        print("\n[WARN] Edge sample results:")
-        for domain, ips, matched_regions in edge_warnings:
-            print(f"  - {domain}: {ips} -> {matched_regions or ['UNCLASSIFIED']}")
-
-    if hard_failures:
-        print("\n[WARN] DNS sample regression (may be transient DNS jitter):")
-        for domain, expected_region, ips in hard_failures:
-            print(f"  - {domain}: expected {expected_region}, got IPs {ips}")
-        print("[INFO] DNS failures are warnings only; static checks (overlap, counts) are authoritative")
+    if args.skip_dns:
+        info("DNS sample checks skipped (--skip-dns)")
+    else:
+        with SAMPLES_PATH.open("r", encoding="utf-8") as f:
+            samples = json.load(f)
+        check_dns_samples(samples, region_nets)
 
     print("\n[PASS] Validation completed successfully")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

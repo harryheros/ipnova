@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
-"""Lightweight offline checks for core IPNova transformations."""
+"""Lightweight offline checks for core IPNova transformations.
 
-import importlib.util
+Run with either:
+    python -m pytest -q tests/
+    python tests/test_core_offline.py      # no pytest required
+"""
+
 import ipaddress
 import json
+import sys
 import tempfile
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("generate_ip_list", ROOT / "generate_ip_list.py")
-generate_ip_list = importlib.util.module_from_spec(SPEC)
-SPEC.loader.exec_module(generate_ip_list)
+for _p in (str(ROOT), str(ROOT / "scripts")):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+# Import as a normal module so every test (and helper modules such as
+# scripts/validate_output.py) shares one instance and its global state.
+import generate_ip_list  # noqa: E402
 
 
 def test_parse_normalize_and_write_outputs():
@@ -49,7 +58,7 @@ def test_parse_normalize_and_write_outputs():
 
         data = json.loads((Path(tmpdir) / "data.json").read_text())
         meta = json.loads((Path(tmpdir) / "meta.json").read_text())
-        assert data["schema_version"] == "3.3"
+        assert data["schema_version"] == generate_ip_list.SCHEMA_VERSION
         assert meta["checksum"]["data_json_sha256"]
         assert "Japan" in (Path(tmpdir) / "JP.txt").read_text()
 
@@ -101,7 +110,6 @@ def test_sanity_check_passes():
 
 def test_sanity_check_fails():
     """Verify sanity check raises RuntimeError when a region is too small."""
-    import sys
     normalized = {}
     for cc, threshold in generate_ip_list.SANITY_THRESHOLDS.items():
         normalized[cc] = {
@@ -262,9 +270,6 @@ def test_mmdb_validator_roundtrip_semantics():
     tolerate individual stale samples (warn but pass), fail when any region
     has zero matching samples, and fail on pathologically small files.
     """
-    import os
-    import sys
-    import tempfile
     import types
 
     # Inject fake maxminddb so the test works without the real dep installed
@@ -286,15 +291,26 @@ def test_mmdb_validator_roundtrip_semantics():
         return _FakeReader(_mapping)
 
     fake_mmdb.open_database = open_database
+    saved_modules = {k: v for k, v in sys.modules.items()
+                     if k == "maxminddb" or k.startswith("mmdb")}
     sys.modules['maxminddb'] = fake_mmdb
+    try:
+        _run_validator_cases(_mapping)
+    finally:
+        # Restore the real modules so later tests are not polluted by the fake.
+        for k in [k for k in sys.modules if k == "maxminddb" or k.startswith("mmdb")]:
+            del sys.modules[k]
+        sys.modules.update(saved_modules)
+
+
+def _run_validator_cases(_mapping):
+    import os
+    import tempfile
 
     # Force fresh import of validator so it picks up the injected fake
     for m in list(sys.modules):
         if m.startswith('mmdb'):
             del sys.modules[m]
-    mmdb_root = str(ROOT)
-    if mmdb_root not in sys.path:
-        sys.path.insert(0, mmdb_root)
     from mmdb.validator import validate, SAMPLE_IPS
 
     def good(cc):
@@ -505,35 +521,306 @@ def test_provenance_survives_collapse_and_level_confidence():
                for o in out_none["CN"]["cidr_objects"])
 
 
+
+
+# ================================================================
+# v3.5 regression tests
+# ================================================================
+def _addr_set(nets):
+    out = set()
+    for n in nets:
+        out.update(range(int(n.network_address), int(n.broadcast_address) + 1))
+    return out
+
+
+def test_sorted_networks_subtraction_matches_bruteforce():
+    """The O(log n) SortedNetworks path must equal naive set subtraction."""
+    import random
+
+    g = generate_ip_list
+    rng = random.Random(1234)
+    base = int(ipaddress.ip_address("10.0.0.0"))
+
+    def rand_net(min_prefix, max_prefix):
+        plen = rng.randint(min_prefix, max_prefix)
+        size = 1 << (32 - plen)
+        start = base + (rng.randrange(0, 1 << 14) // size) * size
+        return ipaddress.ip_network(f"{ipaddress.ip_address(start)}/{plen}")
+
+    for _ in range(300):
+        net = rand_net(19, 26)
+        excluded = [rand_net(20, 30) for _ in range(rng.randint(0, 12))]
+        got = g.subtract_excluded_from_network(net, g.SortedNetworks(excluded))
+        via_list = g.subtract_excluded_from_network(net, excluded)
+        expected = _addr_set([net]) - _addr_set(excluded)
+        assert _addr_set(got) == expected
+        assert _addr_set(via_list) == expected
+        # result pieces must be disjoint
+        assert sum(n.num_addresses for n in got) == len(expected)
+
+
+def test_enforce_is_mutually_exclusive_and_lossless():
+    import random
+
+    g = generate_ip_list
+    rng = random.Random(99)
+    ccs = list(g.TARGET_REGIONS)
+
+    def rnd():
+        plen = rng.randint(20, 26)
+        size = 1 << (32 - plen)
+        start = (int(ipaddress.ip_address("20.0.0.0")) + (rng.randrange(0, 1 << 14) // size) * size)
+        return ipaddress.ip_network(f"{ipaddress.ip_address(start)}/{plen}")
+
+    region = {cc: [rnd() for _ in range(6)] for cc in ccs}
+    supp = {cc: [rnd() for _ in range(6)] for cc in ccs}
+    out, claims = g.enforce_mutual_exclusivity(region, supp, return_claims=True)
+
+    sets = {cc: _addr_set(out[cc]) for cc in ccs}
+    for i, a in enumerate(ccs):
+        for b in ccs[i + 1:]:
+            assert not (sets[a] & sets[b]), f"{a}/{b} overlap"
+    union_in = _addr_set([n for v in region.values() for n in v] + [n for v in supp.values() for n in v])
+    assert set().union(*sets.values()) == union_in, "address space lost or invented"
+    # Tier-2 claims never include Tier-1 space and are part of the output
+    apnic = _addr_set([n for v in region.values() for n in v])
+    for cc in ccs:
+        c = _addr_set(claims[cc])
+        assert not (c & apnic)
+        assert c <= sets[cc]
+
+
+def _with_cache(entries):
+    g = generate_ip_list
+    g._GEOLOC_CACHE = dict(entries)
+
+
+def test_geoloc_cache_hit_keeps_original_level():
+    """v3.4 bug: a cached L2 guess came back as 'L-1' => confidence 'high'."""
+    g = generate_ip_list
+    saved = g._GEOLOC_CACHE
+    try:
+        _with_cache({"120.24.0.0/16": {
+            "cc": "CN", "level": "L2", "ts": "2099-01-01T00:00:00Z",
+            "rule_version": g._GEOLOC_CACHE_RULE_VERSION}})
+        cc, level, from_cache = g.fetch_prefix_country("120.24.0.0/16", 37963, None)
+        assert (cc, level, from_cache) == ("CN", "L2", True)
+        assert g._level_to_confidence(level) == "low"
+    finally:
+        g._GEOLOC_CACHE = saved
+
+
+def test_fresh_apnic_beats_stale_cache():
+    """v3.4 bug: cache was consulted before APNIC containment (L0)."""
+    g = generate_ip_list
+    saved = g._GEOLOC_CACHE
+    try:
+        _with_cache({"1.0.1.0/24": {
+            "cc": "SG", "level": "L1", "ts": "2099-01-01T00:00:00Z",
+            "rule_version": g._GEOLOC_CACHE_RULE_VERSION}})
+        region = {"CN": [ipaddress.ip_network("1.0.0.0/16")]}
+        assert g.fetch_prefix_country("1.0.1.0/24", 1, region) == ("CN", "L0", False)
+        # the prebuilt index gives the same answer
+        idx = g.build_region_index(region)
+        assert g.fetch_prefix_country("1.0.1.0/24", 1, idx) == ("CN", "L0", False)
+    finally:
+        g._GEOLOC_CACHE = saved
+
+
+def test_apnic_block_not_mislabelled_as_bgp():
+    """v3.4 bug: 47.96.0.0/11 (APNIC) was labelled source=bgp because a BGP
+    prefix inside it had been recorded in provenance, even though enforce
+    had trimmed that prefix away entirely."""
+    g = generate_ip_list
+    net = ipaddress.ip_network
+    region = {"CN": [net("47.96.0.0/11")]}
+    supp = {"CN": [net("47.96.0.0/24"), net("198.18.0.0/24")]}
+    prov = {"CN": {
+        "47.96.0.0/24": {"asn": 37963, "tier": 1, "level": "L0"},
+        "198.18.0.0/24": {"asn": 37963, "tier": 1, "level": "L1"},
+    }}
+    out, claims = g.enforce_mutual_exclusivity(region, supp, return_claims=True)
+    claimed_prov = g.restrict_provenance_to_claims(prov, claims)
+    norm = g.normalize_region_data(out, bgp_provenance=claimed_prov)
+    objs = {o["cidr"]: o for o in norm["CN"]["cidr_objects"]}
+    assert objs["47.96.0.0/11"]["source"] == "apnic"
+    assert objs["198.18.0.0/24"]["source"] == "bgp"
+    assert objs["198.18.0.0/24"]["confidence"] == "medium"
+
+
+def test_minority_bgp_share_is_labelled_apnic():
+    """A CIDR that is mostly APNIC but absorbed a small adjacent BGP piece
+    during collapse must stay source=apnic."""
+    g = generate_ip_list
+    net = ipaddress.ip_network
+    region = {"CN": [net("10.0.0.0/25"), net("10.0.0.128/26"), net("10.0.0.192/26")]}
+    prov = {"CN": {"10.0.0.192/26": {"asn": 45090, "tier": 2, "level": "L1"}}}
+    norm = g.normalize_region_data(region, bgp_provenance=prov)
+    (obj,) = norm["CN"]["cidr_objects"]
+    assert obj["cidr"] == "10.0.0.0/24" and obj["source"] == "apnic"
+
+
+def _patched_urlopen(fn):
+    import urllib.request
+
+    class _Ctx:
+        def __enter__(self):
+            self.orig = urllib.request.urlopen
+            urllib.request.urlopen = fn
+        def __exit__(self, *a):
+            urllib.request.urlopen = self.orig
+            return False
+    return _Ctx()
+
+
+def test_http_get_does_not_retry_permanent_4xx():
+    import urllib.error
+
+    g = generate_ip_list
+    calls = []
+
+    def fake(req, timeout=None):
+        calls.append(1)
+        raise urllib.error.HTTPError(req.full_url, 404, "nf", {}, None)
+
+    saved = g.RETRY_BACKOFF_BASE
+    g.RETRY_BACKOFF_BASE = 0
+    try:
+        with _patched_urlopen(fake):
+            try:
+                g.http_get("https://example.com/missing")
+                assert False, "should raise"
+            except urllib.error.HTTPError:
+                pass
+        assert len(calls) == 1, f"404 retried {len(calls)} times"
+
+        calls.clear()
+
+        def fake429(req, timeout=None):
+            calls.append(1)
+            raise urllib.error.HTTPError(req.full_url, 429, "slow", {}, None)
+
+        with _patched_urlopen(fake429):
+            try:
+                g.http_get("https://example.com/busy", retries=3)
+            except urllib.error.HTTPError:
+                pass
+        assert len(calls) == 3, "429 must be retried"
+    finally:
+        g.RETRY_BACKOFF_BASE = saved
+
+
+def test_atomic_writes_leave_no_temp_files():
+    g = generate_ip_list
+    with tempfile.TemporaryDirectory() as d:
+        path = Path(d) / "x.txt"
+        g._atomic_write_text(str(path), "hello\n")
+        assert path.read_text() == "hello\n"
+        assert [p.name for p in Path(d).iterdir()] == ["x.txt"]
+
+
+def _write_dataset(tmpdir):
+    g = generate_ip_list
+    raw = "\n".join([
+        "2|apnic|20260901|1|1|summary",
+        "apnic|CN|ipv4|1.0.1.0|256|20200101|allocated",
+        "apnic|HK|ipv4|1.0.2.0|256|20200101|assigned",
+        "apnic|TW|ipv4|1.0.4.0|256|20200101|assigned",
+        "apnic|MO|ipv4|1.0.5.0|256|20200101|assigned",
+        "apnic|JP|ipv4|1.0.3.0|256|20200101|allocated",
+        "apnic|KR|ipv4|1.0.6.0|256|20200101|allocated",
+        "apnic|SG|ipv4|1.0.7.0|256|20200101|allocated",
+    ])
+    region, stats = g.parse_and_cleanse(raw, [])
+    norm = g.normalize_region_data(region)
+    report = {"mode": "static_only", "succeeded": [], "failed": [], "total_prefixes": 0}
+    g.save_txt_outputs(norm, tmpdir)
+    g.save_json_outputs(norm, report, stats, tmpdir)
+
+
+def test_validate_output_integrity_gates():
+    import validate_output as v
+
+    # The real thresholds need a full dataset; relax CN for the fixture.
+    saved_min = v.MIN_CN_CIDRS
+    v.MIN_CN_CIDRS = 1
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            _write_dataset(d)
+            assert v.main(["-o", d, "--skip-dns"]) == 0
+
+            # Tamper with a region file: must fail the TXT/data.json match.
+            cn = Path(d) / "CN.txt"
+            cn.write_text(cn.read_text() + "9.9.9.0/24\n")
+            try:
+                v.main(["-o", d, "--skip-dns"])
+                assert False, "tampered CN.txt must fail validation"
+            except SystemExit as e:
+                assert e.code == 1
+
+            # Tamper with data.json: checksum gate must fail.
+            _write_dataset(d)
+            dj = Path(d) / "data.json"
+            dj.write_text(dj.read_text().replace('"project"', '"project" ', 1))
+            try:
+                v.main(["-o", d, "--skip-dns"])
+                assert False, "checksum mismatch must fail validation"
+            except SystemExit as e:
+                assert e.code == 1
+    finally:
+        v.MIN_CN_CIDRS = saved_min
+
+
+def test_build_formats_fails_when_a_format_fails():
+    import build_formats as bf
+
+    saved = bf.build_mmdb
+    bf.build_mmdb = lambda data, out: False
+    try:
+        with tempfile.TemporaryDirectory() as d:
+            _write_dataset(d)
+            argv = sys.argv
+            sys.argv = ["build_formats", "-o", d]
+            try:
+                assert bf.main() == 1
+            finally:
+                sys.argv = argv
+            sys.argv = ["build_formats", "-o", d, "--skip-mmdb"]
+            try:
+                assert bf.main() == 0
+            finally:
+                sys.argv = argv
+            # checksums must not list gitignored release files
+            sums = (Path(d) / "checksums.txt").read_text()
+            assert "ipnova-formats.tar.gz" not in sums
+    finally:
+        bf.build_mmdb = saved
+
+
+def test_samples_json_regions_known():
+    samples = json.loads((ROOT / "tests" / "samples.json").read_text(encoding="utf-8"))
+    allowed = set(generate_ip_list.TARGET_REGIONS) | {"INTL", "EDGE"}
+    assert set(samples) <= allowed
+    assert all(isinstance(v, list) and v for v in samples.values())
+
+
 if __name__ == "__main__":
-    test_parse_normalize_and_write_outputs()
-    print("  test_parse_normalize_and_write_outputs: PASS")
-    test_subtract_excluded_precision()
-    print("  test_subtract_excluded_precision: PASS")
-    test_normalize_region_data_collapse()
-    print("  test_normalize_region_data_collapse: PASS")
-    test_sanity_check_passes()
-    print("  test_sanity_check_passes: PASS")
-    test_sanity_check_fails()
-    print("  test_sanity_check_fails: PASS")
-    test_forbidden_asns_not_in_cloud_asns()
-    print("  test_forbidden_asns_not_in_cloud_asns: PASS")
-    test_target_regions_complete()
-    print("  test_target_regions_complete: PASS")
-    test_enforce_apnic_authoritative_over_supp()
-    print("  test_enforce_apnic_authoritative_over_supp: PASS")
-    test_enforce_supp_none_backward_compat()
-    print("  test_enforce_supp_none_backward_compat: PASS")
-    test_http_get_ripe_throttle()
-    print("  test_http_get_ripe_throttle: PASS")
-    test_mmdb_validator_roundtrip_semantics()
-    print("  test_mmdb_validator_roundtrip_semantics: PASS")
-    test_regions_single_source_of_truth()
-    print("  test_regions_single_source_of_truth: PASS")
-    test_user_agent_derives_from_version()
-    print("  test_user_agent_derives_from_version: PASS")
-    test_canary_cidrs_well_formed()
-    print("  test_canary_cidrs_well_formed: PASS")
-    test_provenance_survives_collapse_and_level_confidence()
-    print("  test_provenance_survives_collapse_and_level_confidence: PASS")
-    print("\nAll offline tests passed.")
+    import inspect
+    import traceback
+
+    tests = [(name, fn) for name, fn in sorted(globals().items(), key=lambda kv: (
+        inspect.getsourcelines(kv[1])[1] if inspect.isfunction(kv[1]) else 0))
+        if name.startswith("test_") and inspect.isfunction(fn)]
+    failed = 0
+    for name, fn in tests:
+        try:
+            fn()
+            print(f"  {name}: PASS")
+        except Exception:
+            failed += 1
+            print(f"  {name}: FAIL")
+            traceback.print_exc()
+    if failed:
+        print(f"\n{failed}/{len(tests)} tests FAILED")
+        sys.exit(1)
+    print(f"\nAll {len(tests)} offline tests passed.")
