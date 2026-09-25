@@ -1,12 +1,19 @@
 {
-  "schema_version": "3.3",
+  "schema_version": "3.4",
   "project": "ipnova",
-  "version": "3.4.0",
-  "generated_at": "2026-07-01T08:18:05.240285+00:00",
+  "version": "3.5.0",
+  "generated_at": "2026-09-25T08:58:17.809286+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "build": {
-    "commit_sha": "2a80b9e927201a77b15125b10be4a38621574856",
-    "user_agent": "ipnova/3.4.0 (+https://github.com/harryheros/ipnova)"
+    "commit_sha": "33258b9a746f59ad18e87523de5d676bca0594b1",
+    "user_agent": "ipnova/3.5.0 (+https://github.com/harryheros/ipnova)",
+    "python": "3.13.15",
+    "ripe": {
+      "breaker_tripped": false,
+      "consecutive_failures": 0,
+      "phase_seconds": 68.4,
+      "phase_budget_seconds": 900
+    }
   },
   "provenance": {
     "canary_cidrs": {
@@ -31,32 +38,32 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5606,
-      "ips": 344280584
+      "cidrs": 5502,
+      "ips": 342968328
     },
     "HK": {
-      "cidrs": 2525,
-      "ips": 14780232
+      "cidrs": 2566,
+      "ips": 15690568
     },
     "TW": {
-      "cidrs": 751,
-      "ips": 35724552
+      "cidrs": 758,
+      "ips": 35723784
     },
     "MO": {
       "cidrs": 31,
       "ips": 339464
     },
     "JP": {
-      "cidrs": 3207,
-      "ips": 188587272
+      "cidrs": 3229,
+      "ips": 188635656
     },
     "KR": {
-      "cidrs": 1053,
-      "ips": 112485896
+      "cidrs": 1056,
+      "ips": 112519688
     },
     "SG": {
-      "cidrs": 1623,
-      "ips": 26826248
+      "cidrs": 1660,
+      "ips": 27029320
     }
   },
   "exclusion": {
@@ -78,7 +85,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 33234,
+    "dynamic_prefixes": 37081,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -90,31 +97,34 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21579,
-    "source_networks": 21579,
-    "cidrs_kept": 21667,
-    "cidrs_excluded": 159,
-    "excluded_source_networks": 91,
+    "lines_processed": 21674,
+    "source_networks": 21674,
+    "cidrs_kept": 21813,
+    "cidrs_excluded": 168,
+    "excluded_source_networks": 90,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22032,
-    "prefixes_after_collapse": 14796,
+    "prefixes_before_collapse": 22534,
+    "prefixes_after_collapse": 14802,
     "cloud_supplement": {
-      "prefixes_fetched": 1866,
+      "prefixes_fetched": 6071,
       "kept_per_region": {
-        "CN": 777,
-        "SG": 814,
-        "HK": 39,
-        "JP": 17,
-        "KR": 7
+        "CN": 3378,
+        "SG": 2205,
+        "JP": 33,
+        "HK": 82,
+        "KR": 16
       },
-      "dropped_other_country": 212,
+      "dropped_other_country": 357,
       "dropped_unknown": 0,
-      "l0_local_hit": 1340,
-      "cache_hit": 1,
-      "l1_success": 329,
-      "l2_fallback": 196,
+      "l0_local_hit": 5505,
+      "cache_hit": 553,
+      "l1_success": 564,
+      "l2_fallback": 2,
       "l3_fallback": 0,
-      "duration_seconds": 559.154,
+      "dropped_region_conflict": 0,
+      "trimmed_region_conflict": 0,
+      "asns_failed": [],
+      "duration_seconds": 30.097,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -130,6 +140,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "a2435e46210e19f8a0b619e4ee10413ec6d8cb9db79427853f53dd058ad34e88"
+    "data_json_sha256": "ae8e7302f1bd7c3c38258047bf6401d6d90268566ab648f958825a573ad47fd4"
   }
 }
