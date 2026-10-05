@@ -1,10 +1,10 @@
 # Project     : ipnova
 # Version     : 3.5.0
 # Region      : Japan
-# Last Updated: 2026-09-28 08:41:46 UTC
+# Last Updated: 2026-10-05 09:17:17 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
-# Total CIDRs : 3229
-# Total IPs   : 188,635,656
+# Total CIDRs : 3228
+# Total IPs   : 188,634,632
 # Note        : Each region is separated — this file contains Japan only
 # Provenance  : includes a few RFC5737 documentation-reserved CIDRs as
 #               fingerprints; they never route publicly and are safe to ignore
@@ -641,7 +641,6 @@
 103.60.224.0/22
 103.61.151.0/24
 103.61.244.0/22
-103.62.244.0/22
 103.64.132.0/22
 103.65.44.0/22
 103.65.130.0/23
