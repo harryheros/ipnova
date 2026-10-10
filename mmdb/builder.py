@@ -1,8 +1,8 @@
 """
 mmdb/builder.py — IPNova MMDB builder
 
-Reads normalized region data and writes a MaxMind-compatible
-MMDB database to the specified output path.
+Reads normalized region data and writes an MMDB database
+(MaxMind DB format) to the specified output path.
 
 Requires: pip install mmdb-writer netaddr maxminddb
 """
@@ -13,13 +13,22 @@ import os
 log = logging.getLogger("ipnova.mmdb.builder")
 
 
-def build(normalized_data: dict, output_dir: str = "output") -> str:
+def build(
+    normalized_data: dict,
+    output_dir: str = "output",
+    filename: str | None = None,
+    database_type: str | None = None,
+) -> str:
     """
-    Build ipnova-apac.mmdb from normalized region data.
+    Build an MMDB file (default: ipnova-apac.mmdb) from normalized region data.
 
     Args:
         normalized_data: dict of {cc: {cidrs: [...], region_name: ..., ...}}
         output_dir: directory to write the MMDB file
+        filename: output file name (default: schema.PRIMARY_FILENAME)
+        database_type: metadata database_type (default: schema.DATABASE_TYPE).
+            The compatibility builds pass "GeoIP2-Country" /
+            "GeoLite2-Country" here.
 
     Returns:
         Path to the generated MMDB file.
@@ -38,12 +47,15 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
 
     from mmdb.schema import (
         APAC_REGIONS, DATABASE_TYPE, DATABASE_DESCRIPTION, DATABASE_LANGUAGES,
-        make_record,
+        PRIMARY_FILENAME, make_record,
     )
+
+    filename = filename or PRIMARY_FILENAME
+    database_type = database_type or DATABASE_TYPE
 
     writer = MMDBWriter(
         ip_version=4,
-        database_type=DATABASE_TYPE,
+        database_type=database_type,
         languages=DATABASE_LANGUAGES,
         description=DATABASE_DESCRIPTION,
     )
@@ -89,7 +101,7 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
             "Check mmdb-writer and netaddr versions."
         )
 
-    out_path = os.path.join(output_dir, "ipnova-apac.mmdb")
+    out_path = os.path.join(output_dir, filename)
     os.makedirs(output_dir, exist_ok=True)
     # Write to a temp name first so a failed write never replaces the
     # previously published database with a truncated file.
@@ -103,8 +115,8 @@ def build(normalized_data: dict, output_dir: str = "output") -> str:
 
     size_kb = os.path.getsize(out_path) // 1024
     log.info(
-        "  ipnova-apac.mmdb — %d CIDRs, %d regions, %d KB",
-        total_inserted, len(normalized_data), size_kb
+        "  %s [%s] — %d CIDRs, %d regions, %d KB",
+        filename, database_type, total_inserted, len(normalized_data), size_kb
     )
 
     return out_path

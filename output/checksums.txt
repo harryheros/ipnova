@@ -1,10 +1,8 @@
 # IPNova — SHA-256 checksums
-# Generated : 2026-10-05 09:17:21 UTC
+# Generated : 2026-10-10 04:38:01 UTC
 # Format    : <sha256>  <relative-path>
 #
 c8a22b244dd90a7bad449c351b7e906bb19ac72a91026aed19f83ff27250b671  CN.txt
-a951232aaaaee858610d4f5710f05f7f34e9fa3f53e743d65af83884ddb3dc68  GeoIP2-Country-compatible.mmdb
-a951232aaaaee858610d4f5710f05f7f34e9fa3f53e743d65af83884ddb3dc68  GeoLite2-Country-compatible.mmdb
 94aae5b42cfa54a6ac9469933fb9c7e16eb2f73cf92f924e3a7212a3a9ff9783  HK.txt
 0a6e7e800bbe1db7e98a0e821ca5a7b7251795fedab81c4735ba04c44ee4022f  JP.txt
 6f06d4af50fdfb7100f0559c5e6b9be4061f5e14c5a728a04bc694f4c60ad5b2  KR.txt
@@ -12,6 +10,8 @@ e122b0142dc46a0771547763c18be584cddf681bcf0e09588b10fd0d69c081c5  MO.txt
 5c61acf0595058854a8547e12895a3f3a666ff8506731992da9f120cf9d4c985  SG.txt
 f6e44bef1b5eea2ee7b22e80b33eb59fb41bed55544036420e4b34a950bf7a78  TW.txt
 8406fbf5d700c9ec0ea9357d8f54e0d57de295db2daecc162d45e0daa9f3f27a  data.json
+8871718511ee0c6efecd4d039c4167aa8fae9fc8919c7beeea4034637dcfbdb8  ipnova-apac-country-lite.mmdb
+1d8759d38aae85cadcd8e01ad17ec50cc4dc560bebca5b4f2435cef9db225fcd  ipnova-apac-country.mmdb
 a951232aaaaee858610d4f5710f05f7f34e9fa3f53e743d65af83884ddb3dc68  ipnova-apac.mmdb
 b3ba3ccfc9765d0365fe82c7654ad8f776332aeb2df32fbb6534ae10277d123c  meta.json
 faf9e56b888b044840320329982adf01b9c918f6d8568c9cad6390e6a4e0b1b9  regions.json

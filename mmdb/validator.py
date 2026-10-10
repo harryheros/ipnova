@@ -34,7 +34,7 @@ SAMPLE_IPS = {
 }
 
 
-def validate(mmdb_path: str) -> bool:
+def validate(mmdb_path: str, expected_type: str | None = None) -> bool:
     """Round-trip check the generated MMDB file.
 
     This is NOT an accuracy check — it cannot verify that an IP truly
@@ -48,6 +48,10 @@ def validate(mmdb_path: str) -> bool:
     3. Individual samples resolving to a *different* region than
        expected are logged as warnings — IP holders change over time
        and one stale sample should not fail CI.
+
+    4. When expected_type is given, the metadata database_type matches it
+       exactly. GeoIP2 readers refuse a Country lookup on a file whose type
+       is not exactly GeoIP2-Country / GeoLite2-Country.
 
     Returns True if every region in SAMPLE_IPS has at least one matching
     sample. Returns False on file errors or when a region has zero
@@ -87,6 +91,16 @@ def validate(mmdb_path: str) -> bool:
     region_miss = {cc: 0 for cc in SAMPLE_IPS}
 
     with maxminddb.open_database(mmdb_path) as reader:
+        if expected_type is not None:
+            got_type = reader.metadata().database_type
+            if got_type != expected_type:
+                log.error(
+                    "MMDB database_type mismatch in %s: expected %r, got %r",
+                    mmdb_path, expected_type, got_type,
+                )
+                return False
+            log.info("  database_type: %s", got_type)
+
         for expected_cc, samples in SAMPLE_IPS.items():
             for ip, label in samples:
                 try:
