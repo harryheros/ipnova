@@ -1,10 +1,10 @@
 # Project     : ipnova
-# Version     : 3.5.0
+# Version     : 3.5.1
 # Region      : Singapore
-# Last Updated: 2026-10-05 09:17:17 UTC
+# Last Updated: 2026-10-10 05:12:19 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
-# Total CIDRs : 1660
-# Total IPs   : 26,996,552
+# Total CIDRs : 1661
+# Total IPs   : 26,997,576
 # Note        : Each region is separated — this file contains Singapore only
 # Provenance  : includes a few RFC5737 documentation-reserved CIDRs as
 #               fingerprints; they never route publicly and are safe to ignore
@@ -935,6 +935,7 @@
 146.174.128.0/18
 147.124.12.0/22
 147.136.128.0/18
+147.185.28.0/22
 148.66.128.0/19
 148.145.128.0/17
 148.222.64.0/20
