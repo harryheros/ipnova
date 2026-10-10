@@ -6,8 +6,7 @@ Generates additional output formats from ipnova's data.json:
 
   MMDB:
     - ipnova-apac.mmdb          : Primary branded MMDB
-    - ipnova-apac-country.mmdb      : same records, database_type "GeoIP2-Country"
-    - ipnova-apac-country-lite.mmdb : same records, database_type "GeoLite2-Country"
+    - ipnova-apac-country.mmdb : same records, database_type "GeoLite2-Country"
 
   JSON:
     - regions.json              : All regions combined
@@ -142,16 +141,16 @@ def collect_output_files(output_dir):
 
 def build_mmdb(data, output_dir):
     """
-    Build ipnova-apac.mmdb plus the two compatibility databases.
+    Build ipnova-apac.mmdb plus the compatibility database.
 
-    The compatibility files are built separately, NOT copied from the
+    The compatibility file is built separately, NOT copied from the
     primary: GeoIP2 readers check the metadata `database_type` before a
     Country lookup and reject anything that is not exactly
     "GeoIP2-Country" / "GeoLite2-Country". A byte copy carried IPNova's own
     type (IPNOVA-GeoIP2-Country) and failed with "The database is not
     marked as type GeoLite2-Country or type GeoIP2-Country".
 
-    File names are neutral (ipnova-apac-country*.mmdb) and do not use
+    The file name is neutral (ipnova-apac-country.mmdb) and does not use
     third-party product names.
     """
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -691,7 +690,6 @@ def main():
         core_files = [
             os.path.join(args.output_dir, "ipnova-apac.mmdb"),
             os.path.join(args.output_dir, "ipnova-apac-country.mmdb"),
-            os.path.join(args.output_dir, "ipnova-apac-country-lite.mmdb"),
             os.path.join(args.output_dir, "regions.json"),
             os.path.join(args.output_dir, "meta.json"),
             archive_path,
@@ -702,7 +700,7 @@ def main():
 
     log.info("Done. Output summary:")
     summary = [
-        ("mmdb",      "output/ipnova-apac.mmdb + ipnova-apac-country.mmdb + ipnova-apac-country-lite.mmdb"),
+        ("mmdb",      "output/ipnova-apac.mmdb + ipnova-apac-country.mmdb"),
         ("json",      "output/regions.json + output/json/{CC}.json"),
         ("plain",     "output/plain/{CC}.txt"),
         ("nginx",     "output/nginx/{CC}.conf"),

@@ -27,8 +27,7 @@ def build(
         output_dir: directory to write the MMDB file
         filename: output file name (default: schema.PRIMARY_FILENAME)
         database_type: metadata database_type (default: schema.DATABASE_TYPE).
-            The compatibility builds pass "GeoIP2-Country" /
-            "GeoLite2-Country" here.
+            The compatibility build passes "GeoLite2-Country" here.
 
     Returns:
         Path to the generated MMDB file.

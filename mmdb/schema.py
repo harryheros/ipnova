@@ -39,9 +39,11 @@ PRIMARY_FILENAME = "ipnova-apac.mmdb"
 # The type value is a technical identifier required for interoperability.
 # File names stay neutral (no third-party product names), and the metadata
 # description identifies every file as an independent IPNova build.
+#
+# One file is enough: mainstream readers accept either type for Country
+# lookups, and GeoLite2-Country is the type free/open-source tools expect.
 COMPAT_DATABASE_TYPES = {
-    "ipnova-apac-country.mmdb": "GeoIP2-Country",
-    "ipnova-apac-country-lite.mmdb": "GeoLite2-Country",
+    "ipnova-apac-country.mmdb": "GeoLite2-Country",
 }
 
 DATABASE_DESCRIPTION = {
