@@ -449,8 +449,7 @@ def test_build_mmdb_sets_database_type_per_file():
 
     assert written == {
         "ipnova-apac.mmdb": "IPNOVA-GeoIP2-Country",
-        "ipnova-apac-country.mmdb": "GeoIP2-Country",
-        "ipnova-apac-country-lite.mmdb": "GeoLite2-Country",
+        "ipnova-apac-country.mmdb": "GeoLite2-Country",
     }, written
 
 

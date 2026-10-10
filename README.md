@@ -70,8 +70,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/iptables/{CC}.ipset` | iptables ipset restore format |
 | `output/plain/{CC}.txt` | Plain CIDR list (no headers, for programmatic use) |
 | `output/terraform/{CC}.auto.tfvars.json` | Terraform variable file |
-| `output/ipnova-apac-country.mmdb` | Same records, `database_type` = `GeoIP2-Country` (for GeoIP2 readers) |
-| `output/ipnova-apac-country-lite.mmdb` | Same records, `database_type` = `GeoLite2-Country` (for tools that only accept that type) |
+| `output/ipnova-apac-country.mmdb` | Same records, `database_type` = `GeoLite2-Country` — for GeoIP2 reader libraries and tools |
 | `output/checksums.txt` | SHA-256 checksums for all output files |
 
 For current CIDR counts and IP coverage per region, see `output/meta.json`.
@@ -82,14 +81,15 @@ Text files include metadata headers such as region, version, last updated timest
 
 ## ⬇️ Direct Download
 
+> **Coverage**: the MMDB files cover CN / HK / TW / MO / JP / KR / SG only. IPs outside these regions return no result — this is not a drop-in replacement for a global GeoIP database.
+
 ```bash
 # MMDB — primary branded build
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac.mmdb
 
-# MMDB — compatibility builds (same records as ipnova-apac.mmdb). Use one of
-# these with tools that require database_type "GeoIP2-Country" / "GeoLite2-Country".
+# MMDB — compatibility build (same records as ipnova-apac.mmdb). Use this with
+# GeoIP2 reader libraries and tools that check the database type.
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac-country.mmdb
-https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac-country-lite.mmdb
 
 # Plain text with headers (per region)
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
@@ -248,8 +248,9 @@ than overstated as `high`.
 
 ### v3.5.1
 
-- **Bugfix (MMDB compatibility)**: the compatibility MMDB files were byte copies of `ipnova-apac.mmdb`, so their metadata `database_type` was `IPNOVA-GeoIP2-Country`. GeoIP2 readers check this field before a Country lookup and refused the files with *"The database is not marked as type GeoLite2-Country or type GeoIP2-Country"*. Each file is now built separately with `database_type` set to `GeoIP2-Country` / `GeoLite2-Country`; the records are unchanged.
-- **Renamed (neutral file names)**: `GeoIP2-Country-compatible.mmdb` → `ipnova-apac-country.mmdb`, `GeoLite2-Country-compatible.mmdb` → `ipnova-apac-country-lite.mmdb`. The old files have been removed.
+- **Bugfix (MMDB compatibility)**: the compatibility MMDB files were byte copies of `ipnova-apac.mmdb`, so their metadata `database_type` was `IPNOVA-GeoIP2-Country`. GeoIP2 readers check this field before a Country lookup and refused the files with *"The database is not marked as type GeoLite2-Country or type GeoIP2-Country"*. The compatibility file is now built separately with the correct `database_type`; the records are unchanged.
+- **Single compatibility file, neutral name**: the two identical `GeoIP2-Country-compatible.mmdb` / `GeoLite2-Country-compatible.mmdb` files are replaced by one `ipnova-apac-country.mmdb` (`database_type` = `GeoLite2-Country`, accepted by mainstream GeoIP2 readers). The old files have been removed.
+- **Coverage note**: the README now states that the MMDB covers the seven regions only and is not a drop-in replacement for a global GeoIP database.
 - **Trademark notice**: added to this README and to the metadata description of every MMDB file.
 - **Validation**: the MMDB round-trip check now verifies `database_type` for every file, so a wrong type fails the build instead of being published. New regression tests, including a guard against third-party product names in file names (28 total).
 
@@ -403,7 +404,7 @@ If IPNova is useful to you, consider giving it a ⭐ on GitHub.
 
 **Provenance fingerprinting** — published artifacts contain documentation-reserved CIDR ranges (RFC 5737) embedded for forensic attribution. These ranges are harmless for downstream use (they never route on the public Internet) but make unattributed redistribution detectable. See `regions.py` and `meta.json` for the per-release fingerprint set.
 
-**Third-party trademarks** — MaxMind, GeoIP and GeoLite are trademarks of MaxMind, Inc. IPNova is an independent project, not affiliated with, sponsored or endorsed by MaxMind. The MMDB files use the open MaxMind DB file format, and the compatibility builds set the `database_type` field to `GeoIP2-Country` / `GeoLite2-Country` solely so that existing reader software can open them. IPNova contains no MaxMind data.
+**Third-party trademarks** — MaxMind, GeoIP and GeoLite are trademarks of MaxMind, Inc. IPNova is an independent project, not affiliated with, sponsored or endorsed by MaxMind. The MMDB files use the open MaxMind DB file format, and the compatibility build sets the `database_type` field to `GeoLite2-Country` solely so that existing reader software can open it. IPNova contains no MaxMind data.
 
 If you build something useful on top of IPNova, attribution and a backlink to this repository are appreciated; if you intend to do so commercially, please reach out via the channels above.
 

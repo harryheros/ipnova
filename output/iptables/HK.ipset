@@ -1,6 +1,6 @@
 # IPNova — ipset restore — HK (Hong Kong)
-# Generated : 2026-10-10 04:41:47 UTC
-# CIDRs     : 2567
+# Generated : 2026-10-05 09:17:21 UTC
+# CIDRs     : 2564
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -296,7 +296,6 @@ add ipnova_HK 45.127.160.0/22
 add ipnova_HK 45.127.184.0/22
 add ipnova_HK 45.146.112.0/22
 add ipnova_HK 45.158.180.0/22
-add ipnova_HK 45.194.104.0/21
 add ipnova_HK 45.202.128.0/19
 add ipnova_HK 45.202.160.0/20
 add ipnova_HK 45.202.184.0/21
@@ -1702,11 +1701,9 @@ add ipnova_HK 152.104.0.0/17
 add ipnova_HK 154.8.64.0/19
 add ipnova_HK 154.8.112.0/21
 add ipnova_HK 154.8.124.0/22
-add ipnova_HK 154.81.16.0/20
-add ipnova_HK 154.86.32.0/19
+add ipnova_HK 154.86.32.0/20
 add ipnova_HK 154.220.192.0/19
 add ipnova_HK 155.137.128.0/17
-add ipnova_HK 156.230.40.0/21
 add ipnova_HK 156.230.64.0/18
 add ipnova_HK 156.240.128.0/18
 add ipnova_HK 156.253.16.0/20

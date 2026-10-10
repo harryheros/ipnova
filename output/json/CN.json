@@ -3,7 +3,7 @@
   "region_name": "China (Mainland)",
   "total_cidrs": 5502,
   "total_ips": 343000584,
-  "generated_at": "2026-10-10T04:41:47.368480+00:00",
+  "generated_at": "2026-10-05T09:17:20.875830+00:00",
   "cidrs": [
     "1.0.1.0/24",
     "1.0.2.0/23",
