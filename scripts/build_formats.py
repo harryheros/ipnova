@@ -6,8 +6,8 @@ Generates additional output formats from ipnova's data.json:
 
   MMDB:
     - ipnova-apac.mmdb          : Primary branded MMDB
-    - GeoIP2-Country-compatible.mmdb   : MaxMind GeoIP2 schema-compatible
-    - GeoLite2-Country-compatible.mmdb : MaxMind GeoLite2 schema-compatible
+    - ipnova-apac-country.mmdb      : same records, database_type "GeoIP2-Country"
+    - ipnova-apac-country-lite.mmdb : same records, database_type "GeoLite2-Country"
 
   JSON:
     - regions.json              : All regions combined
@@ -137,32 +137,44 @@ def collect_output_files(output_dir):
 
 
 # ================================================================
-# Format 1: MMDB + schema-compatible aliases
+# Format 1: MMDB + compatibility builds
 # ================================================================
 
 def build_mmdb(data, output_dir):
     """
-    Build ipnova-apac.mmdb via mmdb.builder, then write -compatible aliases
-    as byte-identical copies. The aliases are *named differently* from
-    MaxMind's own product files on purpose: 'GeoIP2-Country' and
-    'GeoLite2-Country' are MaxMind trademarks, and shipping files with
-    those exact names risks brand confusion and trademark issues. The
-    `-compatible` suffix keeps the format interoperable while making clear
-    this is an independent dataset, not a MaxMind product.
+    Build ipnova-apac.mmdb plus the two compatibility databases.
+
+    The compatibility files are built separately, NOT copied from the
+    primary: GeoIP2 readers check the metadata `database_type` before a
+    Country lookup and reject anything that is not exactly
+    "GeoIP2-Country" / "GeoLite2-Country". A byte copy carried IPNova's own
+    type (IPNOVA-GeoIP2-Country) and failed with "The database is not
+    marked as type GeoLite2-Country or type GeoIP2-Country".
+
+    File names are neutral (ipnova-apac-country*.mmdb) and do not use
+    third-party product names.
     """
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     try:
         from mmdb.builder import build
+        from mmdb.schema import (
+            COMPAT_DATABASE_TYPES, DATABASE_TYPE, PRIMARY_FILENAME,
+        )
         from mmdb.validator import validate
     except ImportError as e:
         log.warning("mmdb module error: %s", e)
         return False
 
+    targets = [(PRIMARY_FILENAME, DATABASE_TYPE)] + list(COMPAT_DATABASE_TYPES.items())
+    regions = data.get("regions", {})
+
     try:
-        out_path = build(data.get("regions", {}), output_dir)
-        if not validate(out_path):
-            raise RuntimeError("MMDB validation failed")
+        for filename, db_type in targets:
+            out_path = build(regions, output_dir, filename=filename, database_type=db_type)
+            if not validate(out_path, expected_type=db_type):
+                raise RuntimeError(f"MMDB validation failed: {filename}")
+
     except ImportError as e:
         log.warning("%s", e)
         log.warning("Skipping MMDB — install with: pip install mmdb-writer netaddr maxminddb")
@@ -170,18 +182,6 @@ def build_mmdb(data, output_dir):
     except RuntimeError as e:
         log.error("%s", e)
         return False
-
-    # Schema-compatible aliases — same bytes, different (non-trademarked)
-    # filenames. See docstring above.
-    with open(out_path, "rb") as src:
-        primary_data = src.read()
-    for alias in ["GeoIP2-Country-compatible.mmdb", "GeoLite2-Country-compatible.mmdb"]:
-        alias_path = os.path.join(output_dir, alias)
-        tmp_path = alias_path + ".tmp"
-        with open(tmp_path, "wb") as f:
-            f.write(primary_data)
-        os.replace(tmp_path, alias_path)
-        log.info("  %s — schema-compatible alias", alias)
 
     return True
 
@@ -594,7 +594,7 @@ def build_parser():
         default="output",
         help="Output directory (default: output, must contain data.json)",
     )
-    parser.add_argument("--skip-mmdb",      action="store_true", help="Skip MMDB + aliases")
+    parser.add_argument("--skip-mmdb",      action="store_true", help="Skip all MMDB builds")
     parser.add_argument("--skip-json",      action="store_true", help="Skip per-region JSON")
     parser.add_argument("--skip-plain",     action="store_true", help="Skip plain CIDR files")
     parser.add_argument("--skip-nginx",     action="store_true", help="Skip Nginx format")
@@ -638,7 +638,7 @@ def main():
     results = {}
 
     if not args.skip_mmdb:
-        log.info("--- MMDB (+ schema-compatible aliases) ---")
+        log.info("--- MMDB (+ compatibility builds) ---")
         results["mmdb"] = build_mmdb(data, args.output_dir)
         log.info("")
 
@@ -690,8 +690,8 @@ def main():
         archive_path = create_formats_archive(args.output_dir)
         core_files = [
             os.path.join(args.output_dir, "ipnova-apac.mmdb"),
-            os.path.join(args.output_dir, "GeoIP2-Country-compatible.mmdb"),
-            os.path.join(args.output_dir, "GeoLite2-Country-compatible.mmdb"),
+            os.path.join(args.output_dir, "ipnova-apac-country.mmdb"),
+            os.path.join(args.output_dir, "ipnova-apac-country-lite.mmdb"),
             os.path.join(args.output_dir, "regions.json"),
             os.path.join(args.output_dir, "meta.json"),
             archive_path,
@@ -702,7 +702,7 @@ def main():
 
     log.info("Done. Output summary:")
     summary = [
-        ("mmdb",      "output/ipnova-apac.mmdb + GeoIP2-Country-compatible.mmdb + GeoLite2-Country-compatible.mmdb"),
+        ("mmdb",      "output/ipnova-apac.mmdb + ipnova-apac-country.mmdb + ipnova-apac-country-lite.mmdb"),
         ("json",      "output/regions.json + output/json/{CC}.json"),
         ("plain",     "output/plain/{CC}.txt"),
         ("nginx",     "output/nginx/{CC}.conf"),

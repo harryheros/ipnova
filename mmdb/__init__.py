@@ -1,7 +1,7 @@
 """
 IPNova MMDB module
 
-Generates and validates a MaxMind-compatible MMDB database
+Generates and validates an MMDB database (MaxMind DB format)
 for Asia-Pacific IP intelligence (CN/HK/TW/MO/JP/KR/SG).
 
 Usage:

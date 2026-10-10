@@ -27,11 +27,30 @@ CONTINENT_NAME = "Asia"
 
 # MMDB database metadata
 DATABASE_TYPE = "IPNOVA-GeoIP2-Country"
+PRIMARY_FILENAME = "ipnova-apac.mmdb"
+
+# Compatibility builds. Same records as the primary database, but the
+# metadata `database_type` is set to the exact value that GeoIP2 readers
+# check before a Country lookup. Many tools refuse a file whose type is not
+# exactly "GeoIP2-Country" or "GeoLite2-Country" ("The database is not
+# marked as type GeoLite2-Country or type GeoIP2-Country"), so a byte copy
+# of the primary file (type IPNOVA-GeoIP2-Country) is not enough.
+#
+# The type value is a technical identifier required for interoperability.
+# File names stay neutral (no third-party product names), and the metadata
+# description identifies every file as an independent IPNova build.
+COMPAT_DATABASE_TYPES = {
+    "ipnova-apac-country.mmdb": "GeoIP2-Country",
+    "ipnova-apac-country-lite.mmdb": "GeoLite2-Country",
+}
+
 DATABASE_DESCRIPTION = {
     "en": (
         "IPNova Asia-Pacific IPv4 database — "
         "routing-aware CIDR intelligence for CN/HK/TW/MO/JP/KR/SG. "
         "Source: APNIC delegated + BGP multi-source fusion. "
+        "Independent dataset in MaxMind DB format; not affiliated with or "
+        "endorsed by MaxMind, Inc. and contains no MaxMind data. "
         "https://github.com/harryheros/ipnova"
     )
 }

@@ -31,7 +31,7 @@ if _SCRIPT_DIR not in sys.path:
 # ================================================================
 # Version
 # ================================================================
-__version__ = "3.5.0"
+__version__ = "3.5.1"
 
 # Data-layer schema version (data.json / meta.json / regions.json).
 SCHEMA_VERSION = "3.4"

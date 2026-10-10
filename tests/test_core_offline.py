@@ -278,6 +278,8 @@ def test_mmdb_validator_roundtrip_semantics():
     class _FakeReader:
         def __init__(self, mapping):
             self._m = mapping
+        def metadata(self):
+            return types.SimpleNamespace(database_type=_mapping.get("__type__"))
         def get(self, ip):
             return self._m.get(ip)
         def __enter__(self):
@@ -364,6 +366,101 @@ def _run_validator_cases(_mapping):
         assert validate(p) is False, "tiny file should fail"
     finally:
         os.unlink(p)
+
+    # 5) database_type check: exact match passes, anything else fails.
+    #    GeoIP2 readers reject "IPNOVA-GeoIP2-Country" for Country lookups.
+    _mapping.clear()
+    for cc, samples in SAMPLE_IPS.items():
+        for ip, _ in samples:
+            _mapping[ip] = good(cc)
+    p = write_temp(50)
+    try:
+        _mapping["__type__"] = "GeoIP2-Country"
+        assert validate(p, expected_type="GeoIP2-Country") is True
+        _mapping["__type__"] = "IPNOVA-GeoIP2-Country"
+        assert validate(p, expected_type="GeoIP2-Country") is False, (
+            "wrong database_type must fail"
+        )
+        assert validate(p) is True, "no expected_type means no type check"
+    finally:
+        os.unlink(p)
+
+
+def test_build_mmdb_sets_database_type_per_file():
+    """Each compatibility MMDB must be built with its own database_type.
+
+    Regression: the compatibility files used to be byte copies of
+    ipnova-apac.mmdb, so they carried database_type
+    "IPNOVA-GeoIP2-Country" and GeoIP2 readers refused them.
+    """
+    import importlib
+    import os
+    import tempfile
+    import types
+
+    written = {}
+
+    class FakeWriter:
+        def __init__(self, ip_version, database_type, languages, description):
+            self.database_type = database_type
+            self.n = 0
+        def insert_network(self, ipset, record):
+            assert record["country"]["iso_code"]
+            self.n += 1
+        def to_db_file(self, path):
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(self.database_type)
+
+    fake_writer = types.ModuleType("mmdb_writer")
+    fake_writer.MMDBWriter = FakeWriter
+    fake_netaddr = types.ModuleType("netaddr")
+    fake_netaddr.IPSet = lambda cidrs: list(cidrs)
+
+    def fake_validate(path, expected_type=None):
+        with open(path, encoding="utf-8") as f:
+            got = f.read()
+        written[os.path.basename(path)] = got
+        return got == expected_type
+
+    names = ("mmdb_writer", "netaddr")
+    saved = {k: sys.modules.get(k) for k in names}
+    sys.modules["mmdb_writer"] = fake_writer
+    sys.modules["netaddr"] = fake_netaddr
+    try:
+        sys.path.insert(0, str(ROOT))
+        sys.path.insert(0, str(ROOT / "scripts"))
+        import mmdb.validator as mv
+        bf = importlib.import_module("build_formats")
+        saved_validate = mv.validate
+        mv.validate = fake_validate
+        try:
+            data = {"regions": {"HK": {"cidrs": ["1.0.0.0/24"]},
+                                "JP": {"cidrs": ["1.0.1.0/24"]}}}
+            with tempfile.TemporaryDirectory() as d:
+                assert bf.build_mmdb(data, d) is True
+        finally:
+            mv.validate = saved_validate
+    finally:
+        for k, v in saved.items():
+            if v is None:
+                sys.modules.pop(k, None)
+            else:
+                sys.modules[k] = v
+
+    assert written == {
+        "ipnova-apac.mmdb": "IPNOVA-GeoIP2-Country",
+        "ipnova-apac-country.mmdb": "GeoIP2-Country",
+        "ipnova-apac-country-lite.mmdb": "GeoLite2-Country",
+    }, written
+
+
+def test_mmdb_file_names_are_neutral():
+    """MMDB file names must not use third-party product names."""
+    from mmdb import schema
+
+    for name in [schema.PRIMARY_FILENAME, *schema.COMPAT_DATABASE_TYPES]:
+        low = name.lower()
+        assert "geoip" not in low and "geolite" not in low, name
 
 
 def test_regions_single_source_of_truth():

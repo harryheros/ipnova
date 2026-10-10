@@ -4,7 +4,7 @@
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.5.0-blue)
+![Version](https://img.shields.io/badge/version-3.5.1-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
 
@@ -61,7 +61,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/SG.txt` | Singapore IPv4 CIDR list |
 | `output/data.json` | Structured JSON dataset (schema v3.3, includes cidr_objects provenance) |
 | `output/meta.json` | Enriched metadata with quality report |
-| `output/ipnova-apac.mmdb` | MaxMind-compatible MMDB database (all 7 regions) |
+| `output/ipnova-apac.mmdb` | MMDB database in MaxMind DB format (all 7 regions) |
 | `output/regions.json` | Per-region combined JSON |
 | `output/json/{CC}.json` | Per-region individual JSON |
 | `output/nginx/{CC}.conf` | Nginx geo module format |
@@ -70,8 +70,8 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 | `output/iptables/{CC}.ipset` | iptables ipset restore format |
 | `output/plain/{CC}.txt` | Plain CIDR list (no headers, for programmatic use) |
 | `output/terraform/{CC}.auto.tfvars.json` | Terraform variable file |
-| `output/GeoIP2-Country-compatible.mmdb` | MaxMind GeoIP2 schema-compatible alias |
-| `output/GeoLite2-Country-compatible.mmdb` | MaxMind GeoLite2 schema-compatible alias |
+| `output/ipnova-apac-country.mmdb` | Same records, `database_type` = `GeoIP2-Country` (for GeoIP2 readers) |
+| `output/ipnova-apac-country-lite.mmdb` | Same records, `database_type` = `GeoLite2-Country` (for tools that only accept that type) |
 | `output/checksums.txt` | SHA-256 checksums for all output files |
 
 For current CIDR counts and IP coverage per region, see `output/meta.json`.
@@ -86,9 +86,10 @@ Text files include metadata headers such as region, version, last updated timest
 # MMDB — primary branded build
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac.mmdb
 
-# MMDB — schema-compatible aliases (same data as ipnova-apac.mmdb, named to avoid MaxMind's trademarks)
-https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoIP2-Country-compatible.mmdb
-https://raw.githubusercontent.com/harryheros/ipnova/main/output/GeoLite2-Country-compatible.mmdb
+# MMDB — compatibility builds (same records as ipnova-apac.mmdb). Use one of
+# these with tools that require database_type "GeoIP2-Country" / "GeoLite2-Country".
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac-country.mmdb
+https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac-country-lite.mmdb
 
 # Plain text with headers (per region)
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
@@ -114,6 +115,7 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/data.json
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/meta.json
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/checksums.txt
 ```
+
 
 ---
 
@@ -238,11 +240,18 @@ than overstated as `high`.
 7. Precisely subtract excluded prefixes (surgical removal, not blunt drop)
 8. Sanity check output against minimum thresholds
 9. Aggregate outputs into TXT and JSON formats with SHA-256 checksum
-10. Build extended formats: MMDB (+ schema-compatible aliases), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
+10. Build extended formats: MMDB (+ compatibility builds), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
 
 ---
 
 ## 📋 Changelog
+
+### v3.5.1
+
+- **Bugfix (MMDB compatibility)**: the compatibility MMDB files were byte copies of `ipnova-apac.mmdb`, so their metadata `database_type` was `IPNOVA-GeoIP2-Country`. GeoIP2 readers check this field before a Country lookup and refused the files with *"The database is not marked as type GeoLite2-Country or type GeoIP2-Country"*. Each file is now built separately with `database_type` set to `GeoIP2-Country` / `GeoLite2-Country`; the records are unchanged.
+- **Renamed (neutral file names)**: `GeoIP2-Country-compatible.mmdb` → `ipnova-apac-country.mmdb`, `GeoLite2-Country-compatible.mmdb` → `ipnova-apac-country-lite.mmdb`. The old files have been removed.
+- **Trademark notice**: added to this README and to the metadata description of every MMDB file.
+- **Validation**: the MMDB round-trip check now verifies `database_type` for every file, so a wrong type fails the build instead of being published. New regression tests, including a guard against third-party product names in file names (28 total).
 
 ### v3.5.0
 
@@ -393,6 +402,8 @@ If IPNova is useful to you, consider giving it a ⭐ on GitHub.
 **Project names** — "IPNova", "DomainNova", "ShieldNova", "OsNova", "HarryWrt", and the umbrella "Nova Toolkit" — identify projects authored and maintained by the original author. Use of these names to describe forked, repackaged, or derivative products without attribution may constitute identity confusion and is not authorized.
 
 **Provenance fingerprinting** — published artifacts contain documentation-reserved CIDR ranges (RFC 5737) embedded for forensic attribution. These ranges are harmless for downstream use (they never route on the public Internet) but make unattributed redistribution detectable. See `regions.py` and `meta.json` for the per-release fingerprint set.
+
+**Third-party trademarks** — MaxMind, GeoIP and GeoLite are trademarks of MaxMind, Inc. IPNova is an independent project, not affiliated with, sponsored or endorsed by MaxMind. The MMDB files use the open MaxMind DB file format, and the compatibility builds set the `database_type` field to `GeoIP2-Country` / `GeoLite2-Country` solely so that existing reader software can open them. IPNova contains no MaxMind data.
 
 If you build something useful on top of IPNova, attribution and a backlink to this repository are appreciated; if you intend to do so commercially, please reach out via the channels above.
 
