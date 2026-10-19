@@ -1,6 +1,6 @@
 # IPNova — ipset restore — TW (Taiwan)
-# Generated : 2026-10-12 09:11:05 UTC
-# CIDRs     : 758
+# Generated : 2026-10-19 08:00:31 UTC
+# CIDRs     : 759
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -58,6 +58,7 @@ add ipnova_TW 45.64.232.0/22
 add ipnova_TW 45.113.156.0/22
 add ipnova_TW 45.121.48.0/22
 add ipnova_TW 45.123.116.0/22
+add ipnova_TW 45.248.118.0/23
 add ipnova_TW 49.128.64.0/19
 add ipnova_TW 49.128.112.0/20
 add ipnova_TW 49.158.0.0/15

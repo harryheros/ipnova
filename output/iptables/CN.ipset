@@ -1,6 +1,6 @@
 # IPNova — ipset restore — CN (China (Mainland))
-# Generated : 2026-10-12 09:11:05 UTC
-# CIDRs     : 5502
+# Generated : 2026-10-19 08:00:31 UTC
+# CIDRs     : 5505
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -727,6 +727,7 @@ add ipnova_CN 45.251.160.0/19
 add ipnova_CN 45.251.192.0/19
 add ipnova_CN 45.251.224.0/22
 add ipnova_CN 45.251.240.0/22
+add ipnova_CN 45.251.248.0/23
 add ipnova_CN 45.252.0.0/19
 add ipnova_CN 45.252.32.0/20
 add ipnova_CN 45.252.48.0/22
@@ -776,9 +777,9 @@ add ipnova_CN 45.255.192.0/19
 add ipnova_CN 45.255.224.0/20
 add ipnova_CN 45.255.240.0/21
 add ipnova_CN 45.255.248.0/22
+add ipnova_CN 47.80.96.0/19
 add ipnova_CN 47.92.0.0/14
 add ipnova_CN 47.96.0.0/11
-add ipnova_CN 47.237.0.0/16
 add ipnova_CN 49.4.0.0/14
 add ipnova_CN 49.51.0.0/16
 add ipnova_CN 49.52.0.0/14
@@ -3728,6 +3729,7 @@ add ipnova_CN 160.202.60.0/22
 add ipnova_CN 160.202.148.0/22
 add ipnova_CN 160.202.152.0/22
 add ipnova_CN 160.202.168.0/22
+add ipnova_CN 160.202.210.0/23
 add ipnova_CN 160.202.212.0/22
 add ipnova_CN 160.202.216.0/21
 add ipnova_CN 160.202.224.0/19
@@ -3965,6 +3967,7 @@ add ipnova_CN 192.140.156.0/22
 add ipnova_CN 192.140.160.0/19
 add ipnova_CN 192.140.192.0/20
 add ipnova_CN 192.140.208.0/21
+add ipnova_CN 192.140.244.0/23
 add ipnova_CN 192.144.128.0/17
 add ipnova_CN 192.197.113.0/24
 add ipnova_CN 192.232.34.0/23

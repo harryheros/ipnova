@@ -1,6 +1,6 @@
 # IPNova — ipset restore — SG (Singapore)
-# Generated : 2026-10-12 09:11:05 UTC
-# CIDRs     : 1661
+# Generated : 2026-10-19 08:00:31 UTC
+# CIDRs     : 1663
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -153,7 +153,7 @@ add ipnova_SG 47.88.128.0/17
 add ipnova_SG 47.89.72.0/22
 add ipnova_SG 47.89.88.0/22
 add ipnova_SG 47.235.0.0/22
-add ipnova_SG 47.236.0.0/16
+add ipnova_SG 47.236.0.0/15
 add ipnova_SG 47.241.0.0/16
 add ipnova_SG 47.245.64.0/18
 add ipnova_SG 47.246.72.0/21
@@ -638,7 +638,7 @@ add ipnova_SG 103.212.168.0/24
 add ipnova_SG 103.212.170.0/23
 add ipnova_SG 103.214.108.0/22
 add ipnova_SG 103.214.252.0/22
-add ipnova_SG 103.215.228.0/22
+add ipnova_SG 103.215.230.0/23
 add ipnova_SG 103.216.84.0/23
 add ipnova_SG 103.216.162.0/23
 add ipnova_SG 103.221.240.0/22
@@ -837,6 +837,7 @@ add ipnova_SG 119.161.100.0/22
 add ipnova_SG 119.234.0.0/16
 add ipnova_SG 120.50.32.0/20
 add ipnova_SG 120.51.96.0/19
+add ipnova_SG 120.160.0.0/12
 add ipnova_SG 121.6.0.0/15
 add ipnova_SG 121.46.72.0/23
 add ipnova_SG 121.50.216.0/21
@@ -863,7 +864,8 @@ add ipnova_SG 122.252.24.0/21
 add ipnova_SG 123.49.64.0/18
 add ipnova_SG 123.100.235.0/24
 add ipnova_SG 123.100.236.0/22
-add ipnova_SG 123.100.240.0/22
+add ipnova_SG 123.100.240.0/23
+add ipnova_SG 123.100.243.0/24
 add ipnova_SG 123.100.244.0/23
 add ipnova_SG 123.100.248.0/21
 add ipnova_SG 123.108.72.0/23
