@@ -1,7 +1,7 @@
 # Project     : ipnova
 # Version     : 3.5.1
 # Region      : Japan
-# Last Updated: 2026-10-12 09:11:02 UTC
+# Last Updated: 2026-10-19 08:00:26 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
 # Total CIDRs : 3230
 # Total IPs   : 188,634,376
