@@ -1,6 +1,6 @@
 # IPNova — ipset restore — CN (China (Mainland))
-# Generated : 2026-10-19 08:00:31 UTC
-# CIDRs     : 5505
+# Generated : 2026-10-26 07:48:06 UTC
+# CIDRs     : 5506
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -595,6 +595,7 @@ add ipnova_CN 45.117.20.0/22
 add ipnova_CN 45.117.68.0/22
 add ipnova_CN 45.117.124.0/22
 add ipnova_CN 45.117.252.0/22
+add ipnova_CN 45.119.42.0/23
 add ipnova_CN 45.119.52.0/22
 add ipnova_CN 45.119.60.0/22
 add ipnova_CN 45.119.64.0/21
