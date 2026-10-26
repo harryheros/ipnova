@@ -1,6 +1,6 @@
 # IPNova — ipset restore — TW (Taiwan)
-# Generated : 2026-10-19 08:00:31 UTC
-# CIDRs     : 759
+# Generated : 2026-10-26 07:48:06 UTC
+# CIDRs     : 763
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -26,6 +26,8 @@ add ipnova_TW 27.240.0.0/13
 add ipnova_TW 36.50.228.0/23
 add ipnova_TW 36.50.248.0/23
 add ipnova_TW 36.224.0.0/12
+add ipnova_TW 36.255.244.0/24
+add ipnova_TW 36.255.246.0/24
 add ipnova_TW 39.1.0.0/16
 add ipnova_TW 39.8.0.0/13
 add ipnova_TW 42.0.64.0/18
@@ -128,6 +130,7 @@ add ipnova_TW 103.37.4.0/23
 add ipnova_TW 103.37.36.0/22
 add ipnova_TW 103.38.146.0/23
 add ipnova_TW 103.42.112.0/23
+add ipnova_TW 103.42.138.0/23
 add ipnova_TW 103.42.144.0/21
 add ipnova_TW 103.43.48.0/22
 add ipnova_TW 103.46.144.0/22
@@ -195,7 +198,6 @@ add ipnova_TW 103.124.148.0/22
 add ipnova_TW 103.124.176.0/22
 add ipnova_TW 103.124.252.0/22
 add ipnova_TW 103.125.64.0/22
-add ipnova_TW 103.125.224.0/24
 add ipnova_TW 103.125.228.0/22
 add ipnova_TW 103.126.88.0/22
 add ipnova_TW 103.126.164.0/22
@@ -320,6 +322,8 @@ add ipnova_TW 103.189.132.0/23
 add ipnova_TW 103.190.168.0/23
 add ipnova_TW 103.191.20.0/22
 add ipnova_TW 103.191.181.0/24
+add ipnova_TW 103.196.129.0/24
+add ipnova_TW 103.196.131.0/24
 add ipnova_TW 103.196.172.0/23
 add ipnova_TW 103.197.158.0/23
 add ipnova_TW 103.197.172.0/22
