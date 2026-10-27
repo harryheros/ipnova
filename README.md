@@ -6,7 +6,7 @@
 ![Status](https://img.shields.io/badge/status-active-success)
 ![Version](https://img.shields.io/badge/version-3.5.1-blue)
 
-IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, resolving coverage gaps for ARIN-registered IP blocks used by Alibaba Cloud, Tencent Cloud, and others in mainland China.
+IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, placing their overseas cloud regions — address space registered outside APNIC or under another country — in the region where they actually operate (mostly Hong Kong and Singapore, also Japan and Korea).
 
 IPNova is designed as a reusable infrastructure intelligence dataset for networking, security, compliance, and attribution workflows.
 
@@ -28,7 +28,7 @@ It is designed for routing-aware infrastructure analysis rather than end-user lo
 - Static fallback blacklist for critical anycast ranges
 - Precise CIDR subtraction — excluded prefixes are surgically removed, not bluntly dropped
 - CN / HK / TW / MO / JP / KR / SG fully separated
-- **Multi-source fusion (v3.0)**: supplements APNIC data with BGP-announced prefixes from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance), resolving ARIN-registered IP blocks invisible to APNIC-only pipelines
+- **Multi-source fusion (v3.0)**: supplements APNIC data with BGP-announced prefixes from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance). In current data almost all of their mainland address space is already in APNIC's CN delegations; the supplement mainly adds their Hong Kong, Singapore, Japan and Korea cloud regions, which APNIC-only pipelines miss or misplace
 - **Multi-level country attribution**: L0 in-memory APNIC containment (always checked first) → persistent cache of earlier L1/L2 answers → L1 RIPEstat geoloc (coverage-weighted vote) → L2 ASN holder country fallback
 - **ASN tier model**: Tier 1 (pure cloud), Tier 2 (mixed internet company), Tier 3 (operator backbone, hard-forbidden)
 - **Rule-versioned cache**: 240-hour TTL (outlives the weekly cron) with semantic rule versioning for instant invalidation on classification logic changes; 15× speedup from cold to warm runs
@@ -236,11 +236,12 @@ than overstated as `high`.
 3. Fetch announced prefixes for blacklisted ASNs (RIPE Stat, rate-limited)
 4. Merge dynamic ASN prefixes with static anycast blacklist
 5. Collapse and sort exclusion list for optimized filtering
-6. Generate accurate CIDRs via address range summarization
-7. Precisely subtract excluded prefixes (surgical removal, not blunt drop)
-8. Sanity check output against minimum thresholds
-9. Aggregate outputs into TXT and JSON formats with SHA-256 checksum
-10. Build extended formats: MMDB (+ compatibility builds), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
+6. Cloud supplement: fetch prefixes announced by Chinese cloud provider ASNs and attribute each to a region (APNIC containment → cache → RIPEstat geolocation → ASN holder country); prefixes outside the seven regions are dropped
+7. Generate accurate CIDRs via address range summarization
+8. Precisely subtract excluded prefixes (surgical removal, not blunt drop)
+9. Sanity check output against minimum thresholds
+10. Aggregate outputs into TXT and JSON formats with SHA-256 checksum
+11. Build extended formats: MMDB (+ compatibility builds), HAProxy, Caddy, Nginx, iptables, plain CIDR, Terraform
 
 ---
 
