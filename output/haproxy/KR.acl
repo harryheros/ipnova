@@ -1,6 +1,6 @@
 # IPNova — HAProxy ACL — KR (South Korea)
-# Generated : 2026-10-26 07:48:06 UTC
-# CIDRs     : 1057
+# Generated : 2026-10-27 19:59:47 UTC
+# CIDRs     : 1055
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -743,8 +743,6 @@
 157.119.32.0/21
 157.197.0.0/16
 158.44.0.0/16
-160.20.142.0/24
-160.22.155.0/24
 160.30.106.0/23
 160.30.229.0/24
 160.30.232.0/23

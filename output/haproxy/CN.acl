@@ -1,6 +1,6 @@
 # IPNova — HAProxy ACL — CN (China (Mainland))
-# Generated : 2026-10-26 07:48:06 UTC
-# CIDRs     : 5506
+# Generated : 2026-10-27 19:59:47 UTC
+# CIDRs     : 5504
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -1759,7 +1759,6 @@
 103.97.192.0/22
 103.97.228.0/23
 103.98.0.0/23
-103.98.28.0/23
 103.98.40.0/21
 103.98.48.0/22
 103.98.56.0/22
@@ -1926,7 +1925,6 @@
 103.116.138.0/23
 103.116.148.0/22
 103.116.184.0/22
-103.116.206.0/23
 103.116.220.0/22
 103.116.224.0/21
 103.117.16.0/22
