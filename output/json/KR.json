@@ -1,9 +1,9 @@
 {
   "region": "KR",
   "region_name": "South Korea",
-  "total_cidrs": 1057,
-  "total_ips": 112519752,
-  "generated_at": "2026-10-26T07:48:06.398436+00:00",
+  "total_cidrs": 1055,
+  "total_ips": 112519240,
+  "generated_at": "2026-10-27T19:59:47.686443+00:00",
   "cidrs": [
     "1.11.0.0/16",
     "1.16.0.0/14",
@@ -738,8 +738,6 @@
     "157.119.32.0/21",
     "157.197.0.0/16",
     "158.44.0.0/16",
-    "160.20.142.0/24",
-    "160.22.155.0/24",
     "160.30.106.0/23",
     "160.30.229.0/24",
     "160.30.232.0/23",
@@ -6922,22 +6920,6 @@
     },
     {
       "cidr": "158.44.0.0/16",
-      "source": "apnic",
-      "asn": null,
-      "tier": null,
-      "level": "L0",
-      "confidence": "high"
-    },
-    {
-      "cidr": "160.20.142.0/24",
-      "source": "apnic",
-      "asn": null,
-      "tier": null,
-      "level": "L0",
-      "confidence": "high"
-    },
-    {
-      "cidr": "160.22.155.0/24",
       "source": "apnic",
       "asn": null,
       "tier": null,
