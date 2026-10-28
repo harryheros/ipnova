@@ -2,16 +2,16 @@
   "schema_version": "3.4",
   "project": "ipnova",
   "version": "3.5.1",
-  "generated_at": "2026-10-27T19:59:45.190385+00:00",
+  "generated_at": "2026-10-28T17:12:11.943145+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "build": {
-    "commit_sha": "362461c91c28119d7b774e196cc7805cd18bd867",
+    "commit_sha": "fdb36e97a542ea52528b79a2dc22b25382ad9f07",
     "user_agent": "ipnova/3.5.1 (+https://github.com/harryheros/ipnova)",
     "python": "3.13.17",
     "ripe": {
       "breaker_tripped": false,
       "consecutive_failures": 0,
-      "phase_seconds": 39.3,
+      "phase_seconds": 99.3,
       "phase_budget_seconds": 900
     }
   },
@@ -38,8 +38,8 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5504,
-      "ips": 342944264
+      "cidrs": 5505,
+      "ips": 342944776
     },
     "HK": {
       "cidrs": 2568,
@@ -85,7 +85,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 36913,
+    "dynamic_prefixes": 36797,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -97,34 +97,34 @@
     ]
   },
   "parsing": {
-    "lines_processed": 21689,
-    "source_networks": 21689,
-    "cidrs_kept": 21827,
+    "lines_processed": 21690,
+    "source_networks": 21690,
+    "cidrs_kept": 21828,
     "cidrs_excluded": 169,
     "excluded_source_networks": 91,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22562,
-    "prefixes_after_collapse": 14815,
+    "prefixes_before_collapse": 22563,
+    "prefixes_after_collapse": 14816,
     "cloud_supplement": {
       "prefixes_fetched": 5994,
       "kept_per_region": {
         "CN": 3288,
         "SG": 2216,
-        "JP": 33,
         "HK": 82,
+        "JP": 33,
         "KR": 16
       },
       "dropped_other_country": 359,
       "dropped_unknown": 0,
       "l0_local_hit": 5426,
-      "cache_hit": 567,
+      "cache_hit": 568,
       "l1_success": 567,
       "l2_fallback": 1,
       "l3_fallback": 0,
       "dropped_region_conflict": 0,
       "trimmed_region_conflict": 0,
       "asns_failed": [],
-      "duration_seconds": 11.063,
+      "duration_seconds": 56.414,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -140,6 +140,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "20f56fe6cb0cc46566a2f38c474f3fa5e06dea6f1637e30494f913405f3246d3"
+    "data_json_sha256": "1748b0379b00e4380a9924a6dd7d81ff5641bd3f2d0035c81f4b196e0808f770"
   }
 }
