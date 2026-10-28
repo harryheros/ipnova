@@ -2,13 +2,13 @@
   "schema_version": "3.4",
   "project": "ipnova",
   "version": "3.5.1",
-  "generated_at": "2026-10-27T19:59:45.190385+00:00",
+  "generated_at": "2026-10-28T17:12:11.943145+00:00",
   "regions": {
     "CN": {
       "region_code": "CN",
       "region_name": "China (Mainland)",
-      "total_cidrs": 5504,
-      "total_ips": 342944264,
+      "total_cidrs": 5505,
+      "total_ips": 342944776,
       "cidrs": [
         "1.0.1.0/24",
         "1.0.2.0/23",
@@ -102,6 +102,7 @@
         "27.54.72.0/21",
         "27.54.152.0/21",
         "27.54.192.0/18",
+        "27.98.202.0/23",
         "27.98.208.0/20",
         "27.98.224.0/19",
         "27.99.128.0/17",
@@ -6246,6 +6247,14 @@
         },
         {
           "cidr": "27.54.192.0/18",
+          "source": "apnic",
+          "asn": null,
+          "tier": null,
+          "level": "L0",
+          "confidence": "high"
+        },
+        {
+          "cidr": "27.98.202.0/23",
           "source": "apnic",
           "asn": null,
           "tier": null,
