@@ -1,10 +1,10 @@
 # Project     : ipnova
 # Version     : 3.5.1
 # Region      : South Korea
-# Last Updated: 2026-10-28 17:12:11 UTC
+# Last Updated: 2026-11-02 09:43:18 UTC
 # Source      : APNIC delegated + BGP multi-source fusion
 # Total CIDRs : 1055
-# Total IPs   : 112,519,240
+# Total IPs   : 112,518,728
 # Note        : Each region is separated — this file contains South Korea only
 # Provenance  : includes a few RFC5737 documentation-reserved CIDRs as
 #               fingerprints; they never route publicly and are safe to ignore
@@ -110,7 +110,7 @@
 45.250.220.0/22
 47.80.0.0/18
 47.80.128.0/17
-47.87.224.0/22
+47.87.226.0/23
 49.1.0.0/16
 49.8.0.0/14
 49.16.0.0/12
