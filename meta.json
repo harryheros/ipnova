@@ -1,0 +1,1269 @@
+{
+  "project": "ipnova",
+  "dataset": "global",
+  "version": "4.1.0",
+  "generated_at": "2026-11-03T21:27:07+00:00",
+  "source": "RIR delegation files (APNIC, ARIN, RIPE NCC, LACNIC, AFRINIC); CN/HK/TW/MO/JP/KR/SG IPv4 from IPNova",
+  "meaning": "registration country, not geolocation",
+  "sources": {
+    "apnic": {
+      "url": "https://ftp.apnic.net/stats/apnic/delegated-apnic-extended-latest",
+      "md5": "ok",
+      "ipv4_records": 58355,
+      "ipv6_records": 17305,
+      "serial": "20261104",
+      "skipped": 1
+    },
+    "arin": {
+      "url": "https://ftp.arin.net/pub/stats/arin/delegated-arin-extended-latest",
+      "md5": "ok",
+      "ipv4_records": 77313,
+      "ipv6_records": 11586,
+      "serial": "1793714421904",
+      "skipped": 0
+    },
+    "ripencc": {
+      "url": "https://ftp.ripe.net/pub/stats/ripencc/delegated-ripencc-extended-latest",
+      "md5": "ok",
+      "ipv4_records": 100798,
+      "ipv6_records": 26880,
+      "serial": "1793660399",
+      "skipped": 0
+    },
+    "lacnic": {
+      "url": "https://ftp.lacnic.net/pub/stats/lacnic/delegated-lacnic-extended-latest",
+      "md5": "ok",
+      "ipv4_records": 20452,
+      "ipv6_records": 13602,
+      "serial": "20261102",
+      "skipped": 0
+    },
+    "afrinic": {
+      "url": "https://ftp.afrinic.net/pub/stats/afrinic/delegated-afrinic-extended-latest",
+      "md5": "ok",
+      "ipv4_records": 5549,
+      "ipv6_records": 1693,
+      "serial": "20261102",
+      "skipped": 0
+    }
+  },
+  "build": {
+    "conflicts_trimmed": {
+      "ipv4": 0,
+      "ipv6": 0
+    },
+    "apac_ipv4_from_ipnova": [
+      "CN",
+      "HK",
+      "JP",
+      "KR",
+      "MO",
+      "SG",
+      "TW"
+    ]
+  },
+  "totals": {
+    "countries": 239,
+    "ipv4_cidrs": 178848,
+    "ipv6_cidrs": 69802,
+    "ipv4_addresses": 3684698456,
+    "ipv6_prefixes_48": 32633934287
+  },
+  "countries": {
+    "AD": {
+      "ipv4_cidrs": 27,
+      "ipv4_addresses": 62720,
+      "ipv6_cidrs": 2
+    },
+    "AE": {
+      "ipv4_cidrs": 1222,
+      "ipv4_addresses": 7266048,
+      "ipv6_cidrs": 597
+    },
+    "AF": {
+      "ipv4_cidrs": 127,
+      "ipv4_addresses": 178176,
+      "ipv6_cidrs": 33
+    },
+    "AG": {
+      "ipv4_cidrs": 47,
+      "ipv4_addresses": 250368,
+      "ipv6_cidrs": 9
+    },
+    "AI": {
+      "ipv4_cidrs": 9,
+      "ipv4_addresses": 9728,
+      "ipv6_cidrs": 3
+    },
+    "AL": {
+      "ipv4_cidrs": 234,
+      "ipv4_addresses": 505920,
+      "ipv6_cidrs": 101
+    },
+    "AM": {
+      "ipv4_cidrs": 200,
+      "ipv4_addresses": 663328,
+      "ipv6_cidrs": 56
+    },
+    "AO": {
+      "ipv4_cidrs": 150,
+      "ipv4_addresses": 1294080,
+      "ipv6_cidrs": 42
+    },
+    "AQ": {
+      "ipv4_cidrs": 3,
+      "ipv4_addresses": 1024,
+      "ipv6_cidrs": 1
+    },
+    "AR": {
+      "ipv4_cidrs": 1601,
+      "ipv4_addresses": 19433728,
+      "ipv6_cidrs": 1154
+    },
+    "AS": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 5120,
+      "ipv6_cidrs": 2
+    },
+    "AT": {
+      "ipv4_cidrs": 1909,
+      "ipv4_addresses": 11181664,
+      "ipv6_cidrs": 596
+    },
+    "AU": {
+      "ipv4_cidrs": 5674,
+      "ipv4_addresses": 46088704,
+      "ipv6_cidrs": 1666
+    },
+    "AW": {
+      "ipv4_cidrs": 12,
+      "ipv4_addresses": 111872,
+      "ipv6_cidrs": 3
+    },
+    "AX": {
+      "ipv4_cidrs": 3,
+      "ipv4_addresses": 4864,
+      "ipv6_cidrs": 2
+    },
+    "AZ": {
+      "ipv4_cidrs": 187,
+      "ipv4_addresses": 773376,
+      "ipv6_cidrs": 74
+    },
+    "BA": {
+      "ipv4_cidrs": 160,
+      "ipv4_addresses": 795136,
+      "ipv6_cidrs": 39
+    },
+    "BB": {
+      "ipv4_cidrs": 30,
+      "ipv4_addresses": 168704,
+      "ipv6_cidrs": 4
+    },
+    "BD": {
+      "ipv4_cidrs": 2167,
+      "ipv4_addresses": 2091072,
+      "ipv6_cidrs": 1673
+    },
+    "BE": {
+      "ipv4_cidrs": 924,
+      "ipv4_addresses": 12302720,
+      "ipv6_cidrs": 325
+    },
+    "BF": {
+      "ipv4_cidrs": 51,
+      "ipv4_addresses": 339200,
+      "ipv6_cidrs": 28
+    },
+    "BG": {
+      "ipv4_cidrs": 1350,
+      "ipv4_addresses": 4341824,
+      "ipv6_cidrs": 266
+    },
+    "BH": {
+      "ipv4_cidrs": 56,
+      "ipv4_addresses": 414976,
+      "ipv6_cidrs": 15
+    },
+    "BI": {
+      "ipv4_cidrs": 13,
+      "ipv4_addresses": 36864,
+      "ipv6_cidrs": 6
+    },
+    "BJ": {
+      "ipv4_cidrs": 39,
+      "ipv4_addresses": 151296,
+      "ipv6_cidrs": 15
+    },
+    "BL": {
+      "ipv4_cidrs": 3,
+      "ipv4_addresses": 768,
+      "ipv6_cidrs": 3
+    },
+    "BM": {
+      "ipv4_cidrs": 47,
+      "ipv4_addresses": 108800,
+      "ipv6_cidrs": 11
+    },
+    "BN": {
+      "ipv4_cidrs": 36,
+      "ipv4_addresses": 216576,
+      "ipv6_cidrs": 10
+    },
+    "BO": {
+      "ipv4_cidrs": 102,
+      "ipv4_addresses": 1170176,
+      "ipv6_cidrs": 59
+    },
+    "BQ": {
+      "ipv4_cidrs": 13,
+      "ipv4_addresses": 25856,
+      "ipv6_cidrs": 6
+    },
+    "BR": {
+      "ipv4_cidrs": 4931,
+      "ipv4_addresses": 79322368,
+      "ipv6_cidrs": 8959
+    },
+    "BS": {
+      "ipv4_cidrs": 26,
+      "ipv4_addresses": 138240,
+      "ipv6_cidrs": 6
+    },
+    "BT": {
+      "ipv4_cidrs": 49,
+      "ipv4_addresses": 51456,
+      "ipv6_cidrs": 27
+    },
+    "BW": {
+      "ipv4_cidrs": 56,
+      "ipv4_addresses": 166144,
+      "ipv6_cidrs": 22
+    },
+    "BY": {
+      "ipv4_cidrs": 105,
+      "ipv4_addresses": 1793536,
+      "ipv6_cidrs": 32
+    },
+    "BZ": {
+      "ipv4_cidrs": 61,
+      "ipv4_addresses": 134656,
+      "ipv6_cidrs": 27
+    },
+    "CA": {
+      "ipv4_cidrs": 6470,
+      "ipv4_addresses": 67825664,
+      "ipv6_cidrs": 1147
+    },
+    "CD": {
+      "ipv4_cidrs": 83,
+      "ipv4_addresses": 177920,
+      "ipv6_cidrs": 23
+    },
+    "CF": {
+      "ipv4_cidrs": 6,
+      "ipv4_addresses": 6656,
+      "ipv6_cidrs": 0
+    },
+    "CG": {
+      "ipv4_cidrs": 21,
+      "ipv4_addresses": 141824,
+      "ipv6_cidrs": 10
+    },
+    "CH": {
+      "ipv4_cidrs": 2688,
+      "ipv4_addresses": 23286384,
+      "ipv6_cidrs": 874
+    },
+    "CI": {
+      "ipv4_cidrs": 236,
+      "ipv4_addresses": 1720576,
+      "ipv6_cidrs": 19
+    },
+    "CK": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 8704,
+      "ipv6_cidrs": 2
+    },
+    "CL": {
+      "ipv4_cidrs": 639,
+      "ipv4_addresses": 9646848,
+      "ipv6_cidrs": 336
+    },
+    "CM": {
+      "ipv4_cidrs": 60,
+      "ipv4_addresses": 602112,
+      "ipv6_cidrs": 24
+    },
+    "CN": {
+      "ipv4_cidrs": 5550,
+      "ipv4_addresses": 343383304,
+      "ipv6_cidrs": 2036
+    },
+    "CO": {
+      "ipv4_cidrs": 520,
+      "ipv4_addresses": 17518080,
+      "ipv6_cidrs": 753
+    },
+    "CR": {
+      "ipv4_cidrs": 172,
+      "ipv4_addresses": 2334976,
+      "ipv6_cidrs": 106
+    },
+    "CU": {
+      "ipv4_cidrs": 17,
+      "ipv4_addresses": 257024,
+      "ipv6_cidrs": 6
+    },
+    "CV": {
+      "ipv4_cidrs": 23,
+      "ipv4_addresses": 38144,
+      "ipv6_cidrs": 6
+    },
+    "CW": {
+      "ipv4_cidrs": 45,
+      "ipv4_addresses": 197632,
+      "ipv6_cidrs": 21
+    },
+    "CY": {
+      "ipv4_cidrs": 537,
+      "ipv4_addresses": 1363776,
+      "ipv6_cidrs": 386
+    },
+    "CZ": {
+      "ipv4_cidrs": 1577,
+      "ipv4_addresses": 9555648,
+      "ipv6_cidrs": 676
+    },
+    "DE": {
+      "ipv4_cidrs": 8740,
+      "ipv4_addresses": 126368640,
+      "ipv6_cidrs": 3095
+    },
+    "DJ": {
+      "ipv4_cidrs": 8,
+      "ipv4_addresses": 47360,
+      "ipv6_cidrs": 3
+    },
+    "DK": {
+      "ipv4_cidrs": 1294,
+      "ipv4_addresses": 12008480,
+      "ipv6_cidrs": 411
+    },
+    "DM": {
+      "ipv4_cidrs": 13,
+      "ipv4_addresses": 10496,
+      "ipv6_cidrs": 6
+    },
+    "DO": {
+      "ipv4_cidrs": 148,
+      "ipv4_addresses": 1623296,
+      "ipv6_cidrs": 217
+    },
+    "DZ": {
+      "ipv4_cidrs": 37,
+      "ipv4_addresses": 4768256,
+      "ipv6_cidrs": 9
+    },
+    "EC": {
+      "ipv4_cidrs": 317,
+      "ipv4_addresses": 2728448,
+      "ipv6_cidrs": 282
+    },
+    "EE": {
+      "ipv4_cidrs": 462,
+      "ipv4_addresses": 1345832,
+      "ipv6_cidrs": 165
+    },
+    "EG": {
+      "ipv4_cidrs": 179,
+      "ipv4_addresses": 24151808,
+      "ipv6_cidrs": 20
+    },
+    "ER": {
+      "ipv4_cidrs": 1,
+      "ipv4_addresses": 4096,
+      "ipv6_cidrs": 0
+    },
+    "ES": {
+      "ipv4_cidrs": 3444,
+      "ipv4_addresses": 31947136,
+      "ipv6_cidrs": 889
+    },
+    "ET": {
+      "ipv4_cidrs": 17,
+      "ipv4_addresses": 370176,
+      "ipv6_cidrs": 6
+    },
+    "EU": {
+      "ipv4_cidrs": 9,
+      "ipv4_addresses": 267520,
+      "ipv6_cidrs": 0
+    },
+    "FI": {
+      "ipv4_cidrs": 987,
+      "ipv4_addresses": 13925184,
+      "ipv6_cidrs": 312
+    },
+    "FJ": {
+      "ipv4_cidrs": 39,
+      "ipv4_addresses": 144640,
+      "ipv6_cidrs": 18
+    },
+    "FK": {
+      "ipv4_cidrs": 7,
+      "ipv4_addresses": 7168,
+      "ipv6_cidrs": 0
+    },
+    "FM": {
+      "ipv4_cidrs": 5,
+      "ipv4_addresses": 8704,
+      "ipv6_cidrs": 2
+    },
+    "FO": {
+      "ipv4_cidrs": 14,
+      "ipv4_addresses": 45056,
+      "ipv6_cidrs": 4
+    },
+    "FR": {
+      "ipv4_cidrs": 4175,
+      "ipv4_addresses": 81586768,
+      "ipv6_cidrs": 1398
+    },
+    "GA": {
+      "ipv4_cidrs": 25,
+      "ipv4_addresses": 393728,
+      "ipv6_cidrs": 8
+    },
+    "GB": {
+      "ipv4_cidrs": 8231,
+      "ipv4_addresses": 138753344,
+      "ipv6_cidrs": 2033
+    },
+    "GD": {
+      "ipv4_cidrs": 15,
+      "ipv4_addresses": 11264,
+      "ipv6_cidrs": 10
+    },
+    "GE": {
+      "ipv4_cidrs": 314,
+      "ipv4_addresses": 1306688,
+      "ipv6_cidrs": 82
+    },
+    "GF": {
+      "ipv4_cidrs": 6,
+      "ipv4_addresses": 22528,
+      "ipv6_cidrs": 6
+    },
+    "GG": {
+      "ipv4_cidrs": 60,
+      "ipv4_addresses": 83968,
+      "ipv6_cidrs": 9
+    },
+    "GH": {
+      "ipv4_cidrs": 154,
+      "ipv4_addresses": 2204160,
+      "ipv6_cidrs": 57
+    },
+    "GI": {
+      "ipv4_cidrs": 75,
+      "ipv4_addresses": 131584,
+      "ipv6_cidrs": 13
+    },
+    "GL": {
+      "ipv4_cidrs": 25,
+      "ipv4_addresses": 34304,
+      "ipv6_cidrs": 3
+    },
+    "GM": {
+      "ipv4_cidrs": 25,
+      "ipv4_addresses": 275968,
+      "ipv6_cidrs": 10
+    },
+    "GN": {
+      "ipv4_cidrs": 25,
+      "ipv4_addresses": 39168,
+      "ipv6_cidrs": 12
+    },
+    "GP": {
+      "ipv4_cidrs": 16,
+      "ipv4_addresses": 124928,
+      "ipv6_cidrs": 5
+    },
+    "GQ": {
+      "ipv4_cidrs": 10,
+      "ipv4_addresses": 17920,
+      "ipv6_cidrs": 2
+    },
+    "GR": {
+      "ipv4_cidrs": 444,
+      "ipv4_addresses": 5722240,
+      "ipv6_cidrs": 107
+    },
+    "GT": {
+      "ipv4_cidrs": 139,
+      "ipv4_addresses": 654848,
+      "ipv6_cidrs": 83
+    },
+    "GU": {
+      "ipv4_cidrs": 27,
+      "ipv4_addresses": 218624,
+      "ipv6_cidrs": 11
+    },
+    "GW": {
+      "ipv4_cidrs": 4,
+      "ipv4_addresses": 6656,
+      "ipv6_cidrs": 2
+    },
+    "GY": {
+      "ipv4_cidrs": 13,
+      "ipv4_addresses": 68864,
+      "ipv6_cidrs": 8
+    },
+    "HK": {
+      "ipv4_cidrs": 2564,
+      "ipv4_addresses": 15425096,
+      "ipv6_cidrs": 921
+    },
+    "HN": {
+      "ipv4_cidrs": 188,
+      "ipv4_addresses": 537088,
+      "ipv6_cidrs": 115
+    },
+    "HR": {
+      "ipv4_cidrs": 271,
+      "ipv4_addresses": 2356224,
+      "ipv6_cidrs": 76
+    },
+    "HT": {
+      "ipv4_cidrs": 21,
+      "ipv4_addresses": 154880,
+      "ipv6_cidrs": 10
+    },
+    "HU": {
+      "ipv4_cidrs": 656,
+      "ipv4_addresses": 5922048,
+      "ipv6_cidrs": 172
+    },
+    "ID": {
+      "ipv4_cidrs": 4816,
+      "ipv4_addresses": 18343424,
+      "ipv6_cidrs": 2817
+    },
+    "IE": {
+      "ipv4_cidrs": 714,
+      "ipv4_addresses": 10011968,
+      "ipv6_cidrs": 212
+    },
+    "IL": {
+      "ipv4_cidrs": 781,
+      "ipv4_addresses": 8051840,
+      "ipv6_cidrs": 162
+    },
+    "IM": {
+      "ipv4_cidrs": 75,
+      "ipv4_addresses": 135680,
+      "ipv6_cidrs": 17
+    },
+    "IN": {
+      "ipv4_cidrs": 7233,
+      "ipv4_addresses": 42039808,
+      "ipv6_cidrs": 2890
+    },
+    "IO": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 3072,
+      "ipv6_cidrs": 1
+    },
+    "IQ": {
+      "ipv4_cidrs": 287,
+      "ipv4_addresses": 452928,
+      "ipv6_cidrs": 118
+    },
+    "IR": {
+      "ipv4_cidrs": 1747,
+      "ipv4_addresses": 10840064,
+      "ipv6_cidrs": 577
+    },
+    "IS": {
+      "ipv4_cidrs": 162,
+      "ipv4_addresses": 920576,
+      "ipv6_cidrs": 72
+    },
+    "IT": {
+      "ipv4_cidrs": 3376,
+      "ipv4_addresses": 54086272,
+      "ipv6_cidrs": 1071
+    },
+    "JE": {
+      "ipv4_cidrs": 47,
+      "ipv4_addresses": 156416,
+      "ipv6_cidrs": 11
+    },
+    "JM": {
+      "ipv4_cidrs": 53,
+      "ipv4_addresses": 225280,
+      "ipv6_cidrs": 10
+    },
+    "JO": {
+      "ipv4_cidrs": 128,
+      "ipv4_addresses": 648192,
+      "ipv6_cidrs": 40
+    },
+    "JP": {
+      "ipv4_cidrs": 3242,
+      "ipv4_addresses": 188631048,
+      "ipv6_cidrs": 669
+    },
+    "KE": {
+      "ipv4_cidrs": 382,
+      "ipv4_addresses": 6264064,
+      "ipv6_cidrs": 177
+    },
+    "KG": {
+      "ipv4_cidrs": 118,
+      "ipv4_addresses": 294400,
+      "ipv6_cidrs": 31
+    },
+    "KH": {
+      "ipv4_cidrs": 272,
+      "ipv4_addresses": 440832,
+      "ipv6_cidrs": 92
+    },
+    "KI": {
+      "ipv4_cidrs": 6,
+      "ipv4_addresses": 4352,
+      "ipv6_cidrs": 4
+    },
+    "KM": {
+      "ipv4_cidrs": 6,
+      "ipv4_addresses": 8448,
+      "ipv6_cidrs": 2
+    },
+    "KN": {
+      "ipv4_cidrs": 23,
+      "ipv4_addresses": 24064,
+      "ipv6_cidrs": 5
+    },
+    "KP": {
+      "ipv4_cidrs": 1,
+      "ipv4_addresses": 1024,
+      "ipv6_cidrs": 0
+    },
+    "KR": {
+      "ipv4_cidrs": 1055,
+      "ipv4_addresses": 112518728,
+      "ipv6_cidrs": 142
+    },
+    "KW": {
+      "ipv4_cidrs": 134,
+      "ipv4_addresses": 1904384,
+      "ipv6_cidrs": 35
+    },
+    "KY": {
+      "ipv4_cidrs": 37,
+      "ipv4_addresses": 91136,
+      "ipv6_cidrs": 5
+    },
+    "KZ": {
+      "ipv4_cidrs": 615,
+      "ipv4_addresses": 3382016,
+      "ipv6_cidrs": 98
+    },
+    "LA": {
+      "ipv4_cidrs": 62,
+      "ipv4_addresses": 98880,
+      "ipv6_cidrs": 28
+    },
+    "LB": {
+      "ipv4_cidrs": 230,
+      "ipv4_addresses": 569216,
+      "ipv6_cidrs": 111
+    },
+    "LC": {
+      "ipv4_cidrs": 21,
+      "ipv4_addresses": 22016,
+      "ipv6_cidrs": 4
+    },
+    "LI": {
+      "ipv4_cidrs": 62,
+      "ipv4_addresses": 104704,
+      "ipv6_cidrs": 29
+    },
+    "LK": {
+      "ipv4_cidrs": 69,
+      "ipv4_addresses": 563968,
+      "ipv6_cidrs": 25
+    },
+    "LR": {
+      "ipv4_cidrs": 20,
+      "ipv4_addresses": 40192,
+      "ipv6_cidrs": 7
+    },
+    "LS": {
+      "ipv4_cidrs": 20,
+      "ipv4_addresses": 121344,
+      "ipv6_cidrs": 8
+    },
+    "LT": {
+      "ipv4_cidrs": 950,
+      "ipv4_addresses": 4117504,
+      "ipv6_cidrs": 375
+    },
+    "LU": {
+      "ipv4_cidrs": 540,
+      "ipv4_addresses": 1848320,
+      "ipv6_cidrs": 108
+    },
+    "LV": {
+      "ipv4_cidrs": 434,
+      "ipv4_addresses": 1851136,
+      "ipv6_cidrs": 92
+    },
+    "LY": {
+      "ipv4_cidrs": 74,
+      "ipv4_addresses": 463104,
+      "ipv6_cidrs": 18
+    },
+    "MA": {
+      "ipv4_cidrs": 78,
+      "ipv4_addresses": 12274176,
+      "ipv6_cidrs": 28
+    },
+    "MC": {
+      "ipv4_cidrs": 28,
+      "ipv4_addresses": 65792,
+      "ipv6_cidrs": 6
+    },
+    "MD": {
+      "ipv4_cidrs": 413,
+      "ipv4_addresses": 1258496,
+      "ipv6_cidrs": 216
+    },
+    "ME": {
+      "ipv4_cidrs": 41,
+      "ipv4_addresses": 192000,
+      "ipv6_cidrs": 20
+    },
+    "MF": {
+      "ipv4_cidrs": 7,
+      "ipv4_addresses": 3584,
+      "ipv6_cidrs": 4
+    },
+    "MG": {
+      "ipv4_cidrs": 27,
+      "ipv4_addresses": 579840,
+      "ipv6_cidrs": 8
+    },
+    "MH": {
+      "ipv4_cidrs": 9,
+      "ipv4_addresses": 31232,
+      "ipv6_cidrs": 5
+    },
+    "MK": {
+      "ipv4_cidrs": 109,
+      "ipv4_addresses": 685568,
+      "ipv6_cidrs": 42
+    },
+    "ML": {
+      "ipv4_cidrs": 28,
+      "ipv4_addresses": 92928,
+      "ipv6_cidrs": 9
+    },
+    "MM": {
+      "ipv4_cidrs": 235,
+      "ipv4_addresses": 247296,
+      "ipv6_cidrs": 132
+    },
+    "MN": {
+      "ipv4_cidrs": 136,
+      "ipv4_addresses": 181248,
+      "ipv6_cidrs": 55
+    },
+    "MO": {
+      "ipv4_cidrs": 31,
+      "ipv4_addresses": 339464,
+      "ipv6_cidrs": 11
+    },
+    "MP": {
+      "ipv4_cidrs": 7,
+      "ipv4_addresses": 16128,
+      "ipv6_cidrs": 1
+    },
+    "MQ": {
+      "ipv4_cidrs": 21,
+      "ipv4_addresses": 134656,
+      "ipv6_cidrs": 6
+    },
+    "MR": {
+      "ipv4_cidrs": 19,
+      "ipv4_addresses": 51712,
+      "ipv6_cidrs": 6
+    },
+    "MS": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 1280,
+      "ipv6_cidrs": 0
+    },
+    "MT": {
+      "ipv4_cidrs": 121,
+      "ipv4_addresses": 675200,
+      "ipv6_cidrs": 26
+    },
+    "MU": {
+      "ipv4_cidrs": 105,
+      "ipv4_addresses": 3698944,
+      "ipv6_cidrs": 30
+    },
+    "MV": {
+      "ipv4_cidrs": 44,
+      "ipv4_addresses": 93952,
+      "ipv6_cidrs": 14
+    },
+    "MW": {
+      "ipv4_cidrs": 51,
+      "ipv4_addresses": 556544,
+      "ipv6_cidrs": 32
+    },
+    "MX": {
+      "ipv4_cidrs": 809,
+      "ipv4_addresses": 28968704,
+      "ipv6_cidrs": 214
+    },
+    "MY": {
+      "ipv4_cidrs": 792,
+      "ipv4_addresses": 6701824,
+      "ipv6_cidrs": 339
+    },
+    "MZ": {
+      "ipv4_cidrs": 60,
+      "ipv4_addresses": 450560,
+      "ipv6_cidrs": 18
+    },
+    "NA": {
+      "ipv4_cidrs": 44,
+      "ipv4_addresses": 485120,
+      "ipv6_cidrs": 10
+    },
+    "NC": {
+      "ipv4_cidrs": 42,
+      "ipv4_addresses": 161536,
+      "ipv6_cidrs": 13
+    },
+    "NE": {
+      "ipv4_cidrs": 15,
+      "ipv4_addresses": 48128,
+      "ipv6_cidrs": 8
+    },
+    "NF": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 768,
+      "ipv6_cidrs": 1
+    },
+    "NG": {
+      "ipv4_cidrs": 406,
+      "ipv4_addresses": 3218944,
+      "ipv6_cidrs": 135
+    },
+    "NI": {
+      "ipv4_cidrs": 49,
+      "ipv4_addresses": 411136,
+      "ipv6_cidrs": 24
+    },
+    "NL": {
+      "ipv4_cidrs": 5725,
+      "ipv4_addresses": 47938848,
+      "ipv6_cidrs": 1940
+    },
+    "NO": {
+      "ipv4_cidrs": 1262,
+      "ipv4_addresses": 15600912,
+      "ipv6_cidrs": 463
+    },
+    "NP": {
+      "ipv4_cidrs": 270,
+      "ipv4_addresses": 584192,
+      "ipv6_cidrs": 166
+    },
+    "NR": {
+      "ipv4_cidrs": 7,
+      "ipv4_addresses": 10240,
+      "ipv6_cidrs": 2
+    },
+    "NU": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 2048,
+      "ipv6_cidrs": 2
+    },
+    "NZ": {
+      "ipv4_cidrs": 1272,
+      "ipv4_addresses": 6530560,
+      "ipv6_cidrs": 422
+    },
+    "OM": {
+      "ipv4_cidrs": 78,
+      "ipv4_addresses": 951872,
+      "ipv6_cidrs": 25
+    },
+    "PA": {
+      "ipv4_cidrs": 159,
+      "ipv4_addresses": 2188800,
+      "ipv6_cidrs": 83
+    },
+    "PE": {
+      "ipv4_cidrs": 235,
+      "ipv4_addresses": 3250688,
+      "ipv6_cidrs": 229
+    },
+    "PF": {
+      "ipv4_cidrs": 19,
+      "ipv4_addresses": 75520,
+      "ipv6_cidrs": 7
+    },
+    "PG": {
+      "ipv4_cidrs": 65,
+      "ipv4_addresses": 67840,
+      "ipv6_cidrs": 26
+    },
+    "PH": {
+      "ipv4_cidrs": 836,
+      "ipv4_addresses": 6266432,
+      "ipv6_cidrs": 376
+    },
+    "PK": {
+      "ipv4_cidrs": 766,
+      "ipv4_addresses": 5622016,
+      "ipv6_cidrs": 353
+    },
+    "PL": {
+      "ipv4_cidrs": 3957,
+      "ipv4_addresses": 20043208,
+      "ipv6_cidrs": 984
+    },
+    "PM": {
+      "ipv4_cidrs": 2,
+      "ipv4_addresses": 4608,
+      "ipv6_cidrs": 1
+    },
+    "PR": {
+      "ipv4_cidrs": 287,
+      "ipv4_addresses": 875264,
+      "ipv6_cidrs": 73
+    },
+    "PS": {
+      "ipv4_cidrs": 244,
+      "ipv4_addresses": 873728,
+      "ipv6_cidrs": 46
+    },
+    "PT": {
+      "ipv4_cidrs": 405,
+      "ipv4_addresses": 6692896,
+      "ipv6_cidrs": 121
+    },
+    "PW": {
+      "ipv4_cidrs": 4,
+      "ipv4_addresses": 6144,
+      "ipv6_cidrs": 3
+    },
+    "PY": {
+      "ipv4_cidrs": 142,
+      "ipv4_addresses": 1153536,
+      "ipv6_cidrs": 109
+    },
+    "QA": {
+      "ipv4_cidrs": 49,
+      "ipv4_addresses": 856192,
+      "ipv6_cidrs": 21
+    },
+    "RE": {
+      "ipv4_cidrs": 24,
+      "ipv4_addresses": 409856,
+      "ipv6_cidrs": 6
+    },
+    "RO": {
+      "ipv4_cidrs": 2458,
+      "ipv4_addresses": 7866496,
+      "ipv6_cidrs": 270
+    },
+    "RS": {
+      "ipv4_cidrs": 388,
+      "ipv4_addresses": 2315776,
+      "ipv6_cidrs": 89
+    },
+    "RU": {
+      "ipv4_cidrs": 8671,
+      "ipv4_addresses": 45250624,
+      "ipv6_cidrs": 2166
+    },
+    "RW": {
+      "ipv4_cidrs": 33,
+      "ipv4_addresses": 283392,
+      "ipv6_cidrs": 21
+    },
+    "SA": {
+      "ipv4_cidrs": 592,
+      "ipv4_addresses": 11237696,
+      "ipv6_cidrs": 126
+    },
+    "SB": {
+      "ipv4_cidrs": 12,
+      "ipv4_addresses": 14336,
+      "ipv6_cidrs": 8
+    },
+    "SC": {
+      "ipv4_cidrs": 861,
+      "ipv4_addresses": 8922880,
+      "ipv6_cidrs": 727
+    },
+    "SD": {
+      "ipv4_cidrs": 34,
+      "ipv4_addresses": 1891072,
+      "ipv6_cidrs": 10
+    },
+    "SE": {
+      "ipv4_cidrs": 2057,
+      "ipv4_addresses": 31432480,
+      "ipv6_cidrs": 858
+    },
+    "SG": {
+      "ipv4_cidrs": 1661,
+      "ipv4_addresses": 28088136,
+      "ipv6_cidrs": 481
+    },
+    "SI": {
+      "ipv4_cidrs": 537,
+      "ipv4_addresses": 2685440,
+      "ipv6_cidrs": 149
+    },
+    "SK": {
+      "ipv4_cidrs": 414,
+      "ipv4_addresses": 2684928,
+      "ipv6_cidrs": 149
+    },
+    "SL": {
+      "ipv4_cidrs": 30,
+      "ipv4_addresses": 85760,
+      "ipv6_cidrs": 9
+    },
+    "SM": {
+      "ipv4_cidrs": 25,
+      "ipv4_addresses": 40960,
+      "ipv6_cidrs": 14
+    },
+    "SN": {
+      "ipv4_cidrs": 35,
+      "ipv4_addresses": 407296,
+      "ipv6_cidrs": 12
+    },
+    "SO": {
+      "ipv4_cidrs": 30,
+      "ipv4_addresses": 51968,
+      "ipv6_cidrs": 14
+    },
+    "SR": {
+      "ipv4_cidrs": 12,
+      "ipv4_addresses": 82688,
+      "ipv6_cidrs": 5
+    },
+    "SS": {
+      "ipv4_cidrs": 31,
+      "ipv4_addresses": 26880,
+      "ipv6_cidrs": 10
+    },
+    "ST": {
+      "ipv4_cidrs": 5,
+      "ipv4_addresses": 12288,
+      "ipv6_cidrs": 1
+    },
+    "SV": {
+      "ipv4_cidrs": 75,
+      "ipv4_addresses": 663808,
+      "ipv6_cidrs": 46
+    },
+    "SX": {
+      "ipv4_cidrs": 10,
+      "ipv4_addresses": 34304,
+      "ipv6_cidrs": 7
+    },
+    "SY": {
+      "ipv4_cidrs": 191,
+      "ipv4_addresses": 1278720,
+      "ipv6_cidrs": 35
+    },
+    "SZ": {
+      "ipv4_cidrs": 26,
+      "ipv4_addresses": 55040,
+      "ipv6_cidrs": 8
+    },
+    "TC": {
+      "ipv4_cidrs": 7,
+      "ipv4_addresses": 10496,
+      "ipv6_cidrs": 1
+    },
+    "TD": {
+      "ipv4_cidrs": 20,
+      "ipv4_addresses": 25856,
+      "ipv6_cidrs": 5
+    },
+    "TG": {
+      "ipv4_cidrs": 17,
+      "ipv4_addresses": 354816,
+      "ipv6_cidrs": 8
+    },
+    "TH": {
+      "ipv4_cidrs": 670,
+      "ipv4_addresses": 8931328,
+      "ipv6_cidrs": 225
+    },
+    "TJ": {
+      "ipv4_cidrs": 60,
+      "ipv4_addresses": 85824,
+      "ipv6_cidrs": 25
+    },
+    "TK": {
+      "ipv4_cidrs": 3,
+      "ipv4_addresses": 3072,
+      "ipv6_cidrs": 5
+    },
+    "TL": {
+      "ipv4_cidrs": 38,
+      "ipv4_addresses": 28416,
+      "ipv6_cidrs": 15
+    },
+    "TM": {
+      "ipv4_cidrs": 11,
+      "ipv4_addresses": 22336,
+      "ipv6_cidrs": 3
+    },
+    "TN": {
+      "ipv4_cidrs": 44,
+      "ipv4_addresses": 7877632,
+      "ipv6_cidrs": 12
+    },
+    "TO": {
+      "ipv4_cidrs": 11,
+      "ipv4_addresses": 11520,
+      "ipv6_cidrs": 5
+    },
+    "TR": {
+      "ipv4_cidrs": 1628,
+      "ipv4_addresses": 16826560,
+      "ipv6_cidrs": 672
+    },
+    "TT": {
+      "ipv4_cidrs": 53,
+      "ipv4_addresses": 543744,
+      "ipv6_cidrs": 16
+    },
+    "TV": {
+      "ipv4_cidrs": 1,
+      "ipv4_addresses": 8192,
+      "ipv6_cidrs": 2
+    },
+    "TW": {
+      "ipv4_cidrs": 765,
+      "ipv4_addresses": 35726088,
+      "ipv6_cidrs": 319
+    },
+    "TZ": {
+      "ipv4_cidrs": 197,
+      "ipv4_addresses": 1090816,
+      "ipv6_cidrs": 80
+    },
+    "UA": {
+      "ipv4_cidrs": 2671,
+      "ipv4_addresses": 9094208,
+      "ipv6_cidrs": 625
+    },
+    "UG": {
+      "ipv4_cidrs": 109,
+      "ipv4_addresses": 1426176,
+      "ipv6_cidrs": 38
+    },
+    "US": {
+      "ipv4_cidrs": 29815,
+      "ipv4_addresses": 1604472480,
+      "ipv6_cidrs": 10744
+    },
+    "UY": {
+      "ipv4_cidrs": 58,
+      "ipv4_addresses": 2516736,
+      "ipv6_cidrs": 41
+    },
+    "UZ": {
+      "ipv4_cidrs": 180,
+      "ipv4_addresses": 336128,
+      "ipv6_cidrs": 49
+    },
+    "VA": {
+      "ipv4_cidrs": 4,
+      "ipv4_addresses": 10752,
+      "ipv6_cidrs": 3
+    },
+    "VC": {
+      "ipv4_cidrs": 12,
+      "ipv4_addresses": 10496,
+      "ipv6_cidrs": 3
+    },
+    "VE": {
+      "ipv4_cidrs": 221,
+      "ipv4_addresses": 6700544,
+      "ipv6_cidrs": 244
+    },
+    "VG": {
+      "ipv4_cidrs": 200,
+      "ipv4_addresses": 910848,
+      "ipv6_cidrs": 48
+    },
+    "VI": {
+      "ipv4_cidrs": 24,
+      "ipv4_addresses": 130304,
+      "ipv6_cidrs": 6
+    },
+    "VN": {
+      "ipv4_cidrs": 1270,
+      "ipv4_addresses": 16502784,
+      "ipv6_cidrs": 957
+    },
+    "VU": {
+      "ipv4_cidrs": 22,
+      "ipv4_addresses": 16960,
+      "ipv6_cidrs": 12
+    },
+    "WF": {
+      "ipv4_cidrs": 3,
+      "ipv4_addresses": 3584,
+      "ipv6_cidrs": 1
+    },
+    "WS": {
+      "ipv4_cidrs": 16,
+      "ipv4_addresses": 19968,
+      "ipv6_cidrs": 8
+    },
+    "YE": {
+      "ipv4_cidrs": 29,
+      "ipv4_addresses": 233472,
+      "ipv6_cidrs": 6
+    },
+    "YT": {
+      "ipv4_cidrs": 1,
+      "ipv4_addresses": 1024,
+      "ipv6_cidrs": 0
+    },
+    "ZA": {
+      "ipv4_cidrs": 1602,
+      "ipv4_addresses": 27189504,
+      "ipv6_cidrs": 549
+    },
+    "ZM": {
+      "ipv4_cidrs": 43,
+      "ipv4_addresses": 1652992,
+      "ipv6_cidrs": 14
+    },
+    "ZW": {
+      "ipv4_cidrs": 44,
+      "ipv4_addresses": 105728,
+      "ipv6_cidrs": 21
+    }
+  }
+}
