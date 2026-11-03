@@ -1,8 +1,8 @@
 {
   "schema_version": "3.4",
   "project": "ipnova",
-  "version": "4.0.0",
-  "generated_at": "2026-11-03T12:11:07.993666+00:00",
+  "version": "4.1.0",
+  "generated_at": "2026-11-03T17:42:33.406168+00:00",
   "regions": {
     "CN": {
       "region_code": "CN",
@@ -49967,8 +49967,8 @@
     "HK": {
       "region_code": "HK",
       "region_name": "Hong Kong",
-      "total_cidrs": 2563,
-      "total_ips": 15424584,
+      "total_cidrs": 2564,
+      "total_ips": 15425096,
       "cidrs": [
         "1.36.0.0/16",
         "1.64.0.0/15",
@@ -51976,6 +51976,7 @@
         "202.47.204.0/22",
         "202.47.208.0/20",
         "202.49.248.0/24",
+        "202.50.60.0/23",
         "202.51.128.0/19",
         "202.52.35.0/24",
         "202.52.42.0/24",
@@ -68577,6 +68578,14 @@
         },
         {
           "cidr": "202.49.248.0/24",
+          "source": "apnic",
+          "asn": null,
+          "tier": null,
+          "level": "L0",
+          "confidence": "high"
+        },
+        {
+          "cidr": "202.50.60.0/23",
           "source": "apnic",
           "asn": null,
           "tier": null,
