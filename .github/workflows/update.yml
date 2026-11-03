@@ -190,6 +190,56 @@ jobs:
           echo "::error::failed to push after 3 attempts"
           exit 1
 
+      # Global dataset (all RIRs, IPv4 + IPv6) -> `data` branch. The branch
+      # is force-pushed with a single commit every run, so its size never
+      # grows with history (a weekly binary commit on main would add
+      # ~1 GB/year). Runs after the regional data is committed: the seven
+      # regions' IPv4 comes from the output/ files just built.
+      - name: Build global dataset
+        shell: bash
+        run: |
+          set -euo pipefail
+          args=(--output dist-global)
+          if git fetch --quiet --depth=1 origin data 2>/dev/null \
+             && git show FETCH_HEAD:meta.json > /tmp/ipnova/prev_global_meta.json 2>/dev/null; then
+            args+=(--previous /tmp/ipnova/prev_global_meta.json)
+          else
+            echo "No previous data branch — first global build, shrink guard skipped."
+          fi
+          python3 scripts/build_global.py "${args[@]}"
+
+      - name: Publish data branch
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          cd dist-global
+          git init -q -b data
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "data: global dataset $(date -u '+%Y-%m-%d')"
+          git push --force --quiet \
+            "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git" data:data
+          echo "Published data branch: $(git rev-parse --short HEAD)"
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          t = json.load(open("meta.json"))["totals"]
+          print("### Global dataset\n")
+          print(f"{t['countries']} countries, {t['ipv4_cidrs']} IPv4 + {t['ipv6_cidrs']} IPv6 CIDRs")
+          try:
+              m = json.load(open("../output/meta.json"))
+              ripe = m.get("build", {}).get("ripe") or {}
+              cs = m.get("parsing", {}).get("cloud_supplement") or {}
+          except (OSError, ValueError):
+              ripe, cs = {}, {}
+          if ripe.get("breaker_tripped") or cs.get("asns_failed"):
+              print("\n> [!WARNING]\n> **Degraded build** — RIPE Stat budget ran out "
+                    f"(breaker: {ripe.get('breaker_tripped')}, failed ASNs: {cs.get('asns_failed') or 'none'}). "
+                    "CN comes from APNIC and is unaffected; cloud additions for HK/SG/JP/KR may be incomplete this week.")
+          PY
+
   notify-failure:
     runs-on: ubuntu-latest
     needs: update
@@ -217,6 +267,7 @@ jobs:
               '- Output integrity / cross-region overlap check failed',
               '- MMDB build or format generation failed',
               '- Lint or offline tests failed',
+              '- Global dataset build (RIR download, checksum or shrink guard) failed',
               '',
               'Please investigate the workflow logs and re-run manually if needed.',
             ].join('\n');
