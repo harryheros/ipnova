@@ -13,7 +13,7 @@ IPNova is designed as a reusable infrastructure intelligence dataset for network
 IPNova is part of the [Nova infrastructure toolkit](https://github.com/harryheros), providing the IP-level foundation for infrastructure attribution.
 
 > [!TIP]
-> **New in v4.0 — Global dataset.** Every country, IPv4 + IPv6, from all five Regional Internet Registries, including `geoip.dat` for V2Ray / Xray and a global MMDB. Downloads: **[`global/`](global/)**.
+> **New in v4.0 — Global dataset.** Every country, IPv4 + IPv6, from all five Regional Internet Registries, in MMDB and V2Ray `geoip.dat` formats. Downloads: **[`global/`](global/)**.
 >
 > ```text
 > https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/geoip.dat
@@ -136,7 +136,7 @@ Download links: [`global/`](global/). The files live on the [`data` branch](http
 
 | File | Use |
 |---|---|
-| `geoip.dat` | V2Ray / Xray GeoIP list: every country code, plus `PRIVATE` (same ranges as v2fly/geoip `private`) |
+| `geoip.dat` | V2Ray `geoip.dat` format: every country code, plus `PRIVATE` (same ranges as v2fly/geoip `private`) |
 | `ipnova-global-country.mmdb` | MaxMind DB format, IPv4 + IPv6, `database_type` = `GeoLite2-Country` |
 | `country/ipv4/<CC>.txt`, `country/ipv6/<CC>.txt` | Plain CIDR lists per country |
 | `meta.json`, `SHA256SUMS` | Sources, per-country counts, checksums |
@@ -148,9 +148,7 @@ https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/country/ipv4/US.txt
 https://raw.githubusercontent.com/harryheros/ipnova/data/geoip.dat
 ```
 
-**Passwall2 / Xray**: use the `geoip.dat` URL as the *GeoIP Update URL*. Country rules such as `geoip:cn`, `geoip:us` and `geoip:private` work as with other geoip.dat files.
-
-> **Check your rules first.** The file contains country codes and `PRIVATE` only. Service tags found in some third-party files — `geoip:telegram`, `geoip:google`, `geoip:cloudflare`, `geoip:netflix`, `geoip:ru-blocked` and similar — are not included, and Xray refuses to start when a rule refers to a tag the file does not have. Remove or replace such rules before switching.
+**Contents**: `geoip.dat` contains one entry per country code (e.g. `CN`, `US`) plus `PRIVATE`. It has no service or provider tags.
 
 **What the data means**: the country an address block is **registered** to, not where it is used — a block registered in one country and operated in another keeps the registration country (except in the seven regions IPNova refines with BGP data). Country codes are the registries' own: ISO 3166 alpha-2 plus registry codes such as `EU` and `AP`. Only first-party registry data is used.
 
@@ -290,7 +288,7 @@ than overstated as `high`.
 
 ### v4.0.0
 
-- **Global dataset**: every country, IPv4 + IPv6, from the delegation files of all five RIRs (MD5-checked), published weekly on the history-free `data` branch: `geoip.dat` (V2Ray / Xray, with `PRIVATE` matching v2fly/geoip), a global MMDB (`database_type` `GeoLite2-Country`) and per-country CIDR lists, with `meta.json` and `SHA256SUMS`. CN/HK/TW/MO/JP/KR/SG IPv4 comes from IPNova's own pipeline.
+- **Global dataset**: every country, IPv4 + IPv6, from the delegation files of all five RIRs (MD5-checked), published weekly on the history-free `data` branch: `geoip.dat` (V2Ray format, with `PRIVATE` matching v2fly/geoip), a global MMDB (`database_type` `GeoLite2-Country`) and per-country CIDR lists, with `meta.json` and `SHA256SUMS`. CN/HK/TW/MO/JP/KR/SG IPv4 comes from IPNova's own pipeline.
 - **Safety**: a registry download that is missing, fails or lacks its MD5 checksum, or is truncated stops the global build; a >20% drop in addresses (or >10% in countries) versus the last build is refused.
 - **Status**: the run summary marks a week as *degraded* when the RIPE Stat budget runs out or cloud ASNs fail; CN is unaffected (APNIC-based).
 - **Verification**: `geoip.dat` is decoded after writing and cross-checked against the official protobuf runtime in the tests; the global MMDB is read back for the 30 largest countries.
