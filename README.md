@@ -2,15 +2,17 @@
 
 ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
-![Data Source](https://img.shields.io/badge/source-APNIC%20%2B%20BGP-orange)
+![Data Source](https://img.shields.io/badge/source-5%20RIRs%20%2B%20BGP-orange)
 ![Status](https://img.shields.io/badge/status-active-success)
-![Version](https://img.shields.io/badge/version-3.5.1-blue)
+![Version](https://img.shields.io/badge/version-4.0.0-blue)
 
 IPNova is a routing-aware IPv4 dataset covering key Asia-Pacific regions, built from official APNIC allocation data and enhanced with **multi-source BGP fusion** and geographic attribution. It supplements APNIC's registry data with live BGP announcements from Chinese cloud providers, placing their overseas cloud regions — address space registered outside APNIC or under another country — in the region where they actually operate (mostly Hong Kong and Singapore, also Japan and Korea).
 
 IPNova is designed as a reusable infrastructure intelligence dataset for networking, security, compliance, and attribution workflows.
 
 IPNova is part of the [Nova infrastructure toolkit](https://github.com/harryheros), providing the IP-level foundation for infrastructure attribution.
+
+Since v4.0 IPNova also publishes a **global** dataset — every country, IPv4 and IPv6, from the delegation files of all five Regional Internet Registries — including a `geoip.dat` for V2Ray / Xray clients. See [Global dataset](#-global-dataset).
 
 IPNova is not a geolocation database.  
 It is designed for routing-aware infrastructure analysis rather than end-user location inference.
@@ -119,6 +121,36 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/checksums.txt
 
 ---
 
+## 🌍 Global dataset
+
+Every country, IPv4 and IPv6, rebuilt weekly from the delegation files of **APNIC, ARIN, RIPE NCC, LACNIC and AFRINIC** (each checked against its published MD5). The IPv4 of CN / HK / TW / MO / JP / KR / SG comes from IPNova's routing-aware pipeline above, so the global and regional files never disagree.
+
+It lives on the [`data` branch](https://github.com/harryheros/ipnova/tree/data), which is replaced on every build and keeps no history — the repository does not grow with each weekly update.
+
+| File | Use |
+|---|---|
+| `geoip.dat` | V2Ray / Xray GeoIP list: every country code, plus `PRIVATE` (same ranges as v2fly/geoip `private`) |
+| `ipnova-global-country.mmdb` | MaxMind DB format, IPv4 + IPv6, `database_type` = `GeoLite2-Country` |
+| `country/ipv4/<CC>.txt`, `country/ipv6/<CC>.txt` | Plain CIDR lists per country |
+| `meta.json`, `SHA256SUMS` | Sources, per-country counts, checksums |
+
+```text
+https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/geoip.dat
+https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/ipnova-global-country.mmdb
+https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/country/ipv4/US.txt
+https://raw.githubusercontent.com/harryheros/ipnova/data/geoip.dat
+```
+
+**Passwall2 / Xray**: use the `geoip.dat` URL as the *GeoIP Update URL*. Country rules such as `geoip:cn`, `geoip:us` and `geoip:private` work as with other geoip.dat files.
+
+> **Check your rules first.** The file contains country codes and `PRIVATE` only. Service tags found in some third-party files — `geoip:telegram`, `geoip:google`, `geoip:cloudflare`, `geoip:netflix`, `geoip:ru-blocked` and similar — are not included, and Xray refuses to start when a rule refers to a tag the file does not have. Remove or replace such rules before switching.
+
+**What the data means**: the country an address block is **registered** to, not where it is used — a block registered in one country and operated in another keeps the registration country (except in the seven regions IPNova refines with BGP data). Country codes are the registries' own: ISO 3166 alpha-2 plus registry codes such as `EU` and `AP`. Only first-party registry data is used.
+
+**Safety**: the build stops instead of publishing when any registry file is missing, fails or lacks its MD5 checksum, or looks truncated, or when the total address count drops by more than 20% compared with the last published build.
+
+---
+
 ## 🚀 Usage
 
 ### Local generation
@@ -224,6 +256,8 @@ than overstated as `high`.
 - **APNIC delegated data** — [https://ftp.apnic.net/stats/apnic/delegated-apnic-latest](https://ftp.apnic.net/stats/apnic/delegated-apnic-latest)  
   Data sourced from [APNIC](https://www.apnic.net/) and used in accordance with [APNIC's terms of use](https://www.apnic.net/about-apnic/legal/terms-and-conditions/).
 
+- **ARIN, RIPE NCC, LACNIC, AFRINIC delegated data** (global dataset) — [ARIN](https://ftp.arin.net/pub/stats/arin/), [RIPE NCC](https://ftp.ripe.net/pub/stats/ripencc/), [LACNIC](https://ftp.lacnic.net/pub/stats/lacnic/), [AFRINIC](https://ftp.afrinic.net/pub/stats/afrinic/)
+
 - **RIPE Stat** (ASN announced prefixes) — [https://stat.ripe.net/](https://stat.ripe.net/)  
   Data sourced from [RIPE NCC](https://www.ripe.net/) and used in accordance with [RIPE NCC's terms of service](https://www.ripe.net/manage-ips-and-asns/db/terms-conditions-ripe-database).
 
@@ -246,6 +280,14 @@ than overstated as `high`.
 ---
 
 ## 📋 Changelog
+
+### v4.0.0
+
+- **Global dataset**: every country, IPv4 + IPv6, from the delegation files of all five RIRs (MD5-checked), published weekly on the history-free `data` branch: `geoip.dat` (V2Ray / Xray, with `PRIVATE` matching v2fly/geoip), a global MMDB (`database_type` `GeoLite2-Country`) and per-country CIDR lists, with `meta.json` and `SHA256SUMS`. CN/HK/TW/MO/JP/KR/SG IPv4 comes from IPNova's own pipeline.
+- **Safety**: a registry download that is missing, fails or lacks its MD5 checksum, or is truncated stops the global build; a >20% drop in addresses (or >10% in countries) versus the last build is refused.
+- **Status**: the run summary marks a week as *degraded* when the RIPE Stat budget runs out or cloud ASNs fail; CN is unaffected (APNIC-based).
+- **Verification**: `geoip.dat` is decoded after writing and cross-checked against the official protobuf runtime in the tests; the global MMDB is read back for the 30 largest countries.
+- The existing regional outputs on `main` are unchanged.
 
 ### v3.5.1
 

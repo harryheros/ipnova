@@ -18,3 +18,4 @@ output/SHA256SUMS
 # CI restores this from cache before generate_ip_list.py runs, and saves it
 # after, so warm runs still benefit from the 168h TTL speedup.
 output/.geoloc_cache.json
+dist-global/
