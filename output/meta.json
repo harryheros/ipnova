@@ -2,16 +2,16 @@
   "schema_version": "3.4",
   "project": "ipnova",
   "version": "4.1.0",
-  "generated_at": "2026-11-03T17:42:33.406168+00:00",
+  "generated_at": "2026-11-03T21:26:34.354999+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "build": {
-    "commit_sha": "c1f1ae9c603c85e66b43310ba548de24053359c8",
+    "commit_sha": "0e63b43f8407bda0b0d812cfd7fec72fe2161c77",
     "user_agent": "ipnova/4.1.0 (+https://github.com/harryheros/ipnova)",
-    "python": "3.13.18",
+    "python": "3.13.17",
     "ripe": {
       "breaker_tripped": false,
       "consecutive_failures": 0,
-      "phase_seconds": 45.5,
+      "phase_seconds": 34.9,
       "phase_budget_seconds": 900
     }
   },
@@ -85,7 +85,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 35745,
+    "dynamic_prefixes": 35747,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -106,17 +106,17 @@
     "prefixes_before_collapse": 22615,
     "prefixes_after_collapse": 14868,
     "cloud_supplement": {
-      "prefixes_fetched": 6082,
+      "prefixes_fetched": 6080,
       "kept_per_region": {
         "SG": 2240,
-        "CN": 3390,
-        "JP": 31,
+        "CN": 3388,
         "HK": 77,
+        "JP": 31,
         "KR": 15
       },
       "dropped_other_country": 329,
       "dropped_unknown": 0,
-      "l0_local_hit": 5510,
+      "l0_local_hit": 5508,
       "cache_hit": 572,
       "l1_success": 519,
       "l2_fallback": 53,
@@ -124,7 +124,7 @@
       "dropped_region_conflict": 0,
       "trimmed_region_conflict": 0,
       "asns_failed": [],
-      "duration_seconds": 14.08,
+      "duration_seconds": 11.466,
       "asn_count": 7,
       "tier1_asn_count": 4,
       "tier2_asn_count": 3
@@ -140,6 +140,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "40799841c64a4526f7f8fd7704c3782f07fee76931ec72724d7fe0ec6cdfab46"
+    "data_json_sha256": "c3b9c3adaebb3e84950a1fd9ed6deba8eeb65622248e9e87190adc72888dad42"
   }
 }
