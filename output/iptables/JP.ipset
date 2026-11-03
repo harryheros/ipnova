@@ -1,6 +1,6 @@
 # IPNova — ipset restore — JP (Japan)
-# Generated : 2026-11-02 09:43:22 UTC
-# CIDRs     : 3232
+# Generated : 2026-11-03 12:11:10 UTC
+# CIDRs     : 3242
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -2672,7 +2672,17 @@ add ipnova_JP 202.191.16.0/20
 add ipnova_JP 202.191.112.0/21
 add ipnova_JP 202.208.0.0/12
 add ipnova_JP 202.224.0.0/12
-add ipnova_JP 202.240.0.0/13
+add ipnova_JP 202.240.0.0/14
+add ipnova_JP 202.244.0.0/17
+add ipnova_JP 202.244.128.0/21
+add ipnova_JP 202.244.136.0/22
+add ipnova_JP 202.244.141.0/24
+add ipnova_JP 202.244.142.0/23
+add ipnova_JP 202.244.144.0/20
+add ipnova_JP 202.244.160.0/19
+add ipnova_JP 202.244.192.0/18
+add ipnova_JP 202.245.0.0/16
+add ipnova_JP 202.246.0.0/15
 add ipnova_JP 202.248.0.0/15
 add ipnova_JP 202.250.0.0/20
 add ipnova_JP 202.250.16.0/21
