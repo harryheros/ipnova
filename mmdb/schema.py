@@ -25,26 +25,20 @@ APAC_REGIONS = TARGET_REGIONS
 CONTINENT_CODE = "AS"
 CONTINENT_NAME = "Asia"
 
-# MMDB database metadata
-DATABASE_TYPE = "IPNOVA-GeoIP2-Country"
+# MMDB database metadata.
+#
+# One file. GeoIP2 reader libraries check `database_type` before a Country
+# lookup and refuse anything that is not exactly "GeoIP2-Country" or
+# "GeoLite2-Country", so the file uses the latter (the type free/open-source
+# tools expect). It is a technical identifier required for interoperability;
+# the file name stays neutral and the description identifies the file as an
+# independent IPNova build. Same choice as the global MMDB.
+#
+# v4.1 merged the former ipnova-apac-country.mmdb (same records) into this
+# file; RETIRED_FILENAMES are removed from output/ on the next build.
+DATABASE_TYPE = "GeoLite2-Country"
 PRIMARY_FILENAME = "ipnova-apac.mmdb"
-
-# Compatibility builds. Same records as the primary database, but the
-# metadata `database_type` is set to the exact value that GeoIP2 readers
-# check before a Country lookup. Many tools refuse a file whose type is not
-# exactly "GeoIP2-Country" or "GeoLite2-Country" ("The database is not
-# marked as type GeoLite2-Country or type GeoIP2-Country"), so a byte copy
-# of the primary file (type IPNOVA-GeoIP2-Country) is not enough.
-#
-# The type value is a technical identifier required for interoperability.
-# File names stay neutral (no third-party product names), and the metadata
-# description identifies every file as an independent IPNova build.
-#
-# One file is enough: mainstream readers accept either type for Country
-# lookups, and GeoLite2-Country is the type free/open-source tools expect.
-COMPAT_DATABASE_TYPES = {
-    "ipnova-apac-country.mmdb": "GeoLite2-Country",
-}
+RETIRED_FILENAMES = ("ipnova-apac-country.mmdb",)
 
 DATABASE_DESCRIPTION = {
     "en": (

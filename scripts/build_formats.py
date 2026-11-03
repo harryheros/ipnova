@@ -5,8 +5,7 @@ build_formats.py — IPNova extended format generator
 Generates additional output formats from ipnova's data.json:
 
   MMDB:
-    - ipnova-apac.mmdb          : Primary branded MMDB
-    - ipnova-apac-country.mmdb : same records, database_type "GeoLite2-Country"
+    - ipnova-apac.mmdb          : MaxMind DB format, database_type "GeoLite2-Country"
 
   JSON:
     - regions.json              : All regions combined
@@ -136,43 +135,38 @@ def collect_output_files(output_dir):
 
 
 # ================================================================
-# Format 1: MMDB + compatibility builds
+# Format 1: MMDB
 # ================================================================
 
 def build_mmdb(data, output_dir):
-    """
-    Build ipnova-apac.mmdb plus the compatibility database.
+    """Build ipnova-apac.mmdb (database_type from mmdb.schema) and validate it.
 
-    The compatibility file is built separately, NOT copied from the
-    primary: GeoIP2 readers check the metadata `database_type` before a
-    Country lookup and reject anything that is not exactly
-    "GeoIP2-Country" / "GeoLite2-Country". A byte copy carried IPNova's own
-    type (IPNOVA-GeoIP2-Country) and failed with "The database is not
-    marked as type GeoLite2-Country or type GeoIP2-Country".
-
-    The file name is neutral (ipnova-apac-country.mmdb) and does not use
-    third-party product names.
+    Files listed in schema.RETIRED_FILENAMES are deleted so a merged-away
+    file cannot linger in output/ (and in checksums.txt).
     """
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     try:
         from mmdb.builder import build
-        from mmdb.schema import (
-            COMPAT_DATABASE_TYPES, DATABASE_TYPE, PRIMARY_FILENAME,
-        )
+        from mmdb.schema import DATABASE_TYPE, PRIMARY_FILENAME, RETIRED_FILENAMES
         from mmdb.validator import validate
     except ImportError as e:
         log.warning("mmdb module error: %s", e)
         return False
 
-    targets = [(PRIMARY_FILENAME, DATABASE_TYPE)] + list(COMPAT_DATABASE_TYPES.items())
     regions = data.get("regions", {})
 
+    for name in RETIRED_FILENAMES:
+        stale = os.path.join(output_dir, name)
+        if os.path.exists(stale):
+            os.remove(stale)
+            log.info("  removed retired %s", name)
+
     try:
-        for filename, db_type in targets:
-            out_path = build(regions, output_dir, filename=filename, database_type=db_type)
-            if not validate(out_path, expected_type=db_type):
-                raise RuntimeError(f"MMDB validation failed: {filename}")
+        out_path = build(regions, output_dir, filename=PRIMARY_FILENAME,
+                         database_type=DATABASE_TYPE)
+        if not validate(out_path, expected_type=DATABASE_TYPE):
+            raise RuntimeError(f"MMDB validation failed: {PRIMARY_FILENAME}")
 
     except ImportError as e:
         log.warning("%s", e)
@@ -637,7 +631,7 @@ def main():
     results = {}
 
     if not args.skip_mmdb:
-        log.info("--- MMDB (+ compatibility builds) ---")
+        log.info("--- MMDB ---")
         results["mmdb"] = build_mmdb(data, args.output_dir)
         log.info("")
 
@@ -689,7 +683,6 @@ def main():
         archive_path = create_formats_archive(args.output_dir)
         core_files = [
             os.path.join(args.output_dir, "ipnova-apac.mmdb"),
-            os.path.join(args.output_dir, "ipnova-apac-country.mmdb"),
             os.path.join(args.output_dir, "regions.json"),
             os.path.join(args.output_dir, "meta.json"),
             archive_path,
@@ -700,7 +693,7 @@ def main():
 
     log.info("Done. Output summary:")
     summary = [
-        ("mmdb",      "output/ipnova-apac.mmdb + ipnova-apac-country.mmdb"),
+        ("mmdb",      "output/ipnova-apac.mmdb"),
         ("json",      "output/regions.json + output/json/{CC}.json"),
         ("plain",     "output/plain/{CC}.txt"),
         ("nginx",     "output/nginx/{CC}.conf"),
