@@ -462,7 +462,7 @@ force-pushed on every build and keeps no history.
 
 | File | Content |
 |---|---|
-| `geoip.dat` | V2Ray / Xray GeoIP list: every country code, plus `PRIVATE` |
+| `geoip.dat` | V2Ray `geoip.dat` format: every country code, plus `PRIVATE` |
 | `ipnova-global-country.mmdb` | MaxMind DB format, IPv4 + IPv6, `database_type` = `GeoLite2-Country` |
 | `country/ipv4/<CC>.txt`, `country/ipv6/<CC>.txt` | Plain CIDR lists |
 | `meta.json` | Sources, per-country counts, build info |
