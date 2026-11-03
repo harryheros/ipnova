@@ -12,7 +12,12 @@ IPNova is designed as a reusable infrastructure intelligence dataset for network
 
 IPNova is part of the [Nova infrastructure toolkit](https://github.com/harryheros), providing the IP-level foundation for infrastructure attribution.
 
-Since v4.0 IPNova also publishes a **global** dataset — every country, IPv4 and IPv6, from the delegation files of all five Regional Internet Registries — including a `geoip.dat` for V2Ray / Xray clients. See [Global dataset](#-global-dataset).
+> [!TIP]
+> **New in v4.0 — Global dataset.** Every country, IPv4 + IPv6, from all five Regional Internet Registries, including `geoip.dat` for V2Ray / Xray and a global MMDB. Downloads: **[`global/`](global/)**.
+>
+> ```text
+> https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/geoip.dat
+> ```
 
 IPNova is not a geolocation database.  
 It is designed for routing-aware infrastructure analysis rather than end-user location inference.
@@ -83,6 +88,8 @@ Text files include metadata headers such as region, version, last updated timest
 
 ## ⬇️ Direct Download
 
+The regional files below are on `main`. For every country and `geoip.dat`, see [`global/`](global/).
+
 > **Coverage**: the MMDB files cover CN / HK / TW / MO / JP / KR / SG only. IPs outside these regions return no result — this is not a drop-in replacement for a global GeoIP database.
 
 ```bash
@@ -125,7 +132,7 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/checksums.txt
 
 Every country, IPv4 and IPv6, rebuilt weekly from the delegation files of **APNIC, ARIN, RIPE NCC, LACNIC and AFRINIC** (each checked against its published MD5). The IPv4 of CN / HK / TW / MO / JP / KR / SG comes from IPNova's routing-aware pipeline above, so the global and regional files never disagree.
 
-It lives on the [`data` branch](https://github.com/harryheros/ipnova/tree/data), which is replaced on every build and keeps no history — the repository does not grow with each weekly update.
+Download links: [`global/`](global/). The files live on the [`data` branch](https://github.com/harryheros/ipnova/tree/data), which is replaced on every build and keeps no history — the repository does not grow with each weekly update.
 
 | File | Use |
 |---|---|
