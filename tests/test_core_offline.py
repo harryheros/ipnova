@@ -368,7 +368,7 @@ def _run_validator_cases(_mapping):
         os.unlink(p)
 
     # 5) database_type check: exact match passes, anything else fails.
-    #    GeoIP2 readers reject "IPNOVA-GeoIP2-Country" for Country lookups.
+    #    GeoIP2 readers reject any other type for Country lookups.
     _mapping.clear()
     for cc, samples in SAMPLE_IPS.items():
         for ip, _ in samples:
@@ -386,13 +386,8 @@ def _run_validator_cases(_mapping):
         os.unlink(p)
 
 
-def test_build_mmdb_sets_database_type_per_file():
-    """Each compatibility MMDB must be built with its own database_type.
-
-    Regression: the compatibility files used to be byte copies of
-    ipnova-apac.mmdb, so they carried database_type
-    "IPNOVA-GeoIP2-Country" and GeoIP2 readers refused them.
-    """
+def test_build_mmdb_single_file_and_retires_old():
+    """One MMDB, typed GeoLite2-Country; the merged-away file is deleted."""
     import importlib
     import os
     import tempfile
@@ -437,7 +432,11 @@ def test_build_mmdb_sets_database_type_per_file():
             data = {"regions": {"HK": {"cidrs": ["1.0.0.0/24"]},
                                 "JP": {"cidrs": ["1.0.1.0/24"]}}}
             with tempfile.TemporaryDirectory() as d:
+                stale = os.path.join(d, "ipnova-apac-country.mmdb")
+                open(stale, "w").close()
                 assert bf.build_mmdb(data, d) is True
+                assert not os.path.exists(stale), "retired MMDB not removed"
+                assert sorted(os.listdir(d)) == ["ipnova-apac.mmdb"]
         finally:
             mv.validate = saved_validate
     finally:
@@ -447,17 +446,14 @@ def test_build_mmdb_sets_database_type_per_file():
             else:
                 sys.modules[k] = v
 
-    assert written == {
-        "ipnova-apac.mmdb": "IPNOVA-GeoIP2-Country",
-        "ipnova-apac-country.mmdb": "GeoLite2-Country",
-    }, written
+    assert written == {"ipnova-apac.mmdb": "GeoLite2-Country"}, written
 
 
 def test_mmdb_file_names_are_neutral():
     """MMDB file names must not use third-party product names."""
     from mmdb import schema
 
-    for name in [schema.PRIMARY_FILENAME, *schema.COMPAT_DATABASE_TYPES]:
+    for name in [schema.PRIMARY_FILENAME, *schema.RETIRED_FILENAMES]:
         low = name.lower()
         assert "geoip" not in low and "geolite" not in low, name
 
