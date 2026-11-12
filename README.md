@@ -97,7 +97,7 @@ Release history: [CHANGELOG.md](./CHANGELOG.md).
 ## 📄 License and names
 
 - **Non-commercial use**: permitted under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
-- **Commercial use** (SaaS, API resale, redistribution, paid products): requires prior written authorization — see [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md) or open an [issue](https://github.com/harryheros/ipnova/issues).
+- **Commercial use** (SaaS, API resale, redistribution, paid products, use inside a company beyond research): requires prior written authorization — see [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md), or ask at [novaod.com/licensing](https://novaod.com/licensing).
 - **Project names**: "IPNova", "DomainNova", "ShieldNova", "OsNova", "HarryWrt" and "Nova Toolkit" identify projects by the original author and may not be used for derivative products without attribution.
 - **Provenance**: published files contain documentation-reserved ranges (RFC 5737) that never route on the Internet but make unattributed redistribution detectable.
 - **Trademarks**: MaxMind, GeoIP and GeoLite are trademarks of MaxMind, Inc. IPNova is independent and contains no MaxMind data. The MMDB files use the open MaxMind DB format; `database_type` is set to `GeoLite2-Country` only so existing reader software can open them.
