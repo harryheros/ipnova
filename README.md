@@ -64,7 +64,7 @@ https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/ipnova-global-country.mmdb
 
 ## 🛡️ Reliability
 
-- Only first-party data: RIR delegation files and RIPE Stat BGP data.
+- Only first-party data: RIR delegation files and RIPEstat BGP data.
 - Every RIR file must pass its published MD5 checksum.
 - A build that fails validation or shrinks sharply compared with the last one is not published; the last good data stays online.
 - `meta.json` records each build's sources, counts and status, including weeks when BGP data was incomplete.
@@ -88,7 +88,7 @@ python3 scripts/build_global.py             # Global dataset
 ## 📊 Data sources
 
 - [APNIC](https://www.apnic.net/), [ARIN](https://www.arin.net/), [RIPE NCC](https://www.ripe.net/), [LACNIC](https://www.lacnic.net/) and [AFRINIC](https://afrinic.net/) delegation files, used under each registry's terms.
-- [RIPE Stat](https://stat.ripe.net/) for BGP announcements, used under the [RIPE NCC terms](https://www.ripe.net/manage-ips-and-asns/db/terms-conditions-ripe-database).
+- [RIPEstat](https://stat.ripe.net/) for BGP announcements, used under the [RIPEstat Service Terms and Conditions](https://www.ripe.net/about-us/legal/ripestat-service-terms-and-conditions/). Commercial products or services based on RIPEstat data need the RIPE NCC's permission; an IPNova commercial license does not include it.
 
 Release history: [CHANGELOG.md](./CHANGELOG.md).
 
@@ -98,7 +98,7 @@ Release history: [CHANGELOG.md](./CHANGELOG.md).
 
 - **Non-commercial use**: permitted under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 - **Commercial use** (SaaS, API resale, redistribution, paid products, use inside a company beyond research): requires prior written authorization — see [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md), or ask at [novaod.com/licensing](https://novaod.com/licensing).
-- **Project names**: "IPNova", "DomainNova", "ShieldNova", "OsNova", "HarryWrt" and "Nova Toolkit" identify projects by the original author and may not be used for derivative products without attribution.
+- **Project names**: "IPNova", "DomainNova", "ShieldNova", "DNSNova", "RuleNova", "OsNova", "HarryWrt" and "Nova infrastructure toolkit" identify projects by the original author and may not be used for derivative products without attribution.
 - **Provenance**: published files contain documentation-reserved ranges (RFC 5737) that never route on the Internet but make unattributed redistribution detectable.
 - **Trademarks**: MaxMind, GeoIP and GeoLite are trademarks of MaxMind, Inc. IPNova is independent and contains no MaxMind data. The MMDB files use the open MaxMind DB format; `database_type` is set to `GeoLite2-Country` only so existing reader software can open them.
 

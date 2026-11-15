@@ -402,7 +402,7 @@ def fetch_asn_prefixes(asn):
         raise RuntimeError(
             f"RIPE API returned non-JSON for AS{asn}: {e}; "
             f"body preview={preview!r}"
-        )
+        ) from e
 
     # Structural validation
     if not isinstance(payload, dict):

@@ -123,7 +123,7 @@ def test_sanity_check_fails():
     normalized["CN"]["total_cidrs"] = 1
     try:
         generate_ip_list.sanity_check(normalized)
-        assert False, "Should have raised RuntimeError"
+        raise AssertionError("Should have raised RuntimeError")
     except RuntimeError as e:
         assert "CN" in str(e)
 
@@ -781,7 +781,7 @@ def test_http_get_does_not_retry_permanent_4xx():
         with _patched_urlopen(fake):
             try:
                 g.http_get("https://example.com/missing")
-                assert False, "should raise"
+                raise AssertionError("should raise")
             except urllib.error.HTTPError:
                 pass
         assert len(calls) == 1, f"404 retried {len(calls)} times"
@@ -846,7 +846,7 @@ def test_validate_output_integrity_gates():
             cn.write_text(cn.read_text() + "9.9.9.0/24\n")
             try:
                 v.main(["-o", d, "--skip-dns"])
-                assert False, "tampered CN.txt must fail validation"
+                raise AssertionError("tampered CN.txt must fail validation")
             except SystemExit as e:
                 assert e.code == 1
 
@@ -856,7 +856,7 @@ def test_validate_output_integrity_gates():
             dj.write_text(dj.read_text().replace('"project"', '"project" ', 1))
             try:
                 v.main(["-o", d, "--skip-dns"])
-                assert False, "checksum mismatch must fail validation"
+                raise AssertionError("checksum mismatch must fail validation")
             except SystemExit as e:
                 assert e.code == 1
     finally:

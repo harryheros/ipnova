@@ -331,7 +331,7 @@ def main(argv=None):
     if not args.skip_dns and not SAMPLES_PATH.exists():
         fail("tests/samples.json is missing")
 
-    for region, path in REGION_FILES.items():
+    for path in REGION_FILES.values():
         if not path.exists():
             fail(f"{path} is missing")
         if path.stat().st_size == 0:
