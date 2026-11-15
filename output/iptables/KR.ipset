@@ -1,6 +1,6 @@
 # IPNova — ipset restore — KR (South Korea)
-# Generated : 2026-11-09 09:47:48 UTC
-# CIDRs     : 1055
+# Generated : 2026-11-15 00:53:54 UTC
+# CIDRs     : 1053
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -110,9 +110,7 @@ add ipnova_KR 45.249.160.0/22
 add ipnova_KR 45.250.204.0/22
 add ipnova_KR 45.250.208.0/22
 add ipnova_KR 45.250.220.0/22
-add ipnova_KR 47.80.0.0/18
-add ipnova_KR 47.80.128.0/17
-add ipnova_KR 47.87.226.0/23
+add ipnova_KR 47.80.0.0/19
 add ipnova_KR 49.1.0.0/16
 add ipnova_KR 49.8.0.0/14
 add ipnova_KR 49.16.0.0/12

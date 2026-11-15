@@ -1,6 +1,6 @@
 # IPNova — ipset restore — SG (Singapore)
-# Generated : 2026-11-09 09:47:48 UTC
-# CIDRs     : 1661
+# Generated : 2026-11-15 00:53:54 UTC
+# CIDRs     : 1662
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -139,31 +139,34 @@ add ipnova_SG 45.250.161.0/24
 add ipnova_SG 45.250.162.0/23
 add ipnova_SG 45.254.36.0/22
 add ipnova_SG 46.250.160.0/19
-add ipnova_SG 47.74.192.0/18
-add ipnova_SG 47.79.0.0/20
-add ipnova_SG 47.79.48.0/20
-add ipnova_SG 47.79.96.0/19
-add ipnova_SG 47.79.192.0/18
+add ipnova_SG 47.77.112.0/23
+add ipnova_SG 47.79.0.0/21
+add ipnova_SG 47.79.56.0/21
+add ipnova_SG 47.79.192.0/19
 add ipnova_SG 47.82.0.0/21
 add ipnova_SG 47.82.8.0/22
+add ipnova_SG 47.82.12.0/23
 add ipnova_SG 47.82.16.0/20
-add ipnova_SG 47.82.32.0/19
+add ipnova_SG 47.82.32.0/20
+add ipnova_SG 47.82.48.0/21
 add ipnova_SG 47.82.128.0/17
-add ipnova_SG 47.84.0.0/17
 add ipnova_SG 47.84.128.0/20
 add ipnova_SG 47.84.152.0/21
 add ipnova_SG 47.84.160.0/19
 add ipnova_SG 47.84.192.0/18
 add ipnova_SG 47.88.128.0/17
 add ipnova_SG 47.89.72.0/22
-add ipnova_SG 47.89.88.0/22
+add ipnova_SG 47.89.90.0/23
 add ipnova_SG 47.235.0.0/22
-add ipnova_SG 47.236.0.0/15
+add ipnova_SG 47.236.0.0/16
+add ipnova_SG 47.237.0.0/19
+add ipnova_SG 47.237.48.0/20
+add ipnova_SG 47.237.64.0/18
+add ipnova_SG 47.237.128.0/17
 add ipnova_SG 47.241.0.0/16
 add ipnova_SG 47.245.64.0/18
-add ipnova_SG 47.246.72.0/22
+add ipnova_SG 47.246.72.0/21
 add ipnova_SG 47.246.104.0/22
-add ipnova_SG 47.246.160.0/20
 add ipnova_SG 49.0.192.0/18
 add ipnova_SG 49.128.8.0/22
 add ipnova_SG 49.128.32.0/19
@@ -681,6 +684,7 @@ add ipnova_SG 103.234.190.0/23
 add ipnova_SG 103.236.119.0/24
 add ipnova_SG 103.236.196.0/22
 add ipnova_SG 103.237.80.0/24
+add ipnova_SG 103.237.94.0/23
 add ipnova_SG 103.237.132.0/23
 add ipnova_SG 103.237.142.0/23
 add ipnova_SG 103.237.168.0/23
@@ -913,8 +917,6 @@ add ipnova_SG 138.252.148.0/23
 add ipnova_SG 138.252.224.0/23
 add ipnova_SG 138.252.240.0/23
 add ipnova_SG 139.59.0.0/16
-add ipnova_SG 139.95.96.0/22
-add ipnova_SG 139.95.144.0/20
 add ipnova_SG 142.70.0.0/16
 add ipnova_SG 142.79.192.0/19
 add ipnova_SG 142.91.96.0/21
@@ -966,7 +968,6 @@ add ipnova_SG 152.235.128.0/17
 add ipnova_SG 153.20.0.0/16
 add ipnova_SG 155.69.0.0/16
 add ipnova_SG 156.59.0.0/16
-add ipnova_SG 156.232.16.0/20
 add ipnova_SG 157.10.162.0/23
 add ipnova_SG 157.10.250.0/23
 add ipnova_SG 157.15.191.0/24
