@@ -1,6 +1,6 @@
 # IPNova — ipset restore — HK (Hong Kong)
-# Generated : 2026-11-16 09:41:11 UTC
-# CIDRs     : 2572
+# Generated : 2026-11-19 08:26:32 UTC
+# CIDRs     : 2580
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -1659,6 +1659,8 @@ add ipnova_HK 139.28.128.0/22
 add ipnova_HK 139.190.64.0/21
 add ipnova_HK 140.82.192.0/20
 add ipnova_HK 141.193.152.0/21
+add ipnova_HK 141.229.28.0/23
+add ipnova_HK 141.229.42.0/23
 add ipnova_HK 143.89.0.0/16
 add ipnova_HK 144.48.4.0/22
 add ipnova_HK 144.48.32.0/22
@@ -1902,6 +1904,8 @@ add ipnova_HK 189.75.144.0/20
 add ipnova_HK 189.75.240.0/20
 add ipnova_HK 191.1.0.0/16
 add ipnova_HK 191.124.0.0/16
+add ipnova_HK 191.141.0.0/16
+add ipnova_HK 191.142.0.0/15
 add ipnova_HK 191.214.0.0/16
 add ipnova_HK 191.217.64.0/20
 add ipnova_HK 191.218.192.0/18
@@ -1951,7 +1955,10 @@ add ipnova_HK 200.234.16.0/20
 add ipnova_HK 201.5.0.0/16
 add ipnova_HK 201.15.128.0/20
 add ipnova_HK 201.15.160.0/20
-add ipnova_HK 201.15.208.0/20
+add ipnova_HK 201.15.208.0/22
+add ipnova_HK 201.15.213.0/24
+add ipnova_HK 201.15.214.0/23
+add ipnova_HK 201.15.216.0/21
 add ipnova_HK 202.0.160.0/20
 add ipnova_HK 202.0.180.0/22
 add ipnova_HK 202.1.2.0/24
@@ -2016,6 +2023,7 @@ add ipnova_HK 202.45.64.0/19
 add ipnova_HK 202.45.128.0/24
 add ipnova_HK 202.45.176.0/20
 add ipnova_HK 202.45.192.0/18
+add ipnova_HK 202.46.132.0/23
 add ipnova_HK 202.47.134.0/23
 add ipnova_HK 202.47.193.0/24
 add ipnova_HK 202.47.194.0/24
