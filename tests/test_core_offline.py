@@ -916,3 +916,22 @@ if __name__ == "__main__":
         print(f"\n{failed}/{len(tests)} tests FAILED")
         sys.exit(1)
     print(f"\nAll {len(tests)} offline tests passed.")
+
+
+def test_google_china_asn_is_excluded():
+    """v4.1.1: AS24424 (GOOGLECN, Beijing Gu Xiang Information Technology)
+    announces 203.208.32.0/19, Google's in-country edge for users in China.
+    Only Google's global ASNs were excluded, so the prefix stayed in CN.txt
+    and Google services resolving there looked like mainland services
+    (DomainNova placed googletagmanager.com and googleoptimize.com in CN)."""
+    assert 24424 in generate_ip_list.EXCLUDED_ASNS
+    assert generate_ip_list.ASN_LABELS[24424].startswith("Google")
+    # also excluded without RIPE Stat (static fallback)
+    excluded, _ = generate_ip_list.build_excluded_networks(skip_ripe=True)
+    edge = ipaddress.ip_address("203.208.40.66")
+    assert any(edge in n for n in excluded)
+    kept = generate_ip_list.subtract_excluded_from_network(
+        ipaddress.ip_network("203.208.0.0/16"),
+        sorted(ipaddress.collapse_addresses(excluded), key=lambda n: int(n.network_address)))
+    assert not any(edge in n for n in kept)
+    assert any(ipaddress.ip_address("203.208.0.1") in n for n in kept)

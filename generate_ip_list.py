@@ -31,7 +31,7 @@ if _SCRIPT_DIR not in sys.path:
 # ================================================================
 # Version
 # ================================================================
-__version__ = "4.1.0"
+__version__ = "4.1.1"
 
 # Data-layer schema version (data.json / meta.json / regions.json).
 SCHEMA_VERSION = "3.4"
@@ -83,8 +83,9 @@ class StepTimer:
 EXCLUDED_ASNS = {
     # Cloudflare
     13335, 209242,
-    # Google
-    15169, 396982,
+    # Google (24424: Google China, Beijing Gu Xiang Information Technology,
+    # whose in-country edge serves Google's global services to users in CN)
+    15169, 396982, 24424,
     # Akamai
     20940, 16625,
     # Fastly
@@ -102,7 +103,7 @@ EXCLUDED_ASNS = {
 # Human-readable labels for reporting
 ASN_LABELS = {
     13335: "Cloudflare", 209242: "Cloudflare",
-    15169: "Google", 396982: "Google",
+    15169: "Google", 396982: "Google", 24424: "Google China",
     20940: "Akamai", 16625: "Akamai",
     54113: "Fastly",
     16509: "AWS", 14618: "AWS",
@@ -122,6 +123,7 @@ ANYCAST_BLACKLIST = [
     "9.9.9.0/24",       # Quad9
     "208.67.222.0/24",  # OpenDNS
     "208.67.220.0/24",  # OpenDNS
+    "203.208.32.0/19",  # Google China edge (AS24424), kept out even when RIPE Stat fails
 ]
 
 # ================================================================

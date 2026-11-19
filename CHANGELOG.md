@@ -3,6 +3,10 @@
 Releases, newest first. The weekly data updates are the
 `chore: update dataset` commits.
 
+## 4.1.1 (2026-11-19)
+
+- **Google's in-country edge is no longer in CN.txt.** `203.208.32.0/19` is announced by AS24424 (GOOGLECN, Beijing Gu Xiang Information Technology), Google's network in China, which serves Google's global services to users there. Only Google's global ASNs (15169, 396982) were excluded, so the prefix stayed in the CN list, and services resolving to it looked like mainland services: DomainNova placed googletagmanager.com and googleoptimize.com in CN. AS24424 is now excluded like Google's other ASNs, and the prefix is also on the static list, so it stays out in a week when RIPE Stat fails. CN loses 8,192 addresses.
+
 ## 4.1.0 (2026-11-03)
 
 - **One APAC MMDB**: `ipnova-apac-country.mmdb` is merged into `ipnova-apac.mmdb`, which now uses `database_type` `GeoLite2-Country` and works with GeoIP2 reader libraries. The records are unchanged. Use `ipnova-apac.mmdb` in place of the removed file.
