@@ -1,11 +1,14 @@
 #!/usr/bin/env python3
-"""v4.2.0: international cloud space goes where it is operated.
+"""Cloud space is listed where it is operated (4.2.0, located block by block
+since 4.2.1).
 
-Tencent's 43.128.0.0/13 and Alibaba's 8.128.0.0/10 are registered in SG but
-operated all over the world. The BGP step only *added* cloud prefixes to a
-region; a prefix inside a region's APNIC space was settled by containment
-(L0) and stayed in the registered region, wherever it ran. All tests are
-offline: RIPEstat answers are faked.
+The cloud companies register large blocks in Singapore and run data centres
+all over the world from them. RIPEstat's per-ASN geolocation answer merges
+adjacent announced prefixes into one entry (Tencent's 43.156.0.0/15 holds
+Singapore, Frankfurt and São Paulo), so the located blocks inside each entry
+decide, never a vote over the entry. All tests are offline: RIPEstat answers
+are faked in the shape the real data call returns (covered_percentage is
+relative to the whole ASN; `resources` lists the located blocks).
 """
 
 import contextlib
@@ -25,21 +28,27 @@ import generate_ip_list as g  # noqa: E402
 net = ipaddress.ip_network
 TENCENT = 132203
 
-# AS132203's prefixes, all inside the SG allocation 43.128.0.0/11, with the
-# country shares RIPEstat reports for each.
+# AS132203's answer: entry -> [(country, [located blocks])]
 GEO = {
-    "43.157.0.0/18": {"DE": 100.0},              # Frankfurt: leaves SG
-    "43.128.224.0/19": {"JP": 96.0, "SG": 1.0},  # Tokyo: SG -> JP
-    "43.134.0.0/16": {"SG": 100.0},              # Singapore: stays
-    "43.131.0.0/18": {"SG": 30.0, "US": 30.0},   # no majority: stays
-    "43.152.0.0/16": {"DE": 80.0},               # moves ...
-    "43.152.10.0/24": {"SG": 100.0},             # ... except this /24
-    "43.152.20.0/24": {},                        # no data: follows the /16
+    "43.156.0.0/15": [("SG", ["43.156.0.0/16"]), ("DE", ["43.157.0.0/18"]),
+                      ("BR", ["43.157.128.0/18"]), ("ID", ["43.157.192.0/18"])],
+    "43.165.0.0/16": [("DE", ["43.165.0.0/18"]), ("US", ["43.165.64.0/18"]),
+                      ("JP", ["43.165.128.0/18"]), ("ID", ["43.165.192.0/18"])],
+    "43.129.0.0/16": [("HK", ["43.129.0.0/18"]), ("SG", ["43.129.128.0/17"]),
+                      # small blocks vote for their /24
+                      ("ID", ["43.129.64.0/25", "43.129.64.128/26"]),
+                      ("JP", ["43.129.65.0/26"])],
+    # outside the regions' APNIC space: the supplement's business
+    "129.226.0.0/16": [("HK", ["129.226.0.0/16"])],
+    "170.106.0.0/16": [("US", ["170.106.0.0/16"])],
 }
+# what AS132203 announces (RIPEstat announced-prefixes)
+ANNOUNCED = ["43.156.0.0/16", "43.157.0.0/18", "43.157.64.0/18", "43.165.0.0/16",
+             "43.165.128.0/18", "43.129.0.0/16", "129.226.0.0/16", "170.106.0.0/16"]
 
 APNIC = "\n".join([
     "2|apnic|20261123|5|19830613|20261122|+1000",
-    "apnic|SG|ipv4|43.128.0.0|2097152|20200101|allocated",   # 43.128.0.0/11
+    "apnic|SG|ipv4|43.128.0.0|4194304|20200101|allocated",   # 43.128.0.0/10
     "apnic|SG|ipv4|116.14.0.0|131072|20200101|allocated",
     "apnic|JP|ipv4|126.0.0.0|16777216|20200101|allocated",
     "apnic|CN|ipv4|1.0.1.0|256|20200101|allocated",
@@ -69,16 +78,17 @@ def fresh_cache(entries=None):
 
 def geo_payload(geo):
     rows = []
-    for prefix, shares in geo.items():
-        rows.append({"resource": prefix, "unknown_percentage": 0.0, "locations": [
-            {"country": cc, "city": "", "covered_percentage": pct}
-            for cc, pct in shares.items()]})
+    for prefix, locs in geo.items():
+        rows.append({"resource": prefix, "unknown_percentage": 99.0, "locations": [
+            {"country": cc, "city": "", "covered_percentage": 0.5, "resources": blocks}
+            for cc, blocks in locs]})
     return json.dumps({"data": {"located_resources": rows}, "status": "ok"})
 
 
-def fake_http_get(geo_by_asn):
+def fake_http_get(geo_by_asn, calls):
     def _get(url, timeout=30, retries=3, ua=None, strict_decode=False,
              return_content_type=False):
+        calls.append(url)
         if url.startswith(g.RIPE_GEO_BY_ASN_URL):
             asn = int(url.rsplit("AS", 1)[1])
             if asn not in geo_by_asn:
@@ -97,15 +107,16 @@ def read_list(path):
 
 
 def run_build(*extra):
-    """main() on the fixture above; returns ({cc: [cidr]}, meta, data)."""
-    prefixes = {TENCENT: [net(p) for p in GEO]}
+    """main() on the fixture above; returns ({cc: [cidr]}, meta, data, urls)."""
+    calls = []
+    announced = {TENCENT: [net(p) for p in ANNOUNCED]}
     with tempfile.TemporaryDirectory() as out, patched(
             download_apnic_data=lambda: APNIC,
             build_excluded_networks=lambda skip_ripe=False: (
                 [], {"mode": "test", "succeeded": [], "failed": [], "total_prefixes": 0}),
-            fetch_asn_prefixes=lambda asn: list(prefixes.get(asn, [])),
-            fetch_asn_country=lambda asn: None,
-            http_get=fake_http_get({TENCENT: GEO}),
+            fetch_asn_prefixes=lambda asn: list(announced.get(asn, [])),
+            fetch_asn_country=lambda asn: "CN",
+            http_get=fake_http_get({TENCENT: GEO}, calls),
             _GEOLOC_CACHE=None,
             _GEOLOC_CACHE_PATH=g._GEOLOC_CACHE_PATH):
         g.main(["-o", out, "--skip-canary", "--skip-sanity", *extra])
@@ -113,124 +124,131 @@ def run_build(*extra):
         lists = {cc: read_list(o / f"{cc}.txt") for cc in g.TARGET_REGIONS}
         meta = json.loads((o / "meta.json").read_text())
         data = json.loads((o / "data.json").read_text())
-    return lists, meta, data
+    return lists, meta, data, calls
 
 
 def test_cloud_space_is_listed_where_it_is_operated():
-    """End to end through main(): before 4.2.0 every one of these prefixes
-    stayed in SG.txt because it is inside SG's APNIC allocation."""
-    lists, meta, data = run_build()
-    sg, jp = lists["SG"], lists["JP"]
+    """End to end through main(). Before 4.2.0 all of 43.128.0.0/10 stayed
+    in SG.txt; 4.2.0 voted over whole entries, so 43.165.0.0/16 (four data
+    centres, none in Singapore) and Frankfurt inside 43.156.0.0/15 stayed."""
+    lists, meta, data, calls = run_build()
+    sg, jp, hk = lists["SG"], lists["JP"], lists["HK"]
     everything = [c for cidrs in lists.values() for c in cidrs]
 
-    assert not holds(everything, "43.157.0.1"), "Frankfurt space must be in no region"
-    assert not holds(sg, "43.128.224.1") and holds(jp, "43.128.224.1")
-    assert holds(sg, "43.134.0.1") and holds(sg, "43.131.0.1")
-    assert not holds(everything, "43.152.0.1")
-    assert holds(sg, "43.152.10.1"), "a more specific verdict wins inside a moved prefix"
-    assert not holds(everything, "43.152.20.1"), "a prefix without data follows its parent"
-    assert holds(sg, "43.140.0.1") and holds(sg, "116.14.0.1"), "the rest of SG is untouched"
+    for ip in ("43.157.0.1", "43.157.128.1", "43.157.192.1",
+               "43.165.0.1", "43.165.64.1", "43.165.192.1", "43.129.64.1"):
+        assert not holds(everything, ip), f"{ip} is operated outside the seven regions"
+    assert holds(jp, "43.165.128.1") and not holds(sg, "43.165.128.1")
+    assert holds(hk, "43.129.0.1") and not holds(sg, "43.129.0.1")
+    for ip in ("43.156.0.1", "43.129.128.1", "43.140.0.1", "116.14.0.1"):
+        assert holds(sg, ip), f"{ip} is located in SG (or unknown) and stays"
+    assert holds(sg, "43.157.64.1"), "space without a location stays where it is registered"
+    assert holds(sg, "43.129.65.1"), "a /24 less than half located stays"
 
     rel = meta["parsing"]["cloud_relocation"]
-    assert (rel["moved"], rel["stayed"], rel["undecided"]) == (3, 2, 2)
-    assert rel["removed_addresses"] == {"SG": 16384 + 8192 + 65536 - 256}
-    assert rel["added_addresses"] == {"JP": 8192}
-    assert rel["moved_addresses"] == {"SG->DE": 16384 + 65536 - 256, "SG->JP": 8192}
-    assert rel["asns"][str(TENCENT)]["source"] == "ripestat"
-    assert rel["asns"]["45102"]["source"] == "none"
-    assert set(rel["asns"]) == {str(a) for a in g.RELOCATION_ASNS}
-    assert meta["parsing"]["cloud_supplement"]["handled_by_relocation"] == len(GEO)
+    q = 16384
+    assert rel["moved_addresses"] == {
+        "SG->BR": q, "SG->DE": 2 * q, "SG->HK": q, "SG->ID": 2 * q + 256,
+        "SG->JP": q, "SG->US": q}
+    assert rel["removed_addresses"] == {"SG": 8 * q + 256}
+    assert rel["added_addresses"] == {"HK": q, "JP": q}
+    assert rel["kept_addresses"] == 65536 + 32768
+    assert rel["asns"][str(TENCENT)] == {"name": "Tencent Cloud International",
+                                         "source": "ripestat", "parts": 13}
+    assert {s["source"] for a, s in rel["asns"].items() if a != str(TENCENT)} == {"none"}
+
+    # The supplement leaves moved space alone and places the rest from the
+    # same answer: no per-prefix lookups, no ASN-country guess.
+    cs = meta["parsing"]["cloud_supplement"]
+    assert cs["handled_by_relocation"] == 4   # 43.157.0.0/18, 43.165.x (2), 43.129.0.0/16
+    assert cs["geo_hit"] == 2 and cs["l2_fallback"] == 0
+    assert holds(hk, "129.226.0.1") and not holds(everything, "170.106.0.1")
+    assert not [u for u in calls if "/geoloc/" in u]
 
     objs = {o["cidr"]: o for o in data["regions"]["JP"]["cidr_objects"]}
-    assert objs["43.128.224.0/19"] == {
-        "cidr": "43.128.224.0/19", "source": "bgp", "asn": TENCENT, "tier": 1,
+    assert objs["43.165.128.0/18"] == {
+        "cidr": "43.165.128.0/18", "source": "bgp", "asn": TENCENT, "tier": 1,
         "level": "L1", "confidence": "medium"}
 
 
 def test_skip_relocation_keeps_the_registration():
-    lists, meta, _data = run_build("--skip-relocation")
-    assert holds(lists["SG"], "43.157.0.1") and holds(lists["SG"], "43.128.224.1")
+    lists, meta, _data, _calls = run_build("--skip-relocation")
+    assert holds(lists["SG"], "43.157.0.1") and holds(lists["SG"], "43.165.128.1")
     assert meta["parsing"]["cloud_relocation"] == {"skipped": True, "reason": "skip_relocation"}
 
 
-def test_failed_lookup_moves_nothing_without_cached_answers():
+def test_failed_lookup_moves_nothing_without_cached_parts():
     def fail(asn):
         raise OSError("RIPEstat down")
     with fresh_cache({}), patched(fetch_asn_geoloc=fail):
-        region = {"SG": [net("43.128.0.0/11")]}
-        out, moved_in, _prov, handled, stats = g.relocate_cloud_space(region)
+        out, moved_in, _prov, moved_space, stats = g.relocate_cloud_space(
+            {"SG": [net("43.128.0.0/11")]})
     assert [str(n) for n in out["SG"]] == ["43.128.0.0/11"]
-    assert moved_in == {} and handled == set()
+    assert moved_in == {} and moved_space == []
     assert {s["source"] for s in stats["asns"].values()} == {"none"}
 
 
-def test_failed_lookup_uses_answers_cached_by_earlier_runs():
+def test_failed_lookup_uses_parts_cached_by_earlier_runs():
     def fail(asn):
         raise OSError("RIPEstat down")
-    rec = {"cc": "DE", "level": "L1", "share": 100.0, "asn": TENCENT,
+    rec = {"cc": "DE", "level": "L1", "asn": TENCENT, "part": True,
            "ts": "2099-01-01T00:00:00Z", "rule_version": g._GEOLOC_CACHE_RULE_VERSION}
     with fresh_cache({"43.157.0.0/18": rec}), patched(fetch_asn_geoloc=fail):
-        out, _moved_in, _prov, handled, stats = g.relocate_cloud_space(
+        out, _moved_in, _prov, moved_space, stats = g.relocate_cloud_space(
             {"SG": [net("43.128.0.0/11")]})
     assert not holds(out["SG"], "43.157.0.1") and holds(out["SG"], "43.156.0.1")
-    assert handled == {"43.157.0.0/18"}
+    assert [str(n) for n in moved_space] == ["43.157.0.0/18"]
     assert stats["asns"][str(TENCENT)]["source"] == "cache"
 
 
-def test_asn_geolocation_is_one_call_and_warms_the_prefix_cache():
+def test_answer_is_one_call_per_asn_and_is_cached_for_a_failed_week():
     calls = []
-    payload = json.dumps({"data": {"located_resources": [
-        # covered_percentage relative to the whole ASN; the listed block
-        # shows the /24 is entirely in the US.
-        {"resource": "47.251.0.0/24", "locations": [
-            {"country": "US", "covered_percentage": 0.39, "resources": ["47.251.0.0/16"]}]},
-        {"resource": "2404:2280::/40", "locations": [
-            {"country": "SG", "covered_percentage": 100.0}]},
-    ]}})
-
-    def get(url, **kw):
-        calls.append(url)
-        if url.startswith(g.RIPE_GEO_BY_ASN_URL) and url.endswith("AS134963"):
-            return payload, "application/json; charset=utf-8"
-        raise OSError("down")
-
-    with fresh_cache({}), patched(http_get=get, fetch_asn_country=lambda asn: None):
-        assert g.fetch_asn_geoloc(134963) == {"47.251.0.0/24": {"US": 100.0}}
-        calls.clear()
-        g.relocate_cloud_space({"SG": [net("8.208.0.0/12")]})
+    with fresh_cache({}), patched(http_get=fake_http_get({134963: {
+            "8.208.136.0/22": [("GB", ["8.208.136.0/22"])]}}, calls)):
+        geo = g.fetch_cloud_geoloc()
         assert sum("AS134963" in u for u in calls) == 1
-        calls.clear()
-        # Outside every region: the supplement's lookup now comes from the cache.
-        assert g.fetch_prefix_country("47.251.0.0/24", 134963, {}) == ("US", "L1", True)
-        assert calls == []
+        assert len(calls) == len(g.RELOCATION_ASNS)
+        assert geo.parts == [(net("8.208.136.0/22"), "GB", 134963)]
+        assert g._asn_parts_from_cache(134963) == [(net("8.208.136.0/22"), "GB")]
+
+
+def test_located_blocks_not_covered_percentage_decide():
+    r = net("43.129.0.0/16")
+    locs = [
+        {"country": "HK", "covered_percentage": 2.46,
+         "resources": ["43.129.0.0/18", "43.0.0.0/8", "2404:2280::/40", "10.0.0.0/8"]},
+        {"country": "SG", "covered_percentage": 0.15,
+         "resources": ["43.129.111.0/25", "43.129.111.245/32"]},
+        {"country": "ID", "covered_percentage": 0.37},           # no blocks: ignored
+    ]
+    parts = g._resource_parts(r, locs)
+    # the /8 block covers the whole entry; the /25 + /32 carry 129 of 256
+    assert sorted((str(n), cc) for n, cc in parts) == [
+        ("43.129.0.0/16", "HK"), ("43.129.0.0/18", "HK"), ("43.129.111.0/24", "SG")]
+    # an entry smaller than /24 is its own voting unit
+    assert g._resource_parts(net("1.2.3.0/25"), [
+        {"country": "JP", "resources": ["1.2.3.0/26"]}]) == [(net("1.2.3.0/25"), "JP")]
 
 
 def test_cn_registrations_stay_but_cloud_space_can_join_cn():
-    """Part of Alibaba's 8.128.0.0/10 (SG) runs mainland regions; it belongs
-    in CN. Space registered in CN is never moved out."""
-    geo = {"8.130.0.0/16": {"CN": 100.0}, "47.96.0.0/16": {"HK": 100.0}}
-    with fresh_cache({}), patched(
-            fetch_asn_geoloc=lambda asn: geo if asn == 37963 else {}):
-        out, moved_in, _prov, handled, _stats = g.relocate_cloud_space(
-            {"SG": [net("8.128.0.0/10")], "CN": [net("47.96.0.0/11")]})
+    """Part of Alibaba's 8.128.0.0/10 (SG) runs Aliyun's mainland regions; it
+    belongs in CN. Space registered in CN is never moved out."""
+    geo = g.CloudGeo([(net("8.130.0.0/16"), "CN", 37963),
+                      (net("47.96.0.0/16"), "HK", 37963)])
+    out, moved_in, _prov, moved_space, _stats = g.relocate_cloud_space(
+        {"SG": [net("8.128.0.0/10")], "CN": [net("47.96.0.0/11")]}, geo)
     assert not holds(out["SG"], "8.130.0.1") and holds(moved_in["CN"], "8.130.0.1")
-    assert holds(out["CN"], "47.96.0.1") and "47.96.0.0/16" not in handled
+    assert holds(out["CN"], "47.96.0.1") and moved_space == [net("8.130.0.0/16")]
     assert set(g.RELOCATION_ASNS) == set(g.CN_CLOUD_ASNS)
-    assert 134963 in g.CN_CLOUD_ASNS_TIER1
 
 
-def test_shares_are_measured_from_the_located_blocks():
-    """The share must not depend on what covered_percentage is relative to."""
-    p = net("43.152.0.0/16")
-    locs = [
-        {"country": "DE", "covered_percentage": 0.3,
-         "resources": ["43.152.0.0/18", "43.152.64.0/18", "43.152.128.0/18"]},
-        {"country": "SG", "covered_percentage": 0.1, "resources": ["43.152.192.0/18"]},
-        {"country": "DE", "city": "Berlin", "covered_percentage": 0.1,
-         "resources": ["43.152.0.0/18", "2404:2280::/40", "10.0.0.0/8"]},
-    ]
-    assert g._located_shares(p, locs) == {"DE": 75.0, "SG": 25.0}
-    # a block larger than the prefix covers all of it
-    assert g._located_shares(p, [{"country": "JP", "resources": ["43.152.0.0/12"]}]) == {"JP": 100.0}
-    # no blocks listed: the reported percentage is used as is
-    assert g._located_shares(p, [{"country": "US", "covered_percentage": 40}]) == {"US": 40.0}
+def test_no_asn_country_guess_for_international_clouds():
+    """Alibaba's Hong Kong 47.56.0.0/15 was listed in CN: with no location
+    known, the ASN holder's country (CN) was used."""
+    with fresh_cache({"47.56.0.0/15": {
+            "cc": "CN", "level": "L2", "ts": "2099-01-01T00:00:00Z",
+            "rule_version": g._GEOLOC_CACHE_RULE_VERSION}}), patched(
+            http_get=fake_http_get({}, []), fetch_asn_country=lambda asn: "CN"):
+        assert g.fetch_prefix_country("47.56.0.0/15", 45102, {}) == (None, "L3", False)
+        assert g.fetch_prefix_country("47.92.0.0/14", 37963, {}) == ("CN", "L2", False)
+    assert "ByteDance" not in g.CN_CLOUD_ASNS.values(), "AS58593 is Azure China (21Vianet)"

@@ -3,11 +3,11 @@
 ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-5%20RIRs%20%2B%20BGP-orange)
-![Version](https://img.shields.io/badge/version-4.2.0-blue)
+![Version](https://img.shields.io/badge/version-4.2.1-blue)
 
 IPNova is an IP dataset for networking, security, compliance and attribution workflows. It has two parts:
 
-- **Asia-Pacific regions** — CN, HK, TW, MO, JP, KR and SG IPv4, built from APNIC data and refined with BGP announcements. Chinese cloud providers' address space is listed where it is operated, not where it is registered: their large Singapore-registered blocks serve data centres worldwide, so each announced prefix goes to the region it is located in, or to none. Networks of global anycast, CDN and cloud operators (Cloudflare, Google including its in-country edge in China, Akamai, Fastly, AWS, Microsoft, Meta, X) are left out of every region.
+- **Asia-Pacific regions** — CN, HK, TW, MO, JP, KR and SG IPv4, built from APNIC data and refined with BGP announcements. Chinese cloud providers' address space is listed where it is operated, not where it is registered: their large Singapore-registered blocks serve data centres worldwide, so each part of them goes to the region it is located in, or to none. Networks of global anycast, CDN and cloud operators (Cloudflare, Google including its in-country edge in China, Akamai, Fastly, AWS, Microsoft, Meta, X) are left out of every region.
 - **Global dataset** — every country, IPv4 + IPv6, from all five Regional Internet Registries.
 
 IPNova shows where address space is registered, routed and, for cloud providers, operated. It is not a geolocation database for end users.

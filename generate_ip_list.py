@@ -31,7 +31,7 @@ if _SCRIPT_DIR not in sys.path:
 # ================================================================
 # Version
 # ================================================================
-__version__ = "4.2.0"
+__version__ = "4.2.1"
 
 # Data-layer schema version (data.json / meta.json / regions.json).
 SCHEMA_VERSION = "3.4"
@@ -636,7 +636,7 @@ CN_CLOUD_ASNS_TIER1 = {
 CN_CLOUD_ASNS_TIER2 = {
     45090: "Tencent",
     38365: "Baidu",
-    58593: "ByteDance",
+    58593: "Azure China (21Vianet Blue Cloud)",
 }
 
 CN_CLOUD_ASNS = {**CN_CLOUD_ASNS_TIER1, **CN_CLOUD_ASNS_TIER2}
@@ -674,10 +674,14 @@ FORBIDDEN_ASNS = {
 # ============================================================
 RELOCATION_ASNS = tuple(CN_CLOUD_ASNS)
 RELOCATION_KEEP_REGIONS = ("CN",)
-# A prefix moves only when at least this share (percent) of its addresses is
-# located in one other country; weaker or missing evidence keeps the
-# registration.
+# Located blocks smaller than /24 vote for their /24, which goes to the
+# country holding at least this share (percent) of it; the lists are never
+# cut finer than /24.
 RELOCATION_MIN_SHARE = 50.0
+# Their holder country (CN) says nothing about where a prefix runs, so the
+# ASN-country guess (L2) is never used for them: Alibaba's Hong Kong
+# 47.56.0.0/15 sat in CN.txt on that guess.
+INTERNATIONAL_CLOUD_ASNS = frozenset({45102, 134963, 132203, 136907})
 RIPE_GEO_BY_ASN_URL = (
     "https://stat.ripe.net/data/maxmind-geo-lite-announced-by-as/data.json"
 )
@@ -838,39 +842,68 @@ def _country_shares(locations):
     return shares
 
 
-def _located_shares(prefix, locations):
-    """Country shares, in percent of `prefix`'s addresses, for one RIPEstat
-    located resource.
+def _resource_parts(resource, locations):
+    """Located parts of one RIPEstat located resource: [(IPv4Network, cc)].
 
-    Measured from each location's `resources` (the geolocated blocks) where
-    the answer lists them, so the result does not depend on what
-    `covered_percentage` is relative to (the prefix, or the whole ASN in an
-    ASN query). Without them, the reported covered_percentage is used.
+    Each location lists its geolocated blocks (`resources`), cut here to the
+    resource. Blocks of /24 or larger are used as they are; smaller ones vote
+    for their /24 (or for the resource, if that is smaller), which goes to
+    the country holding at least RELOCATION_MIN_SHARE % of it.
+
+    `covered_percentage` is not used: in an ASN query it is relative to the
+    whole ASN, not to the resource (a fully located /22 of AS134963 shows
+    1.44).
     """
-    blocks = defaultdict(list)
-    fallback = {}
+    parts = []
+    votes = defaultdict(lambda: defaultdict(int))
+    unit_len = max(24, resource.prefixlen)
     for loc in locations or []:
         if not isinstance(loc, dict):
             continue
-        c = (loc.get("country") or "").upper().strip()
-        if len(c) != 2:
+        cc = (loc.get("country") or "").upper().strip()
+        if len(cc) != 2:
             continue
-        listed = False
         for r in loc.get("resources") or []:
             try:
                 b = ipaddress.ip_network(str(r), strict=False)
             except ValueError:
                 continue
-            listed = True
-            if b.version == prefix.version and b.overlaps(prefix):
-                blocks[c].append(prefix if prefix.subnet_of(b) else b)
-        if not listed:
-            fallback[c] = fallback.get(c, 0.0) + _country_shares([loc]).get(c, 0.0)
-    shares = {c: 100.0 * sum(n.num_addresses for n in ipaddress.collapse_addresses(bs))
-              / prefix.num_addresses for c, bs in blocks.items()}
-    for c, pct in fallback.items():
-        shares[c] = max(shares.get(c, 0.0), pct)
-    return shares
+            if b.version != resource.version or not b.overlaps(resource):
+                continue
+            part = resource if resource.subnet_of(b) else b
+            if part.prefixlen <= 24:
+                parts.append((part, cc))
+            else:
+                votes[part.supernet(new_prefix=unit_len)][cc] += part.num_addresses
+    for unit, by_cc in votes.items():
+        cc, n = max(by_cc.items(), key=lambda kv: (kv[1], kv[0]))
+        if 100.0 * n / unit.num_addresses >= RELOCATION_MIN_SHARE:
+            parts.append((unit, cc))
+    return parts
+
+
+class CloudGeo:
+    """Where the cloud ASNs' address space is located, from one RIPEstat
+    answer per ASN: `parts` is [(IPv4Network, cc, asn)], `asns` per-ASN
+    status for meta.json."""
+
+    def __init__(self, parts=(), asns=None):
+        self.parts = list(parts)
+        self.asns = dict(asns or {})
+        by_cc = defaultdict(list)
+        for net, cc, _asn in self.parts:
+            by_cc[cc].append(net)
+        self._idx = {cc: SortedNetworks(nets) for cc, nets in by_cc.items()}
+
+    def shares(self, net):
+        """{cc: percent of `net` located there}; empty when nothing is known."""
+        out = {}
+        for cc, idx in self._idx.items():
+            n = sum((b if b.subnet_of(net) else net).num_addresses
+                    for b in idx.overlapping(net))
+            if n:
+                out[cc] = 100.0 * n / net.num_addresses
+        return out
 
 
 def _dominant(shares):
@@ -922,7 +955,8 @@ def fetch_prefix_country(prefix, asn, region_data=None):
     # Only network-derived answers are served from cache. Legacy "L0" entries
     # (written by v3.4) depend on that week's APNIC data, so they are ignored
     # and re-derived instead of being trusted blindly.
-    if rec and rec.get("cc") and rec.get("level") in ("L1", "L2"):
+    if rec and rec.get("cc") and rec.get("level") in ("L1", "L2") and not (
+            rec["level"] == "L2" and asn in INTERNATIONAL_CLOUD_ASNS):
         return rec["cc"], rec["level"], True
 
     try:
@@ -953,6 +987,8 @@ def fetch_prefix_country(prefix, asn, region_data=None):
     except Exception as e:
         log.debug("[cloud-supp] geoloc lookup failed for %s: %s", prefix, e)
 
+    if asn in INTERNATIONAL_CLOUD_ASNS:
+        return None, "L3", False
     cc = fetch_asn_country(asn)
     if cc in TARGET_REGIONS:
         _cache_put(cache, prefix, cc, "L2")
@@ -986,13 +1022,13 @@ def subtract_region_conflicts(network, cc, region_data):
 
 
 def fetch_asn_geoloc(asn):
-    """Country shares for every IPv4 prefix that `asn` announces.
+    """Located parts of all IPv4 space that `asn` announces: [(net, cc)].
 
     One RIPEstat call (maxmind-geo-lite-announced-by-as) instead of one
-    geoloc call per prefix: the cloud ASNs announce thousands of prefixes,
-    far more than the RIPE budget allows one by one.
-
-    Returns {cidr: {country: percent of the prefix}}. Raises on any failure.
+    geoloc call per prefix. The answer merges adjacent announced prefixes
+    into one entry (43.156.0.0/15 for Tencent's Singapore, Frankfurt and
+    São Paulo data centres), so the located blocks inside each entry are
+    used, never a vote over the whole entry. Raises on any failure.
     """
     url = f"{RIPE_GEO_BY_ASN_URL}?resource=AS{asn}"
     # One attempt: a slow answer for one ASN must not eat the RIPE budget
@@ -1007,7 +1043,7 @@ def fetch_asn_geoloc(asn):
     located = data.get("located_resources") if isinstance(data, dict) else None
     if not isinstance(located, list):
         raise RuntimeError(f"malformed RIPEstat geolocation for AS{asn}")
-    out = {}
+    out = []
     for res in located:
         if not isinstance(res, dict):
             continue
@@ -1016,173 +1052,139 @@ def fetch_asn_geoloc(asn):
         except ValueError:
             continue
         if net.version == 4:
-            out[str(net)] = _located_shares(net, res.get("locations"))
+            out.extend(_resource_parts(net, res.get("locations")))
     return out
 
 
-def _asn_geoloc_from_cache(asn):
-    """{cidr: (country, share)} written by earlier runs for `asn`."""
-    out = {}
+def _asn_parts_from_cache(asn):
+    """[(net, cc)] located for `asn` by earlier runs."""
+    out = []
     for prefix, rec in _load_geoloc_cache().items():
-        if rec.get("asn") == asn and rec.get("level") == "L1" and "share" in rec:
+        if rec.get("asn") == asn and rec.get("part") and rec.get("cc"):
             try:
-                out[prefix] = (rec.get("cc"), float(rec["share"]))
-            except (TypeError, ValueError):
+                out.append((ipaddress.ip_network(prefix, strict=False), rec["cc"]))
+            except ValueError:
                 continue
     return out
 
 
-def relocate_cloud_space(region_data):
+def fetch_cloud_geoloc():
+    """CloudGeo for every cloud ASN. When RIPEstat fails for an ASN, the
+    parts cached by earlier runs stand in; with none, nothing is known."""
+    cache = _load_geoloc_cache()
+    parts, asns = [], {}
+    for asn in RELOCATION_ASNS:
+        st = {"name": CN_CLOUD_ASNS.get(asn, ""), "source": "ripestat"}
+        try:
+            got = fetch_asn_geoloc(asn)
+            if not got:
+                raise RuntimeError("no located IPv4 space in the answer")
+            for net, cc in got:
+                _cache_put(cache, str(net), cc, "L1", asn=asn, part=True)
+        except Exception as e:
+            got = _asn_parts_from_cache(asn)
+            st["source"] = "cache" if got else "none"
+            log.warning("[relocate] AS%s geolocation unavailable (%s); %s",
+                        asn, e, f"using {len(got)} cached parts"
+                        if got else "its space stays where it is registered")
+        st["parts"] = len(got)
+        parts.extend((net, cc, asn) for net, cc in got)
+        asns[str(asn)] = st
+    _save_geoloc_cache()
+    return CloudGeo(parts, asns)
+
+
+def _addresses(nets):
+    return sum(n.num_addresses for n in ipaddress.collapse_addresses(nets))
+
+
+def relocate_cloud_space(region_data, geo=None):
     """Take cloud space out of the region it is registered in when it is
     operated somewhere else.
 
-    Every prefix announced by RELOCATION_ASNS that lies inside the APNIC
-    space of a region (other than RELOCATION_KEEP_REGIONS) gets a verdict
-    from RIPEstat geolocation:
-      - at least RELOCATION_MIN_SHARE % located in the registered region:
-        it stays;
-      - at least RELOCATION_MIN_SHARE % located in another country: it moves,
-        leaving the registered region and joining the other one if that is a
-        target region (otherwise it belongs to no region);
-      - weaker or no evidence: no verdict.
-    Inside a less specific prefix, a more specific prefix's verdict wins; a
-    prefix without a verdict follows the nearest enclosing prefix that has
-    one, or stays where it is registered.
+    Every located part (see _resource_parts) of the cloud ASNs' space that
+    lies inside the APNIC space of a region other than
+    RELOCATION_KEEP_REGIONS is placed where it is located: it stays when
+    that is the registered region; otherwise it leaves the region and joins
+    the located country if that is a target region, or belongs to no region.
+    Space without a location stays where it is registered.
 
-    When RIPEstat fails for an ASN, the answers cached by earlier runs are
-    used; with none, that ASN's space stays where it is registered.
-
-    Returns (region_data, moved_in, provenance, handled, stats):
+    Returns (region_data, moved_in, provenance, moved_space, stats):
       region_data  new dict, the input minus the moved space
       moved_in     {cc: [IPv4Network]}: moved space located in a target region
       provenance   {cc: {cidr: {asn, tier, level}}} for moved_in
-      handled      prefixes given a verdict here; the cloud supplement skips them
+      moved_space  [IPv4Network]: all moved space; the cloud supplement
+                   skips any prefix that touches it
       stats        summary for meta.json
     """
+    if geo is None:
+        geo = fetch_cloud_geoloc()
     index = build_region_index(region_data)
-    cache = _load_geoloc_cache()
+    checked = []
+    kept = []
+    moved = defaultdict(list)  # registered -> [(net, cc, asn)]
+    for net, cc, asn in geo.parts:
+        registered = next((rcc for rcc, idx in index.items()
+                           if idx.containing(net) is not None), None)
+        if registered is None or registered in RELOCATION_KEEP_REGIONS:
+            continue  # the supplement's job, as before
+        checked.append(net)
+        if cc == registered:
+            kept.append(net)
+        else:
+            moved[registered].append((net, cc, asn))
+
     stats = {
-        "min_share": RELOCATION_MIN_SHARE,
-        "asns": {},
-        "prefixes_checked": 0,
-        "moved": 0,
-        "stayed": 0,
-        "undecided": 0,
-        "moved_addresses": {},    # "SG->JP": addresses actually moved
+        "asns": geo.asns,
+        "located_addresses": _addresses(checked),
+        "kept_addresses": _addresses(kept),
+        "moved_addresses": {},    # "SG->JP": addresses moved
         "removed_addresses": {},  # registered region -> addresses removed
         "added_addresses": {},    # target region -> addresses added
     }
-
-    # prefix -> (net, registered, located or None, share, asn)
-    verdicts = {}
-    for asn in RELOCATION_ASNS:
-        astats = {"name": CN_CLOUD_ASNS.get(asn, ""), "source": "ripestat",
-                  "prefixes": 0, "in_regions": 0}
-        try:
-            shares = fetch_asn_geoloc(asn)
-            if not shares:
-                raise RuntimeError("no IPv4 prefixes in the answer")
-            dominant = {}
-            for prefix, by_cc in shares.items():
-                cc, pct = _dominant(by_cc)
-                dominant[prefix] = (cc, pct)
-                if cc:
-                    # Also serves the supplement's L1 lookups for this ASN.
-                    _cache_put(cache, prefix, cc, "L1", share=round(pct, 2), asn=asn)
-        except Exception as e:
-            dominant = _asn_geoloc_from_cache(asn)
-            astats["source"] = "cache" if dominant else "none"
-            log.warning("[relocate] AS%s geolocation unavailable (%s); %s",
-                        asn, e, f"using {len(dominant)} cached answers"
-                        if dominant else "its space stays where it is registered")
-        astats["prefixes"] = len(dominant)
-        for prefix, (cc, pct) in dominant.items():
-            try:
-                net = ipaddress.ip_network(prefix, strict=False)
-            except ValueError:
-                continue
-            registered = next((rcc for rcc, idx in index.items()
-                               if idx.containing(net) is not None), None)
-            if registered is None or registered in RELOCATION_KEEP_REGIONS:
-                continue  # the supplement's job, as before
-            astats["in_regions"] += 1
-            located = cc if cc and pct >= RELOCATION_MIN_SHARE else None
-            prev = verdicts.get(prefix)
-            if prev is None or (located is not None
-                                and (prev[2] is None or pct > prev[3])):
-                verdicts[prefix] = (net, registered, located, pct, asn)
-        stats["asns"][str(asn)] = astats
-
-    decided = [v for v in verdicts.values() if v[2] is not None]
-    stats["prefixes_checked"] = len(verdicts)
-    stats["undecided"] = len(verdicts) - len(decided)
-    stats["stayed"] = sum(1 for v in decided if v[2] == v[1])
-    stats["moved"] = len(decided) - stats["stayed"]
-
-    # Per registered region, nest the verdicts (CIDRs are either disjoint or
-    # nested) and give each moving prefix its space minus its direct children,
-    # which carry their own verdicts.
-    moved_parts = defaultdict(list)  # registered -> [(net, located, asn)]
-    for registered in sorted({v[1] for v in decided}):
-        items = sorted((v for v in decided if v[1] == registered),
-                       key=lambda v: (int(v[0].network_address), v[0].prefixlen))
-        children = defaultdict(list)
-        stack = []
-        for i, v in enumerate(items):
-            while stack and not v[0].subnet_of(items[stack[-1]][0]):
-                stack.pop()
-            if stack:
-                children[stack[-1]].append(v[0])
-            stack.append(i)
-        for i, (net, _reg, located, _pct, asn) in enumerate(items):
-            if located == registered:
-                continue
-            parts = (subtract_excluded_from_network(net, SortedNetworks(children[i]))
-                     if children[i] else [net])
-            moved_parts[registered].extend((p, located, asn) for p in parts)
-
     new_region_data = {}
     for cc, nets in region_data.items():
-        parts = moved_parts.get(cc)
+        parts = moved.get(cc)
         if not parts:
             new_region_data[cc] = list(nets)
             continue
         holes = SortedNetworks([p for p, _, _ in parts])
-        kept = []
+        out = []
         for n in nets:
-            kept.extend(subtract_excluded_from_network(n, holes))
-        new_region_data[cc] = kept
+            out.extend(subtract_excluded_from_network(n, holes))
+        new_region_data[cc] = out
         stats["removed_addresses"][cc] = sum(h.num_addresses for h in holes.nets)
 
     moved_in = defaultdict(list)
     provenance = defaultdict(dict)
-    for registered, parts in moved_parts.items():
+    pairs = defaultdict(list)
+    for registered, parts in moved.items():
         for part, located, asn in parts:
-            key = f"{registered}->{located}"
-            stats["moved_addresses"][key] = (
-                stats["moved_addresses"].get(key, 0) + part.num_addresses)
+            pairs[f"{registered}->{located}"].append(part)
             if located in TARGET_REGIONS:
                 moved_in[located].append(part)
                 provenance[located][str(part)] = {
                     "asn": asn, "tier": _ASN_TIER_MAP.get(asn), "level": "L1"}
-                stats["added_addresses"][located] = (
-                    stats["added_addresses"].get(located, 0) + part.num_addresses)
-    stats["moved_addresses"] = dict(sorted(stats["moved_addresses"].items()))
+    stats["moved_addresses"] = {k: _addresses(v) for k, v in sorted(pairs.items())}
+    stats["added_addresses"] = {cc: _addresses(v) for cc, v in sorted(moved_in.items())}
+    moved_space = list(ipaddress.collapse_addresses(
+        p for parts in moved.values() for p, _, _ in parts))
 
-    log.info("[relocate] %d prefixes checked: %d moved, %d stayed, %d undecided; "
-             "removed %s", stats["prefixes_checked"], stats["moved"],
-             stats["stayed"], stats["undecided"], stats["removed_addresses"] or "nothing")
-    _save_geoloc_cache()
+    log.info("[relocate] %s addresses located in the regions' space: %s kept, "
+             "removed %s", f"{stats['located_addresses']:,}",
+             f"{stats['kept_addresses']:,}", stats["removed_addresses"] or "nothing")
     return (new_region_data,
             {cc: list(ipaddress.collapse_addresses(v)) for cc, v in moved_in.items()},
-            dict(provenance), set(verdicts), stats)
+            dict(provenance), moved_space, stats)
 
 
-def build_cloud_supplementary_networks(region_data, skip=None):
+def build_cloud_supplementary_networks(region_data, skip=None, geo=None):
     """Fetch cloud ASN prefixes, classify by country, keep TARGET_REGIONS only.
 
-    `skip`: prefixes relocate_cloud_space() already gave a verdict; they are
-    not looked up again.
+    `skip`: space relocate_cloud_space() moved; a prefix touching it is left
+    alone, so moved space can never be claimed back by its old region.
+    `geo`: a CloudGeo; a prefix outside the regions' APNIC space is placed
+    from it (L1) before the cache or a per-prefix RIPEstat lookup is tried.
 
     Returns:
         supp:            dict[cc, list[IPv4Network]]  — collapsed supplementary networks
@@ -1202,6 +1204,7 @@ def build_cloud_supplementary_networks(region_data, skip=None):
         "dropped_region_conflict": 0,
         "trimmed_region_conflict": 0,
         "handled_by_relocation": 0,
+        "geo_hit": 0,
         "asns_failed": [],
         "duration_seconds": 0.0,
         "asn_count": len(CN_CLOUD_ASNS),
@@ -1217,6 +1220,7 @@ def build_cloud_supplementary_networks(region_data, skip=None):
     # Build the APNIC containment / conflict index once; v3.4 rescanned every
     # region list linearly for each of ~1,900 prefixes.
     region_index = build_region_index(region_data)
+    skip_index = SortedNetworks(skip or [])
 
     log.info("[cloud-supp] build_cloud_supplementary_networks start")
 
@@ -1230,11 +1234,19 @@ def build_cloud_supplementary_networks(region_data, skip=None):
 
         for p in prefixes:
             stats["prefixes_fetched"] += 1
-            if skip and str(p) in skip:
+            if skip_index and skip_index.overlapping(p):
                 stats["handled_by_relocation"] += 1
                 continue
 
-            cc, level, from_cache = fetch_prefix_country(str(p), asn, region_index)
+            cc, level, from_cache = None, None, False
+            if geo is not None and not any(
+                    idx.containing(p) is not None for idx in region_index.values()):
+                cc, _share = _dominant(geo.shares(p))
+                if cc:
+                    level = "L1"
+                    stats["geo_hit"] += 1
+            if cc is None:
+                cc, level, from_cache = fetch_prefix_country(str(p), asn, region_index)
 
             if from_cache:
                 stats["cache_hit"] += 1
@@ -2010,8 +2022,8 @@ def main(argv=None):
         parse_stats["cloud_supplement"] = {"skipped": True, "reason": reason}
         parse_stats["cloud_relocation"] = {"skipped": True, "reason": reason}
     else:
-        # Step 3.4: international cloud space goes where it is operated.
-        handled = set()
+        # Step 3.4: cloud space goes where it is operated.
+        geo, moved_space = None, []
         moved_in, moved_provenance = {}, {}
         if args.skip_relocation:
             log.info("Skipping cloud relocation (--skip-relocation)")
@@ -2019,11 +2031,12 @@ def main(argv=None):
                                                "reason": "skip_relocation"}
         else:
             with StepTimer("Cloud relocation"):
-                (region_data, moved_in, moved_provenance, handled,
-                 parse_stats["cloud_relocation"]) = relocate_cloud_space(region_data)
+                geo = fetch_cloud_geoloc()
+                (region_data, moved_in, moved_provenance, moved_space,
+                 parse_stats["cloud_relocation"]) = relocate_cloud_space(region_data, geo)
         with StepTimer("Cloud ASN supplement"):
             supp, supp_provenance, supp_stats = build_cloud_supplementary_networks(
-                region_data, skip=handled)
+                region_data, skip=moved_space, geo=geo)
         parse_stats["cloud_supplement"] = supp_stats
         for cc, nets in moved_in.items():
             supp[cc] = list(ipaddress.collapse_addresses(supp.get(cc, []) + nets))

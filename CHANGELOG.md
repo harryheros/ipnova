@@ -3,6 +3,15 @@
 Releases, newest first. The weekly data updates are the
 `chore: update dataset` commits.
 
+## 4.2.1 (2026-11-23)
+
+- **Relocation works block by block.** RIPEstat's per-ASN answer merges adjacent announced prefixes into one entry: Tencent's `43.156.0.0/15` holds its Singapore, Frankfurt and São Paulo data centres, and `43.165.0.0/16` four data centres, none of them in Singapore. 4.2.0 voted over each entry, so such entries stayed in SG whole. Now the located blocks inside each entry decide, and each goes where it is located. Blocks smaller than /24 vote for their /24, so the lists are never cut finer than /24. The answer's `covered_percentage` is not used: it is relative to the whole ASN.
+- **The first 4.2.0 run ran out of RIPE budget.** The cloud supplement matched relocated space by exact prefix string, which the merged entries never match, so hundreds of prefixes that relocation had already placed were looked up again one by one. The RIPE breaker tripped after 900 s and five cloud ASNs were skipped; HK lost 75,776 addresses of Huawei Cloud for the week. The supplement now leaves any prefix that touches moved space alone, and places the others from the same per-ASN answer (`geo_hit` in `meta.json`) before it tries the cache or a per-prefix lookup.
+- **No ASN-country guess for the international cloud networks** (AS45102, AS134963, AS132203, AS136907). Their holder country is CN, so a prefix with no known location was put in CN: Alibaba's Hong Kong `47.56.0.0/15`, `47.76.0.0/17` and `47.89.0.0/18` sat in CN.txt until the 4.2.0 run. Such a prefix is now left out.
+- AS58593 is Azure China (21Vianet Blue Cloud), not ByteDance; the label is corrected. Its space runs in mainland China and stays in CN.
+- `meta.json`: `cloud_relocation` reports addresses (`located_addresses`, `kept_addresses`, and moved per region pair) instead of prefix counts.
+- Relocation tests rewritten with RIPEstat answers in the shape the real data call returns (8 tests, 45 in total).
+
 ## 4.2.0 (2026-11-23)
 
 - **Cloud space is listed where it is operated.** The cloud companies register large blocks in Singapore and run data centres around the world from them: Alibaba's `8.128.0.0/10` carries Aliyun's mainland regions (`8.129`–`8.147`, AS37963), its `8.208.0.0/12` and `149.129.0.0/16` serve Manila and Mumbai, and Tencent's `43.128.0.0/13` serves Tokyo and Frankfurt. The BGP step only added cloud prefixes from outside APNIC space; a prefix inside a region's APNIC space was settled by containment and stayed where it was registered. So SG.txt listed all of these (its two largest entries, `43.0.0.0/9` and `8.128.0.0/10`, were 45% of its addresses), and DomainNova placed sites hosted on them in SG, mainland ones included.
