@@ -1,9 +1,9 @@
 {
   "region": "CN",
   "region_name": "China (Mainland)",
-  "total_cidrs": 5618,
-  "total_ips": 346548744,
-  "generated_at": "2026-11-23T18:02:02.926476+00:00",
+  "total_cidrs": 5526,
+  "total_ips": 345605640,
+  "generated_at": "2026-11-23T20:26:11.017329+00:00",
   "cidrs": [
     "1.0.1.0/24",
     "1.0.2.0/23",
@@ -82,7 +82,6 @@
     "8.163.0.0/16",
     "8.164.0.0/14",
     "8.168.0.0/14",
-    "8.209.40.0/23",
     "14.0.0.0/21",
     "14.0.12.0/22",
     "14.1.0.0/22",
@@ -795,90 +794,8 @@
     "45.255.224.0/20",
     "45.255.240.0/21",
     "45.255.248.0/22",
-    "47.74.0.0/21",
-    "47.74.96.0/19",
-    "47.74.128.0/17",
-    "47.76.128.0/17",
-    "47.77.0.0/23",
-    "47.77.8.0/22",
-    "47.77.32.0/20",
-    "47.77.64.0/20",
-    "47.77.104.0/21",
-    "47.77.144.0/21",
-    "47.78.128.0/17",
-    "47.79.8.0/21",
-    "47.79.48.0/21",
-    "47.79.72.0/21",
-    "47.79.80.0/20",
-    "47.79.96.0/19",
-    "47.79.144.0/20",
-    "47.79.176.0/20",
-    "47.79.224.0/19",
-    "47.80.32.0/19",
-    "47.80.128.0/17",
-    "47.81.64.0/18",
-    "47.81.128.0/17",
-    "47.82.14.0/23",
-    "47.82.56.0/21",
-    "47.82.64.0/19",
-    "47.83.48.0/20",
-    "47.84.0.0/17",
-    "47.84.144.0/21",
-    "47.85.0.0/16",
-    "47.86.0.0/16",
-    "47.87.0.0/17",
-    "47.87.196.0/22",
-    "47.87.216.0/23",
-    "47.87.224.0/21",
-    "47.87.234.0/23",
-    "47.87.246.0/23",
-    "47.87.248.0/22",
-    "47.87.252.0/23",
-    "47.88.0.0/18",
-    "47.89.76.0/23",
-    "47.89.88.0/23",
-    "47.89.92.0/23",
-    "47.89.96.0/24",
-    "47.89.98.0/23",
-    "47.89.100.0/24",
-    "47.89.104.0/22",
-    "47.90.128.0/17",
-    "47.91.0.0/19",
-    "47.91.64.0/20",
     "47.92.0.0/14",
     "47.96.0.0/11",
-    "47.235.4.0/24",
-    "47.235.6.0/23",
-    "47.235.10.0/23",
-    "47.235.18.0/23",
-    "47.235.23.0/24",
-    "47.237.32.0/20",
-    "47.242.0.0/15",
-    "47.244.73.0/24",
-    "47.244.128.0/17",
-    "47.245.0.0/18",
-    "47.246.68.0/24",
-    "47.246.82.0/24",
-    "47.246.86.0/23",
-    "47.246.90.0/23",
-    "47.246.128.0/23",
-    "47.246.132.0/22",
-    "47.246.136.0/22",
-    "47.246.144.0/24",
-    "47.246.147.0/24",
-    "47.246.152.0/23",
-    "47.246.156.0/23",
-    "47.246.160.0/20",
-    "47.246.192.0/22",
-    "47.246.204.0/22",
-    "47.246.216.0/23",
-    "47.250.0.0/17",
-    "47.250.192.0/18",
-    "47.251.0.0/17",
-    "47.252.67.0/24",
-    "47.252.128.0/17",
-    "47.254.128.0/19",
-    "47.254.192.0/18",
     "49.4.0.0/14",
     "49.51.0.0/16",
     "49.52.0.0/14",
@@ -3634,12 +3551,6 @@
     "139.5.212.0/22",
     "139.5.244.0/22",
     "139.9.0.0/16",
-    "139.95.4.0/23",
-    "139.95.34.0/23",
-    "139.95.64.0/23",
-    "139.95.134.0/23",
-    "139.95.144.0/20",
-    "139.95.192.0/18",
     "139.129.0.0/16",
     "139.148.0.0/16",
     "139.155.0.0/16",
@@ -3706,8 +3617,6 @@
     "146.196.92.0/22",
     "146.196.112.0/21",
     "146.196.124.0/22",
-    "147.139.64.0/18",
-    "147.139.128.0/17",
     "148.70.0.0/16",
     "149.41.0.0/16",
     "150.0.0.0/16",
@@ -5472,7 +5381,6 @@
     "203.217.164.0/22",
     "203.223.16.0/21",
     "204.52.191.0/24",
-    "205.204.102.0/23",
     "210.2.0.0/19",
     "210.5.0.0/19",
     "210.5.56.0/21",
@@ -6110,8 +6018,8 @@
       "source": "bgp",
       "asn": 37963,
       "tier": 1,
-      "level": "L2",
-      "confidence": "low"
+      "level": "L1",
+      "confidence": "medium"
     },
     {
       "cidr": "8.130.0.0/15",
@@ -6126,8 +6034,8 @@
       "source": "bgp",
       "asn": 37963,
       "tier": 1,
-      "level": "L2",
-      "confidence": "low"
+      "level": "L1",
+      "confidence": "medium"
     },
     {
       "cidr": "8.136.0.0/13",
@@ -6198,8 +6106,8 @@
       "source": "bgp",
       "asn": 37963,
       "tier": 1,
-      "level": "L2",
-      "confidence": "low"
+      "level": "L1",
+      "confidence": "medium"
     },
     {
       "cidr": "8.160.0.0/15",
@@ -6230,24 +6138,16 @@
       "source": "bgp",
       "asn": 37963,
       "tier": 1,
-      "level": "L2",
-      "confidence": "low"
+      "level": "L1",
+      "confidence": "medium"
     },
     {
       "cidr": "8.168.0.0/14",
       "source": "bgp",
       "asn": 37963,
       "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "8.209.40.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
+      "level": "L1",
+      "confidence": "medium"
     },
     {
       "cidr": "14.0.0.0/21",
@@ -11946,406 +11846,6 @@
       "confidence": "high"
     },
     {
-      "cidr": "47.74.0.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.74.96.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.74.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.76.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.77.0.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.77.8.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.77.32.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.77.64.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.77.104.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.77.144.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.78.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.8.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.48.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.72.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.80.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.96.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.144.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.176.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.79.224.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.80.32.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.80.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.81.64.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.81.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.82.14.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.82.56.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.82.64.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.83.48.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.84.0.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.84.144.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.85.0.0/16",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.86.0.0/16",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.0.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.196.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.216.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.224.0/21",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.234.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.246.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.248.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.87.252.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.88.0.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.76.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.88.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.92.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.96.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.98.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.100.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.89.104.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.90.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.91.0.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.91.64.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
       "cidr": "47.92.0.0/14",
       "source": "apnic",
       "asn": null,
@@ -12360,262 +11860,6 @@
       "tier": null,
       "level": "L0",
       "confidence": "high"
-    },
-    {
-      "cidr": "47.235.4.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.235.6.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.235.10.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.235.18.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.235.23.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.237.32.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.242.0.0/15",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.244.73.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.244.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.245.0.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.68.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.82.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.86.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.90.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.128.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.132.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.136.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.144.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.147.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.152.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.156.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.160.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.192.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.204.0/22",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.246.216.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.250.0.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.250.192.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.251.0.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.252.67.0/24",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.252.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.254.128.0/19",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "47.254.192.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
     },
     {
       "cidr": "49.4.0.0/14",
@@ -34658,54 +33902,6 @@
       "confidence": "high"
     },
     {
-      "cidr": "139.95.4.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "139.95.34.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "139.95.64.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "139.95.134.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "139.95.144.0/20",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "139.95.192.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
       "cidr": "139.129.0.0/16",
       "source": "apnic",
       "asn": null,
@@ -35232,22 +34428,6 @@
       "tier": null,
       "level": "L0",
       "confidence": "high"
-    },
-    {
-      "cidr": "147.139.64.0/18",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
-    },
-    {
-      "cidr": "147.139.128.0/17",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
     },
     {
       "cidr": "148.70.0.0/16",
@@ -49360,14 +48540,6 @@
       "tier": null,
       "level": "L0",
       "confidence": "high"
-    },
-    {
-      "cidr": "205.204.102.0/23",
-      "source": "bgp",
-      "asn": 45102,
-      "tier": 1,
-      "level": "L2",
-      "confidence": "low"
     },
     {
       "cidr": "210.2.0.0/19",

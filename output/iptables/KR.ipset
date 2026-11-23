@@ -1,6 +1,6 @@
 # IPNova — ipset restore — KR (South Korea)
-# Generated : 2026-11-23 18:02:03 UTC
-# CIDRs     : 1082
+# Generated : 2026-11-23 20:26:11 UTC
+# CIDRs     : 1091
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -18,8 +18,8 @@ add ipnova_KR 1.176.0.0/15
 add ipnova_KR 1.201.0.0/16
 add ipnova_KR 1.208.0.0/12
 add ipnova_KR 1.224.0.0/11
-add ipnova_KR 8.220.236.0/22
-add ipnova_KR 8.220.248.0/21
+add ipnova_KR 8.213.128.0/19
+add ipnova_KR 8.220.192.0/18
 add ipnova_KR 14.0.32.0/19
 add ipnova_KR 14.0.64.0/18
 add ipnova_KR 14.4.0.0/14
@@ -64,10 +64,15 @@ add ipnova_KR 42.8.0.0/13
 add ipnova_KR 42.16.0.0/12
 add ipnova_KR 42.32.0.0/12
 add ipnova_KR 42.82.0.0/16
+add ipnova_KR 43.92.128.0/17
 add ipnova_KR 43.108.0.0/17
 add ipnova_KR 43.128.128.0/19
 add ipnova_KR 43.131.224.0/19
-add ipnova_KR 43.164.128.0/17
+add ipnova_KR 43.133.64.0/19
+add ipnova_KR 43.133.224.0/19
+add ipnova_KR 43.155.128.0/17
+add ipnova_KR 43.164.128.0/18
+add ipnova_KR 43.166.0.0/18
 add ipnova_KR 43.224.104.0/22
 add ipnova_KR 43.227.116.0/22
 add ipnova_KR 43.227.120.0/22
@@ -116,7 +121,9 @@ add ipnova_KR 45.249.160.0/22
 add ipnova_KR 45.250.204.0/22
 add ipnova_KR 45.250.208.0/22
 add ipnova_KR 45.250.220.0/22
-add ipnova_KR 47.80.0.0/19
+add ipnova_KR 47.80.0.0/18
+add ipnova_KR 47.80.128.0/17
+add ipnova_KR 47.87.224.0/22
 add ipnova_KR 49.1.0.0/16
 add ipnova_KR 49.8.0.0/14
 add ipnova_KR 49.16.0.0/12
@@ -200,6 +207,7 @@ add ipnova_KR 64.188.32.0/20
 add ipnova_KR 91.240.89.0/24
 add ipnova_KR 101.1.8.0/21
 add ipnova_KR 101.1.32.0/19
+add ipnova_KR 101.44.212.0/22
 add ipnova_KR 101.53.64.0/19
 add ipnova_KR 101.55.0.0/17
 add ipnova_KR 101.79.0.0/16
@@ -743,7 +751,8 @@ add ipnova_KR 149.129.0.0/20
 add ipnova_KR 150.107.68.0/22
 add ipnova_KR 150.107.80.0/21
 add ipnova_KR 150.109.80.0/21
-add ipnova_KR 150.109.192.0/18
+add ipnova_KR 150.109.208.0/20
+add ipnova_KR 150.109.224.0/19
 add ipnova_KR 150.129.224.0/22
 add ipnova_KR 150.150.0.0/16
 add ipnova_KR 150.183.0.0/16
