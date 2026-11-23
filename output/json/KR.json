@@ -3,7 +3,7 @@
   "region_name": "South Korea",
   "total_cidrs": 1053,
   "total_ips": 112477256,
-  "generated_at": "2026-11-19T08:26:32.286109+00:00",
+  "generated_at": "2026-11-23T10:45:19.266860+00:00",
   "cidrs": [
     "1.11.0.0/16",
     "1.16.0.0/14",
