@@ -3,14 +3,14 @@
 ![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)
 ![Update](https://img.shields.io/badge/update-weekly-brightgreen)
 ![Data Source](https://img.shields.io/badge/source-5%20RIRs%20%2B%20BGP-orange)
-![Version](https://img.shields.io/badge/version-4.1.1-blue)
+![Version](https://img.shields.io/badge/version-4.2.0-blue)
 
 IPNova is an IP dataset for networking, security, compliance and attribution workflows. It has two parts:
 
-- **Asia-Pacific regions** — CN, HK, TW, MO, JP, KR and SG IPv4, built from APNIC data and refined with BGP announcements, so Chinese cloud providers' overseas regions land where they actually operate. Networks of global anycast, CDN and cloud operators (Cloudflare, Google including its in-country edge in China, Akamai, Fastly, AWS, Microsoft, Meta, X) are left out of every region.
+- **Asia-Pacific regions** — CN, HK, TW, MO, JP, KR and SG IPv4, built from APNIC data and refined with BGP announcements. Chinese cloud providers' address space is listed where it is operated, not where it is registered: their large Singapore-registered blocks serve data centres worldwide, so each announced prefix goes to the region it is located in, or to none. Networks of global anycast, CDN and cloud operators (Cloudflare, Google including its in-country edge in China, Akamai, Fastly, AWS, Microsoft, Meta, X) are left out of every region.
 - **Global dataset** — every country, IPv4 + IPv6, from all five Regional Internet Registries.
 
-IPNova shows where address space is registered and routed. It is not a geolocation database for end users.
+IPNova shows where address space is registered, routed and, for cloud providers, operated. It is not a geolocation database for end users.
 
 Part of the [Nova infrastructure toolkit](https://github.com/harryheros).
 
@@ -57,14 +57,14 @@ https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/geoip.dat
 https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/ipnova-global-country.mmdb
 ```
 
-- Country codes mean where a block is **registered**. CN / HK / TW / MO / JP / KR / SG IPv4 comes from the Asia-Pacific pipeline above, so both parts agree.
+- Country codes mean where a block is **registered**. CN / HK / TW / MO / JP / KR / SG IPv4 comes from the Asia-Pacific pipeline above, so both parts agree; space registered in those seven that the pipeline leaves out (anycast and CDN networks, cloud space operated elsewhere) has no country code.
 - The files live on the [`data` branch](https://github.com/harryheros/ipnova/tree/data), replaced on every build with no history, so the repository does not grow.
 
 ---
 
 ## 🛡️ Reliability
 
-- Only first-party data: RIR delegation files and RIPEstat BGP data.
+- Two sources only: RIR delegation files and RIPEstat.
 - Every RIR file must pass its published MD5 checksum.
 - A build that fails validation or shrinks sharply compared with the last one is not published; the last good data stays online.
 - `meta.json` records each build's sources, counts and status, including weeks when BGP data was incomplete.
@@ -88,7 +88,7 @@ python3 scripts/build_global.py             # Global dataset
 ## 📊 Data sources
 
 - [APNIC](https://www.apnic.net/), [ARIN](https://www.arin.net/), [RIPE NCC](https://www.ripe.net/), [LACNIC](https://www.lacnic.net/) and [AFRINIC](https://afrinic.net/) delegation files, used under each registry's terms.
-- [RIPEstat](https://stat.ripe.net/) for BGP announcements, used under the [RIPEstat Service Terms and Conditions](https://www.ripe.net/about-us/legal/ripestat-service-terms-and-conditions/). Commercial products or services based on RIPEstat data need the RIPE NCC's permission; an IPNova commercial license does not include it.
+- [RIPEstat](https://stat.ripe.net/) for BGP announcements, and for where cloud providers' prefixes are located (RIPEstat geolocation, based on MaxMind GeoLite2: it only decides which region a prefix belongs to, and IPNova publishes no location data), used under the [RIPEstat Service Terms and Conditions](https://www.ripe.net/about-us/legal/ripestat-service-terms-and-conditions/). Commercial products or services based on RIPEstat data need the RIPE NCC's permission; an IPNova commercial license does not include it.
 
 Release history: [CHANGELOG.md](./CHANGELOG.md).
 

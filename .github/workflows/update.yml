@@ -139,6 +139,12 @@ jobs:
 
               lines.append(f'{cc}: {p_cidrs} -> {c_cidrs} ({sign}{diff})')
 
+          # Cloud space moved to the region it is operated in (v4.2.0).
+          rel = (curr_meta.get('parsing') or {}).get('cloud_relocation') or {}
+          if rel.get('moved_addresses'):
+              lines.append('relocated: ' + ', '.join(
+                  f'{k} {v:,}' for k, v in rel['moved_addresses'].items()))
+
           report = '\n'.join(lines) if lines else 'First run or no previous data'
           print(report)
 
@@ -232,12 +238,16 @@ jobs:
               m = json.load(open("../output/meta.json"))
               ripe = m.get("build", {}).get("ripe") or {}
               cs = m.get("parsing", {}).get("cloud_supplement") or {}
+              rel = m.get("parsing", {}).get("cloud_relocation") or {}
           except (OSError, ValueError):
-              ripe, cs = {}, {}
-          if ripe.get("breaker_tripped") or cs.get("asns_failed"):
-              print("\n> [!WARNING]\n> **Degraded build** — RIPE Stat budget ran out "
-                    f"(breaker: {ripe.get('breaker_tripped')}, failed ASNs: {cs.get('asns_failed') or 'none'}). "
-                    "CN comes from APNIC and is unaffected; cloud additions for HK/SG/JP/KR may be incomplete this week.")
+              ripe, cs, rel = {}, {}, {}
+          stale = sorted(a for a, s in (rel.get("asns") or {}).items() if s.get("source") != "ripestat")
+          if ripe.get("breaker_tripped") or cs.get("asns_failed") or stale:
+              print("\n> [!WARNING]\n> **Degraded build** — RIPE Stat budget ran out or failed "
+                    f"(breaker: {ripe.get('breaker_tripped')}, failed ASNs: {cs.get('asns_failed') or 'none'}, "
+                    f"location from cache or missing: {', '.join(stale) or 'none'}). "
+                    "CN's APNIC space is unaffected; cloud space for the other regions may be incomplete or "
+                    "still listed where it is registered this week.")
           PY
 
   notify-failure:

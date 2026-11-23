@@ -3,6 +3,17 @@
 Releases, newest first. The weekly data updates are the
 `chore: update dataset` commits.
 
+## 4.2.0 (2026-11-23)
+
+- **Cloud space is listed where it is operated.** The cloud companies register large blocks in Singapore and run data centres around the world from them: Alibaba's `8.128.0.0/10` carries Aliyun's mainland regions (`8.129`–`8.147`, AS37963), its `8.208.0.0/12` and `149.129.0.0/16` serve Manila and Mumbai, and Tencent's `43.128.0.0/13` serves Tokyo and Frankfurt. The BGP step only added cloud prefixes from outside APNIC space; a prefix inside a region's APNIC space was settled by containment and stayed where it was registered. So SG.txt listed all of these (its two largest entries, `43.0.0.0/9` and `8.128.0.0/10`, were 45% of its addresses), and DomainNova placed sites hosted on them in SG, mainland ones included.
+- Each prefix the cloud ASNs announce is now checked against RIPEstat geolocation, with one call per ASN. If at least half of it is located in another country, it leaves the region it is registered in and joins that country when it is one of the seven (SG → CN, SG → JP, …); space located anywhere else belongs to no region. Inside a less specific prefix, a more specific prefix's result wins. Weaker evidence keeps the registration, and space registered in CN never moves. When RIPEstat fails, the answers cached by earlier runs are used; without them nothing moves, and the run summary marks the week as degraded.
+- `meta.json` reports the result under `parsing.cloud_relocation`: prefixes moved, kept and undecided, and addresses moved per region pair (also listed in the weekly commit message). `--skip-relocation` keeps the old behaviour.
+- AS134963 (Alibaba Cloud Singapore) joins the cloud ASNs.
+- The per-ASN answers also fill the geolocation cache, so the cloud supplement no longer needs one RIPEstat call per prefix for these networks.
+- Global dataset: space registered in the seven regions but operated elsewhere has no country code, like the anycast networks the regional lists leave out.
+- README: it said cloud regions already landed where they operate, which held only for space outside APNIC. It now describes the relocation and lists RIPEstat geolocation as a source.
+- 7 new offline tests (44 total).
+
 ## 4.1.1 (2026-11-19)
 
 - **Google's in-country edge is no longer in CN.txt.** `203.208.32.0/19` is announced by AS24424 (GOOGLECN, Beijing Gu Xiang Information Technology), Google's network in China, which serves Google's global services to users there. Only Google's global ASNs (15169, 396982) were excluded, so the prefix stayed in the CN list, and services resolving to it looked like mainland services: DomainNova placed googletagmanager.com and googleoptimize.com in CN. AS24424 is now excluded like Google's other ASNs, and the prefix is also on the static list, so it stays out in a week when RIPE Stat fails. CN loses 8,192 addresses.

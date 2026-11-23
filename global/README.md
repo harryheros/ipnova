@@ -33,4 +33,4 @@ https://raw.githubusercontent.com/harryheros/ipnova/data/geoip.dat
 
 `geoip.dat` contains one entry per country code plus `PRIVATE`, with no service or provider tags.
 
-Country codes mean where an address block is **registered**, not where it is used. See the [main README](../README.md#-global-dataset) for details.
+Country codes mean where an address block is **registered**, not where it is used. CN / HK / TW / MO / JP / KR / SG IPv4 comes from IPNova's Asia-Pacific lists; space registered in those seven that the lists leave out (anycast and CDN networks, cloud space operated elsewhere) has no country code. See the [main README](../README.md#-global-dataset) for details.
