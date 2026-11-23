@@ -1,7 +1,8 @@
 # IPNova Changelog
 
 Releases, newest first. The weekly data updates are the
-`chore: update dataset` commits.
+`chore: update dataset` commits. Versions before 3.1.1 have no GitHub
+release.
 
 ## 4.2.1 (2026-11-23)
 
@@ -90,7 +91,7 @@ Releases, newest first. The weekly data updates are the
 ## 3.2.1 (2026-05-07)
 
 - **New**: `output/cidr_objects` per-CIDR provenance metadata in `data.json` (schema v3.2) — each CIDR now carries `source`, `asn`, `tier`, and `confidence` fields
-- **New**: `output/GeoIP2-Country-compatible.mmdb` + `output/GeoLite2-Country-compatible.mmdb` — schema-compatible aliases (named with `-compatible` suffix to avoid using MaxMind's trademarked product names directly)
+- **New**: two copies of `ipnova-apac.mmdb` under the file names GeoIP2 Country tools expect (renamed with a `-compatible` suffix in 3.3.0)
 - **New**: `output/haproxy/{CC}.acl` — HAProxy ACL format
 - **New**: `output/caddy/{CC}.conf` — Caddy remote_ip matcher format
 - **New**: `output/plain/{CC}.txt` — pure CIDR files with no comment headers (for programmatic consumption)
@@ -118,7 +119,7 @@ Releases, newest first. The weekly data updates are the
 - **CI**: added syntax check and offline smoke test steps; validation failures now block commit
 - **Test**: added `tests/test_core_offline.py` for network-free core regression
 
-## 3.1.0
+## 3.1.0 (2026-04-26)
 
 - **Asia-Pacific expansion**: added Japan (JP), South Korea (KR), and Singapore (SG) to target regions
 - All new regions sourced from APNIC delegation data (no BGP supplement needed — APNIC coverage is complete for these regions)
@@ -126,7 +127,7 @@ Releases, newest first. The weekly data updates are the
 - Validation script and test samples updated with JP/KR/SG domains
 - Cloud supplement remains CN-specific (resolves ARIN-registered Chinese cloud provider IP blocks)
 
-## 3.0.0
+## 3.0.0 (2026-04-21)
 
 - **Multi-source BGP fusion**: supplements APNIC data with live BGP announcements from Chinese cloud provider ASNs (Alibaba, Tencent, Baidu, Huawei, ByteDance, JD, NetEase)
 - **ASN tier model**: Tier 1 (pure cloud), Tier 2 (mixed internet company), Tier 3 (operator backbone, hard-forbidden)
@@ -137,7 +138,7 @@ Releases, newest first. The weekly data updates are the
 - Output validation script (`scripts/validate_output.py`) with sample-based testing
 - Schema version bumped to 3.0
 
-## 2.1.0
+## 2.1.0 (2026-03-30)
 
 - Precise CIDR subtraction — excluded subnets are surgically removed instead of dropping entire networks on overlap
 - APNIC format validation (header line check catches error pages / corrupted downloads)
@@ -152,7 +153,7 @@ Releases, newest first. The weekly data updates are the
 - CI auto-cleans legacy files (.gitkeep, diff_report.txt)
 - `time.monotonic()` for accurate elapsed time measurement
 
-## 2.0.0
+## 2.0.0 (2026-03-30)
 
 - Replaced `print()` with `logging` module
 - Added CLI via `argparse`
@@ -162,6 +163,6 @@ Releases, newest first. The weekly data updates are the
 - Enriched `meta.json` schema
 - CI lint check, diff reporting, failure notifications
 
-## 1.0.0
+## 1.0.0 (2026-03-22)
 
 - Initial release
