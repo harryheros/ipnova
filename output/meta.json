@@ -1,17 +1,17 @@
 {
   "schema_version": "3.4",
   "project": "ipnova",
-  "version": "4.1.1",
-  "generated_at": "2026-11-23T10:45:14.343522+00:00",
+  "version": "4.2.0",
+  "generated_at": "2026-11-23T18:02:00.259071+00:00",
   "source": "APNIC delegated + BGP multi-source fusion",
   "build": {
-    "commit_sha": "00b1593e7285fd77d958f25ec6671abbee910a26",
-    "user_agent": "ipnova/4.1.1 (+https://github.com/harryheros/ipnova)",
+    "commit_sha": "546251277b23ee0a4305e48b5ba78a71da01f67e",
+    "user_agent": "ipnova/4.2.0 (+https://github.com/harryheros/ipnova)",
     "python": "3.13.18",
     "ripe": {
-      "breaker_tripped": false,
+      "breaker_tripped": true,
       "consecutive_failures": 0,
-      "phase_seconds": 79.7,
+      "phase_seconds": 902.1,
       "phase_budget_seconds": 900
     }
   },
@@ -38,12 +38,12 @@
   },
   "counts": {
     "CN": {
-      "cidrs": 5607,
-      "ips": 344059656
+      "cidrs": 5618,
+      "ips": 346548744
     },
     "HK": {
-      "cidrs": 2580,
-      "ips": 15382600
+      "cidrs": 2632,
+      "ips": 16598088
     },
     "TW": {
       "cidrs": 764,
@@ -54,16 +54,16 @@
       "ips": 339464
     },
     "JP": {
-      "cidrs": 3239,
-      "ips": 188590344
+      "cidrs": 3249,
+      "ips": 188800008
     },
     "KR": {
-      "cidrs": 1053,
-      "ips": 112477256
+      "cidrs": 1082,
+      "ips": 112584264
     },
     "SG": {
-      "cidrs": 1666,
-      "ips": 28007496
+      "cidrs": 1833,
+      "ips": 22541896
     }
   },
   "exclusion": {
@@ -86,7 +86,7 @@
       396982
     ],
     "asns_failed": [],
-    "dynamic_prefixes": 35633,
+    "dynamic_prefixes": 35635,
     "static_blacklist": [
       "1.0.0.0/24",
       "1.1.1.0/24",
@@ -101,35 +101,136 @@
   "parsing": {
     "lines_processed": 21701,
     "source_networks": 21701,
-    "cidrs_kept": 21849,
-    "cidrs_excluded": 168,
+    "cidrs_kept": 21863,
+    "cidrs_excluded": 170,
     "excluded_source_networks": 90,
     "parse_errors": 0,
-    "prefixes_before_collapse": 22686,
-    "prefixes_after_collapse": 14940,
+    "prefixes_before_collapse": 22457,
+    "prefixes_after_collapse": 15209,
     "cloud_supplement": {
-      "prefixes_fetched": 6078,
+      "prefixes_fetched": 2240,
       "kept_per_region": {
-        "CN": 3455,
-        "SG": 2247,
-        "HK": 65,
-        "JP": 25,
-        "KR": 12
+        "CN": 872,
+        "SG": 628,
+        "HK": 82,
+        "KR": 32,
+        "JP": 46
       },
-      "dropped_other_country": 274,
+      "dropped_other_country": 503,
       "dropped_unknown": 0,
-      "l0_local_hit": 5507,
-      "cache_hit": 554,
-      "l1_success": 432,
-      "l2_fallback": 139,
+      "l0_local_hit": 1093,
+      "cache_hit": 568,
+      "l1_success": 919,
+      "l2_fallback": 147,
       "l3_fallback": 0,
       "dropped_region_conflict": 0,
-      "trimmed_region_conflict": 0,
-      "asns_failed": [],
-      "duration_seconds": 37.643,
-      "asn_count": 7,
-      "tier1_asn_count": 4,
+      "trimmed_region_conflict": 8,
+      "handled_by_relocation": 81,
+      "asns_failed": [
+        132203,
+        136907,
+        45090,
+        38365,
+        58593
+      ],
+      "duration_seconds": 863.255,
+      "asn_count": 8,
+      "tier1_asn_count": 5,
       "tier2_asn_count": 3
+    },
+    "cloud_relocation": {
+      "min_share": 50.0,
+      "asns": {
+        "37963": {
+          "name": "Aliyun Computing",
+          "source": "ripestat",
+          "prefixes": 102,
+          "in_regions": 27
+        },
+        "45102": {
+          "name": "Alibaba US Technology",
+          "source": "ripestat",
+          "prefixes": 189,
+          "in_regions": 104
+        },
+        "134963": {
+          "name": "Alibaba Cloud Singapore",
+          "source": "ripestat",
+          "prefixes": 90,
+          "in_regions": 45
+        },
+        "132203": {
+          "name": "Tencent Cloud International",
+          "source": "ripestat",
+          "prefixes": 176,
+          "in_regions": 120
+        },
+        "136907": {
+          "name": "Huawei Clouds International",
+          "source": "ripestat",
+          "prefixes": 183,
+          "in_regions": 161
+        },
+        "45090": {
+          "name": "Tencent",
+          "source": "ripestat",
+          "prefixes": 78,
+          "in_regions": 0
+        },
+        "38365": {
+          "name": "Baidu",
+          "source": "ripestat",
+          "prefixes": 33,
+          "in_regions": 0
+        },
+        "58593": {
+          "name": "ByteDance",
+          "source": "ripestat",
+          "prefixes": 12,
+          "in_regions": 0
+        }
+      },
+      "prefixes_checked": 448,
+      "moved": 238,
+      "stayed": 188,
+      "undecided": 22,
+      "moved_addresses": {
+        "SG->AE": 4096,
+        "SG->BR": 30720,
+        "SG->CL": 8704,
+        "SG->CN": 2676224,
+        "SG->DE": 180736,
+        "SG->EG": 8960,
+        "SG->FR": 2048,
+        "SG->GB": 67584,
+        "SG->HK": 1110016,
+        "SG->ID": 11776,
+        "SG->IE": 3072,
+        "SG->JP": 160768,
+        "SG->KE": 768,
+        "SG->KR": 140288,
+        "SG->MX": 31744,
+        "SG->MY": 16896,
+        "SG->NG": 5120,
+        "SG->PE": 8192,
+        "SG->PH": 62464,
+        "SG->RU": 47360,
+        "SG->SA": 42496,
+        "SG->TH": 119296,
+        "SG->TR": 28416,
+        "SG->US": 712704,
+        "SG->VN": 12032,
+        "SG->ZA": 22528
+      },
+      "removed_addresses": {
+        "SG": 5515008
+      },
+      "added_addresses": {
+        "CN": 2676224,
+        "JP": 160768,
+        "HK": 1110016,
+        "KR": 140288
+      }
     }
   },
   "sanity_thresholds": {
@@ -142,6 +243,6 @@
     "SG": 300
   },
   "checksum": {
-    "data_json_sha256": "3bf9d348b3a4ec01a8336a567d893ce852ebfa725fcd216eff7bdd91574ec463"
+    "data_json_sha256": "42c0ac5a6eb2969870ae15db93e7132fa624c7e90807120b9906c3b4b577c5b8"
   }
 }

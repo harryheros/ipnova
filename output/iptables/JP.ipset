@@ -1,6 +1,6 @@
 # IPNova — ipset restore — JP (Japan)
-# Generated : 2026-11-23 10:45:19 UTC
-# CIDRs     : 3239
+# Generated : 2026-11-23 18:02:03 UTC
+# CIDRs     : 3249
 # Project   : https://github.com/harryheros/ipnova
 # Note      : output includes a few RFC5737 documentation-reserved
 #             CIDRs as provenance fingerprints; they never route on
@@ -22,6 +22,9 @@ add ipnova_JP 1.33.0.0/16
 add ipnova_JP 1.66.0.0/15
 add ipnova_JP 1.72.0.0/13
 add ipnova_JP 1.112.0.0/14
+add ipnova_JP 8.209.192.0/18
+add ipnova_JP 8.216.76.0/22
+add ipnova_JP 8.221.152.0/22
 add ipnova_JP 14.0.8.0/22
 add ipnova_JP 14.1.4.0/22
 add ipnova_JP 14.1.8.0/21
@@ -34,6 +37,8 @@ add ipnova_JP 14.128.0.0/22
 add ipnova_JP 14.128.16.0/20
 add ipnova_JP 14.128.64.0/18
 add ipnova_JP 14.132.0.0/15
+add ipnova_JP 14.137.152.0/23
+add ipnova_JP 14.137.155.0/24
 add ipnova_JP 14.137.224.0/19
 add ipnova_JP 14.192.32.0/20
 add ipnova_JP 14.192.96.0/19
@@ -147,6 +152,11 @@ add ipnova_JP 42.123.32.0/22
 add ipnova_JP 42.124.0.0/14
 add ipnova_JP 42.144.0.0/13
 add ipnova_JP 42.187.124.0/22
+add ipnova_JP 43.108.128.0/17
+add ipnova_JP 43.116.176.0/21
+add ipnova_JP 43.130.224.0/19
+add ipnova_JP 43.161.0.0/18
+add ipnova_JP 43.166.0.0/15
 add ipnova_JP 43.222.0.0/15
 add ipnova_JP 43.224.32.0/22
 add ipnova_JP 43.224.140.0/22
