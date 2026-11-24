@@ -26,7 +26,7 @@ release.
 
 ## 4.1.1 (2026-11-19)
 
-- **Google's in-country edge is no longer in CN.txt.** `203.208.32.0/19` is announced by AS24424 (GOOGLECN, Beijing Gu Xiang Information Technology), Google's network in China, which serves Google's global services to users there. Only Google's global ASNs (15169, 396982) were excluded, so the prefix stayed in the CN list, and services resolving to it looked like mainland services: DomainNova placed googletagmanager.com and googleoptimize.com in CN. AS24424 is now excluded like Google's other ASNs, and the prefix is also on the static list, so it stays out in a week when RIPE Stat fails. CN loses 8,192 addresses.
+- **Google's in-country edge is no longer in CN.txt.** `203.208.32.0/19` is announced by AS24424 (GOOGLECN, Beijing Gu Xiang Information Technology), Google's network in China, which serves Google's global services to users there. Only Google's global ASNs (15169, 396982) were excluded, so the prefix stayed in the CN list, and services resolving to it looked like mainland services: DomainNova placed googletagmanager.com and googleoptimize.com in CN. AS24424 is now excluded like Google's other ASNs, and the prefix is also on the static list, so it stays out in a week when RIPEstat fails. CN loses 8,192 addresses.
 
 ## 4.1.0 (2026-11-03)
 
@@ -37,7 +37,7 @@ release.
 
 - **Global dataset**: every country, IPv4 + IPv6, from the delegation files of all five RIRs (MD5-checked), published weekly on the history-free `data` branch: `geoip.dat` (V2Ray format, with `PRIVATE` matching v2fly/geoip), a global MMDB (`database_type` `GeoLite2-Country`) and per-country CIDR lists, with `meta.json` and `SHA256SUMS`. CN/HK/TW/MO/JP/KR/SG IPv4 comes from IPNova's own pipeline.
 - **Safety**: a registry download that is missing, fails or lacks its MD5 checksum, or is truncated stops the global build; a >20% drop in addresses (or >10% in countries) versus the last build is refused.
-- **Status**: the run summary marks a week as *degraded* when the RIPE Stat budget runs out or cloud ASNs fail; CN is unaffected (APNIC-based).
+- **Status**: the run summary marks a week as *degraded* when the RIPEstat budget runs out or cloud ASNs fail; CN is unaffected (APNIC-based).
 - **Verification**: `geoip.dat` is decoded after writing and cross-checked against the official protobuf runtime in the tests; the global MMDB is read back for the 30 largest countries.
 - The existing regional outputs on `main` are unchanged.
 
@@ -76,7 +76,7 @@ release.
 
 - **Architecture**: extracted `TARGET_REGIONS` into `regions.py` as a single source of truth, eliminating definition drift between the build pipeline and `mmdb/schema.py`
 - **Correctness**: `enforce_mutual_exclusivity` now treats APNIC results as Tier 1 (authoritative) and BGP supplement as Tier 2 (gap-filling), so a misclassified supplement prefix can no longer displace an APNIC-assigned region block
-- **Reliability**: per-host RIPE Stat throttling enforced inside `http_get` (canonical hostname matching via `urlparse`, not substring), so callers can no longer accidentally bypass rate limits, and spoofed URLs cannot trigger throttling
+- **Reliability**: per-host RIPEstat throttling enforced inside `http_get` (canonical hostname matching via `urlparse`, not substring), so callers can no longer accidentally bypass rate limits, and spoofed URLs cannot trigger throttling
 - **Operations**: `MAX_L2_RATIO` threshold tightened from 0.60 to 0.10 and downgraded from CI gate to loud warning — transient RIPEstat hiccups no longer block weekly publishes, while genuine L1 degradation is still surfaced
 - **MMDB validator**: rewritten as an explicit round-trip check rather than an "accuracy" check it could not actually perform; tolerates individual stale samples (warn-only), fails only when an entire region has zero matching samples
 - **Security/Provenance**: canary CIDR set embedded in published artifacts using RFC5737 documentation-reserved ranges (harmless for downstream firewall/ACL use, but enables forensic attribution of unattributed redistributions); `meta.json` gains a `build` section recording the commit SHA that produced the artifact
@@ -86,11 +86,11 @@ release.
 - **iptables**: `ipset` maxelem sized dynamically (`max(num_cidrs * 2, 65536)`, rounded to next power of two) so future region growth doesn't silently truncate
 - **MMDB validator**: expanded MO sample set so a single IP holder change can't fail the region-coverage gate
 - **Documentation**: project-language consistency — translated `IPNOVA_MULTISOURCE_PROPOSAL.md` to English (`P0_5_POSTMORTEM.md` already English)
-- **Testing**: 4 new offline tests covering tier-layered enforce, hostname-based RIPE throttle classification, MMDB round-trip semantics, regions single-source-of-truth, User-Agent derivation, and canary CIDR well-formedness — 14 tests total
+- **Testing**: 7 new offline tests covering tier-layered enforce, hostname-based RIPE throttle classification, MMDB round-trip semantics, regions single-source-of-truth, User-Agent derivation, and canary CIDR well-formedness — 14 tests total
 
 ## 3.2.1 (2026-05-07)
 
-- **New**: `output/cidr_objects` per-CIDR provenance metadata in `data.json` (schema v3.2) — each CIDR now carries `source`, `asn`, `tier`, and `confidence` fields
+- **New**: `cidr_objects`, per-CIDR provenance metadata in `output/data.json` (schema v3.2) — each CIDR now carries `source`, `asn`, `tier`, and `confidence` fields
 - **New**: two copies of `ipnova-apac.mmdb` under the file names GeoIP2 Country tools expect (renamed with a `-compatible` suffix in 3.3.0)
 - **New**: `output/haproxy/{CC}.acl` — HAProxy ACL format
 - **New**: `output/caddy/{CC}.conf` — Caddy remote_ip matcher format
@@ -158,7 +158,7 @@ release.
 - Replaced `print()` with `logging` module
 - Added CLI via `argparse`
 - HTTP retry with exponential backoff
-- RIPE Stat rate limiting
+- RIPEstat rate limiting
 - Data sanity checks
 - Enriched `meta.json` schema
 - CI lint check, diff reporting, failure notifications

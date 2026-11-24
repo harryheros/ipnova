@@ -1,24 +1,29 @@
-# IPNova — Routing-Aware IP Intelligence Dataset
+<div align="center">
 
-![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)
-![Update](https://img.shields.io/badge/update-weekly-brightgreen)
-![Data Source](https://img.shields.io/badge/source-5%20RIRs%20%2B%20BGP-orange)
-![Version](https://img.shields.io/badge/version-4.2.1-blue)
+# IPNova
 
-IPNova is an IP dataset for networking, security, compliance and attribution workflows. It has two parts:
+**Routing-aware IP dataset: seven Asia-Pacific regions refined with BGP, and every country from all five RIRs.**
 
-- **Asia-Pacific regions** — CN, HK, TW, MO, JP, KR and SG IPv4, built from APNIC data and refined with BGP announcements. Chinese cloud providers' address space is listed where it is operated, not where it is registered: their large Singapore-registered blocks serve data centres worldwide, so each part of them goes to the region it is located in, or to none. Networks of global anycast, CDN and cloud operators (Cloudflare, Google including its in-country edge in China, Akamai, Fastly, AWS, Microsoft, Meta, X) are left out of every region.
-- **Global dataset** — every country, IPv4 + IPv6, from all five Regional Internet Registries.
+[![Version](https://img.shields.io/github/v/release/harryheros/ipnova?label=version&color=blue)](https://github.com/harryheros/ipnova/releases)
+[![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)](#license-and-names)
+[![Weekly update](https://img.shields.io/github/actions/workflow/status/harryheros/ipnova/update.yml?label=weekly%20update)](https://github.com/harryheros/ipnova/actions/workflows/update.yml)
+[![Sources](https://img.shields.io/badge/sources-5%20RIRs%20%2B%20BGP-orange)](#data-sources)
 
-IPNova shows where address space is registered, routed and, for cloud providers, operated. It is not a geolocation database for end users.
+[Asia-Pacific regions](#asia-pacific-regions) · [Global dataset](#global-dataset) · [How it is built](#how-it-is-built) · [Changelog](./CHANGELOG.md) · [License](#license-and-names)
 
-Part of the [Nova infrastructure toolkit](https://github.com/harryheros).
+</div>
 
+IPNova is an IP dataset for networking, security, compliance and attribution work. It shows where address space is registered, routed and, for cloud providers, operated. It is not a geolocation database for end users.
+
+| | Coverage | Built from |
+|---|---|---|
+| [**Asia-Pacific regions**](#asia-pacific-regions) | CN, HK, TW, MO, JP, KR and SG, IPv4 | APNIC data, refined with BGP announcements |
+| [**Global dataset**](#global-dataset) | Every country, IPv4 and IPv6 | All five Regional Internet Registries |
+
+> [!NOTE]
 > **License**: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) for all versions, including historical commits. Commercial use requires a separate written license — see [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md).
 
----
-
-## 📦 Asia-Pacific regions
+## Asia-Pacific regions
 
 Files in [`output/`](output/), updated weekly:
 
@@ -39,11 +44,9 @@ https://raw.githubusercontent.com/harryheros/ipnova/main/output/ipnova-apac.mmdb
 
 The MMDB covers the seven regions only; other addresses return no result.
 
----
+## Global dataset
 
-## 🌍 Global dataset
-
-Every country, IPv4 + IPv6. Download links: **[`global/`](global/)**.
+Every country, IPv4 and IPv6. Download links and notes: [`global/`](global/).
 
 | File | Format |
 |---|---|
@@ -57,21 +60,22 @@ https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/geoip.dat
 https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/ipnova-global-country.mmdb
 ```
 
-- Country codes mean where a block is **registered**. CN / HK / TW / MO / JP / KR / SG IPv4 comes from the Asia-Pacific pipeline above, so both parts agree; space registered in those seven that the pipeline leaves out (anycast and CDN networks, cloud space operated elsewhere) has no country code.
+- Country codes mean where a block is **registered**. CN, HK, TW, MO, JP, KR and SG IPv4 comes from the Asia-Pacific pipeline, so both parts agree; space registered in those seven that the pipeline leaves out (anycast and CDN networks, cloud space operated elsewhere) has no country code.
 - The files live on the [`data` branch](https://github.com/harryheros/ipnova/tree/data), replaced on every build with no history, so the repository does not grow.
 
----
+## How it is built
 
-## 🛡️ Reliability
+- **Registered and routed.** Each region starts from APNIC's delegations and is refined with the prefixes that networks announce in BGP.
+- **Cloud space where it is operated.** Chinese cloud providers register large blocks in Singapore and serve data centres worldwide from them, so each part of those blocks goes to the region it is located in, or to none.
+- **Global networks left out.** Anycast, CDN and cloud operators (Cloudflare, Google including its in-country edge in China, Akamai, Fastly, AWS, Microsoft, Meta, X) are in no region.
+- **Checked before it is published.** Every RIR file must pass its published MD5 checksum. A build that fails validation, or shrinks sharply compared with the last one, is not published, and the last good data stays online. `meta.json` records each build's sources, counts and status, including weeks when BGP data was incomplete.
 
-- Two sources only: RIR delegation files and RIPEstat.
-- Every RIR file must pass its published MD5 checksum.
-- A build that fails validation or shrinks sharply compared with the last one is not published; the last good data stays online.
-- `meta.json` records each build's sources, counts and status, including weeks when BGP data was incomplete.
+### Data sources
 
----
+- [APNIC](https://www.apnic.net/), [ARIN](https://www.arin.net/), [RIPE NCC](https://www.ripe.net/), [LACNIC](https://www.lacnic.net/) and [AFRINIC](https://afrinic.net/) delegation files, used under each registry's terms.
+- [RIPEstat](https://stat.ripe.net/) for BGP announcements, and for where cloud providers' prefixes are located (RIPEstat geolocation, based on MaxMind GeoLite2: it only decides which region a prefix belongs to, and IPNova publishes no location data), used under the [RIPEstat Service Terms and Conditions](https://www.ripe.net/about-us/legal/ripestat-service-terms-and-conditions/). Commercial products or services based on RIPEstat data need the RIPE NCC's permission; an IPNova commercial license does not include it.
 
-## 🚀 Usage
+## Build it yourself
 
 ```bash
 git clone https://github.com/harryheros/ipnova && cd ipnova
@@ -81,20 +85,9 @@ python3 scripts/build_formats.py            # MMDB and other formats
 python3 scripts/build_global.py             # Global dataset
 ```
 
-`python3 generate_ip_list.py --help` lists all options.
+`python3 generate_ip_list.py --help` lists all options. Release history: [CHANGELOG.md](./CHANGELOG.md).
 
----
-
-## 📊 Data sources
-
-- [APNIC](https://www.apnic.net/), [ARIN](https://www.arin.net/), [RIPE NCC](https://www.ripe.net/), [LACNIC](https://www.lacnic.net/) and [AFRINIC](https://afrinic.net/) delegation files, used under each registry's terms.
-- [RIPEstat](https://stat.ripe.net/) for BGP announcements, and for where cloud providers' prefixes are located (RIPEstat geolocation, based on MaxMind GeoLite2: it only decides which region a prefix belongs to, and IPNova publishes no location data), used under the [RIPEstat Service Terms and Conditions](https://www.ripe.net/about-us/legal/ripestat-service-terms-and-conditions/). Commercial products or services based on RIPEstat data need the RIPE NCC's permission; an IPNova commercial license does not include it.
-
-Release history: [CHANGELOG.md](./CHANGELOG.md).
-
----
-
-## 📄 License and names
+## License and names
 
 - **Non-commercial use**: permitted under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).
 - **Commercial use** (SaaS, API resale, redistribution, paid products, use inside a company beyond research): requires prior written authorization — see [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md), or ask at [novaod.com/licensing](https://novaod.com/licensing).
@@ -103,3 +96,5 @@ Release history: [CHANGELOG.md](./CHANGELOG.md).
 - **Trademarks**: MaxMind, GeoIP and GeoLite are trademarks of MaxMind, Inc. IPNova is independent and contains no MaxMind data. The MMDB files use the open MaxMind DB format; `database_type` is set to `GeoLite2-Country` only so existing reader software can open them.
 
 If IPNova is useful to you, a ⭐ is appreciated.
+
+Part of the [Nova infrastructure toolkit](https://github.com/harryheros).
