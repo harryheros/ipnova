@@ -1,8 +1,6 @@
-<div align="center">
-
 # IPNova
 
-**Routing-aware IP dataset: seven Asia-Pacific regions refined with BGP, and every country from all five RIRs.**
+> Routing-aware IP dataset: seven Asia-Pacific regions refined with BGP, and every country from all five RIRs.
 
 [![Version](https://img.shields.io/github/v/release/harryheros/ipnova?label=version&color=blue)](https://github.com/harryheros/ipnova/releases)
 [![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)](#license-and-names)
@@ -11,30 +9,23 @@
 
 [Asia-Pacific regions](#asia-pacific-regions) · [Global dataset](#global-dataset) · [How it is built](#how-it-is-built) · [Changelog](./CHANGELOG.md) · [License](#license-and-names)
 
-</div>
-
 IPNova is an IP dataset for networking, security, compliance and attribution work. It shows where address space is registered, routed and, for cloud providers, operated. It is not a geolocation database for end users.
 
-| | Coverage | Built from |
-|---|---|---|
-| [**Asia-Pacific regions**](#asia-pacific-regions) | CN, HK, TW, MO, JP, KR and SG, IPv4 | APNIC data, refined with BGP announcements |
-| [**Global dataset**](#global-dataset) | Every country, IPv4 and IPv6 | All five Regional Internet Registries |
+- [**Asia-Pacific regions**](#asia-pacific-regions): CN, HK, TW, MO, JP, KR and SG, IPv4. Built from APNIC data, refined with BGP announcements.
+- [**Global dataset**](#global-dataset): every country, IPv4 and IPv6. Built from all five Regional Internet Registries.
 
 > [!NOTE]
 > **License**: [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/) for all versions, including historical commits. Commercial use requires a separate written license — see [COMMERCIAL_LICENSE.md](./COMMERCIAL_LICENSE.md).
 
 ## Asia-Pacific regions
 
-Files in [`output/`](output/), updated weekly:
+Files in [`output/`](output/), updated weekly (`{CC}` is `CN`, `HK`, `TW`, `MO`, `JP`, `KR` or `SG`):
 
-| File | Format |
-|---|---|
-| `{CC}.txt` | CIDR list with header (`CN`, `HK`, `TW`, `MO`, `JP`, `KR`, `SG`) |
-| `plain/{CC}.txt` | CIDR list, no header |
-| `ipnova-apac.mmdb` | MaxMind DB format, all seven regions |
-| `data.json`, `regions.json`, `json/{CC}.json` | Structured data with per-CIDR provenance |
-| `nginx/`, `haproxy/`, `caddy/`, `iptables/`, `terraform/` | Ready-made configs |
-| `meta.json`, `checksums.txt` | Build report, SHA-256 checksums |
+- `{CC}.txt`: CIDR list with a header; `plain/{CC}.txt` without one.
+- `ipnova-apac.mmdb`: MaxMind DB format, all seven regions.
+- `data.json`, `regions.json`, `json/{CC}.json`: structured data with per-CIDR provenance.
+- `nginx/`, `haproxy/`, `caddy/`, `iptables/`, `terraform/`: ready-made configs.
+- `meta.json`, `checksums.txt`: build report and SHA-256 checksums.
 
 ```text
 https://raw.githubusercontent.com/harryheros/ipnova/main/output/CN.txt
@@ -48,12 +39,10 @@ The MMDB covers the seven regions only; other addresses return no result.
 
 Every country, IPv4 and IPv6. Download links and notes: [`global/`](global/).
 
-| File | Format |
-|---|---|
-| `geoip.dat` | V2Ray `geoip.dat` format: one entry per country code, plus `PRIVATE` |
-| `ipnova-global-country.mmdb` | MaxMind DB format |
-| `country/ipv4/{CC}.txt`, `country/ipv6/{CC}.txt` | CIDR list per country |
-| `meta.json`, `SHA256SUMS` | Sources, counts, checksums |
+- `geoip.dat`: V2Ray `geoip.dat` format, one entry per country code plus `PRIVATE`.
+- `ipnova-global-country.mmdb`: MaxMind DB format.
+- `country/ipv4/{CC}.txt`, `country/ipv6/{CC}.txt`: CIDR list per country.
+- `meta.json`, `SHA256SUMS`: sources, counts and checksums.
 
 ```text
 https://cdn.jsdelivr.net/gh/harryheros/ipnova@data/geoip.dat
