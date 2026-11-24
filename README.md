@@ -2,9 +2,9 @@
 
 > Routing-aware IP dataset: seven Asia-Pacific regions refined with BGP, and every country from all five RIRs.
 
-[![Version](https://img.shields.io/github/v/release/harryheros/ipnova?label=version&color=blue)](https://github.com/harryheros/ipnova/releases)
+[![Version](https://img.shields.io/badge/version-v4.2.1-blue.svg)](https://github.com/harryheros/ipnova/releases)
 [![License](https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg)](#license-and-names)
-[![Weekly update](https://img.shields.io/github/actions/workflow/status/harryheros/ipnova/update.yml?label=weekly%20update)](https://github.com/harryheros/ipnova/actions/workflows/update.yml)
+[![Weekly update](https://github.com/harryheros/ipnova/actions/workflows/update.yml/badge.svg)](https://github.com/harryheros/ipnova/actions/workflows/update.yml)
 [![Sources](https://img.shields.io/badge/sources-5%20RIRs%20%2B%20BGP-orange)](#data-sources)
 
 [Asia-Pacific regions](#asia-pacific-regions) · [Global dataset](#global-dataset) · [How it is built](#how-it-is-built) · [Changelog](./CHANGELOG.md) · [License](#license-and-names)
